@@ -1,0 +1,898 @@
+{"query": "给我们唱个歌曲吧", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "唱首歌", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "来一首歌", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "我想听张学友的一千个伤心的理由", "domain": "music", "intent": "inform", "slots": {"artist": "张学友[3, 6]", "title": "一千个伤心的理由[7, 15]"}, "weight": "0.400000"}
+{"query": "刘德华的冰雨唱一个", "domain": "music", "intent": "inform", "slots": {"artist": "刘德华[0, 3]", "title": "冰雨[4, 6]"}, "weight": "0.400000"}
+{"query": "刘德华的冰雨", "domain": "music", "intent": "inform", "slots": {"artist": "刘德华[0, 3]", "title": "冰雨[4, 6]"}, "weight": "0.400000"}
+{"query": "我要听林志炫的单身情歌", "domain": "music", "intent": "inform", "slots": {"artist": "林志炫[3, 6]", "title": "单身情歌[7, 11]"}, "weight": "0.400000"}
+{"query": "周杰伦的告白气球", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[0, 3]", "title": "告白气球[4, 8]"}, "weight": "0.400000"}
+{"query": "陈奕迅的好久不见", "domain": "music", "intent": "inform", "slots": {"artist": "陈奕迅[0, 3]", "title": "好久不见[4, 8]"}, "weight": "0.400000"}
+{"query": "筷子兄弟的小苹果", "domain": "music", "intent": "inform", "slots": {"artist": "筷子兄弟[0, 4]", "title": "小苹果[5, 8]"}, "weight": "0.400000"}
+{"query": "来一首凤凰传奇的最炫民族风", "domain": "music", "intent": "inform", "slots": {"artist": "凤凰传奇[3, 7]", "title": "最炫民族风[8, 13]"}, "weight": "0.400000"}
+{"query": "来一首凤凰传奇的最炫民族风", "domain": "music", "intent": "inform", "slots": {"title": "凤凰[3, 5]"}, "weight": "0.300000"}
+{"query": "刘德华的男人哭吧不是罪", "domain": "music", "intent": "inform", "slots": {"artist": "刘德华[0, 3]", "title": "男人哭吧不是罪[4, 11]"}, "weight": "0.400000"}
+{"query": "播放周杰伦的稻香", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[2, 5]", "title": "稻香[6, 8]"}, "weight": "0.400000"}
+{"query": "我想听周杰伦的青花瓷", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[3, 6]", "title": "青花瓷[7, 10]"}, "weight": "0.400000"}
+随便播放张杰的一首歌
+{"query": "我想听tfboys的歌", "domain": "music", "intent": "inform", "slots": {"artist": "tfboys[3, 9]"}, "weight": "0.300000"}
+{"query": "来一首tfboys的歌", "domain": "music", "intent": "inform", "slots": {"artist": "tfboys[3, 9]"}, "weight": "0.300000"}
+{"query": "我想听周杰伦的歌", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[3, 6]"}, "weight": "0.300000"}
+{"query": "来一首周杰伦的歌", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[3, 6]"}, "weight": "0.300000"}
+{"query": "放首张杰的歌", "domain": "music", "intent": "inform", "slots": {"artist": "张杰[2, 4]"}, "weight": "0.300000"}
+{"query": "我要听张震岳的歌", "domain": "music", "intent": "inform", "slots": {"artist": "张震岳[3, 6]"}, "weight": "0.300000"}
+{"query": "来一首林俊杰的歌", "domain": "music", "intent": "inform", "slots": {"artist": "林俊杰[3, 6]"}, "weight": "0.300000"}
+{"query": "来一首王俊凯的歌", "domain": "music", "intent": "inform", "slots": {"artist": "王俊凯[3, 6]"}, "weight": "0.300000"}
+我想听肖邦
+{"query": "周杰伦的歌", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[0, 3]"}, "weight": "0.300000"}
+周董的歌
+想听周杰伦的伤感音乐
+{"query": "来一首肖邦的交响乐", "domain": "music", "intent": "inform", "slots": {"artist": "肖邦[3, 5]", "tag": "交响乐[6, 9]"}, "weight": "0.400000"}
+{"query": "唱一首蔡依林唱的英文歌", "domain": "music", "intent": "inform", "slots": {"language": "英文[8, 10]"}, "weight": "0.300000"}
+{"query": "想听凤凰传奇的广场舞歌曲", "domain": "music", "intent": "inform", "slots": {"title": "凤凰[2, 4]"}, "weight": "0.300000"}
+放首德国儿歌小鲨鱼
+{"query": "来首英文的字母歌吧", "domain": "music", "intent": "inform", "slots": {"language": "英文[2, 4]", "title": "字母歌[5, 8]"}, "weight": "0.400000"}
+{"query": "来一个粤语的十年", "domain": "music", "intent": "inform", "slots": {"language": "粤语[3, 5]", "title": "十年[6, 8]"}, "weight": "0.400000"}
+{"query": "可以放一首七里香吗", "domain": "music", "intent": "inform", "slots": {"title": "七里香[5, 8]"}, "weight": "0.300000"}
+{"query": "我想听三字经", "domain": "music", "intent": "inform", "slots": {"title": "三字经[3, 6]"}, "weight": "0.300000"}
+{"query": "我要听小乌龟", "domain": "music", "intent": "inform", "slots": {"title": "小乌龟[3, 6]"}, "weight": "0.300000"}
+{"query": "唱首两只老虎", "domain": "music", "intent": "inform", "slots": {"title": "两只老虎[2, 6]"}, "weight": "0.300000"}
+{"query": "播放两只老虎", "domain": "music", "intent": "inform", "slots": {"title": "两只老虎[2, 6]"}, "weight": "0.300000"}
+{"query": "来一首两只老虎", "domain": "music", "intent": "inform", "slots": {"title": "两只老虎[3, 7]"}, "weight": "0.300000"}
+{"query": "来一首两只老虎吧", "domain": "music", "intent": "inform", "slots": {"title": "两只老虎[3, 7]"}, "weight": "0.300000"}
+{"query": "放一下中华人民共和国国歌吧", "domain": "music", "intent": "inform", "slots": {"title": "中华人民共和国国歌[3, 12]"}, "weight": "0.300000"}
+{"query": "我要听信仰之名", "domain": "music", "intent": "inform", "slots": {"title": "信仰之名[3, 7]"}, "weight": "0.300000"}
+{"query": "放首刷牙歌", "domain": "music", "intent": "inform", "slots": {"title": "刷牙歌[2, 5]"}, "weight": "0.300000"}
+{"query": "我要听外婆的澎湖湾", "domain": "music", "intent": "inform", "slots": {"title": "外婆的澎湖湾[3, 9]"}, "weight": "0.300000"}
+{"query": "我要听小苹果", "domain": "music", "intent": "inform", "slots": {"title": "小苹果[3, 6]"}, "weight": "0.300000"}
+{"query": "唱首平凡之路吧", "domain": "music", "intent": "inform", "slots": {"title": "平凡之路[2, 6]"}, "weight": "0.300000"}
+{"query": "唱找朋友", "domain": "music", "intent": "inform", "slots": {"title": "找朋友[1, 4]"}, "weight": "0.300000"}
+{"query": "来一个最炫民族风", "domain": "music", "intent": "inform", "slots": {"title": "最炫民族风[3, 8]"}, "weight": "0.300000"}
+{"query": "我想听桃花谣", "domain": "music", "intent": "inform", "slots": {"title": "桃花谣[3, 6]"}, "weight": "0.300000"}
+{"query": "放欢乐颂", "domain": "music", "intent": "inform", "slots": {"title": "欢乐颂[1, 4]"}, "weight": "0.300000"}
+{"query": "我要听生来彷徨", "domain": "music", "intent": "inform", "slots": {"title": "生来彷徨[3, 7]"}, "weight": "0.300000"}
+{"query": "放舒克和贝塔", "domain": "substory", "intent": "reqalts", "slots": {"character": "舒克[1, 3]", "character1": "贝塔[4, 6]"}, "weight": "0.500000"}
+{"query": "放舒克和贝塔", "domain": "music", "intent": "inform", "slots": {"title": "舒克和贝塔[1, 6]"}, "weight": "0.300000"}
+{"query": "我想听蓝精灵", "domain": "music", "intent": "inform", "slots": {"title": "蓝精灵[3, 6]"}, "weight": "0.300000"}
+放一首雪绒花
+{"query": "我要听青春修炼手册", "domain": "poem", "intent": "inform", "slots": {"title": "青春[3, 5]"}, "weight": "0.300000"}
+{"query": "来一个青春修炼手册", "domain": "poem", "intent": "inform", "slots": {"title": "青春[3, 5]"}, "weight": "0.300000"}
+{"query": "播放青花瓷", "domain": "music", "intent": "inform", "slots": {"title": "青花瓷[2, 5]"}, "weight": "0.300000"}
+{"query": "来一首青花瓷", "domain": "music", "intent": "inform", "slots": {"title": "青花瓷[3, 6]"}, "weight": "0.300000"}
+歌曲学习雷锋好榜样
+我想听米奇秒秒屋
+我要听汪汪队
+{"query": "青花瓷这首歌", "domain": "music", "intent": "inform", "slots": {"title": "青花瓷[0, 3]"}, "weight": "0.300000"}
+{"query": "播放红星闪闪", "domain": "music", "intent": "inform", "slots": {"title": "红星[2, 4]"}, "weight": "0.300000"}
+{"query": "我想听小马宝莉", "domain": "music", "intent": "inform", "slots": {"title": "小马[3, 5]"}, "weight": "0.300000"}
+小熊维尼怎么唱呀
+{"query": "青花瓷怎么唱", "domain": "music", "intent": "inform", "slots": {"title": "青花瓷[0, 3]"}, "weight": "0.300000"}
+{"query": "给我唱一首忘情水", "domain": "music", "intent": "inform", "slots": {"title": "忘情水[5, 8]"}, "weight": "0.300000"}
+{"query": "给我唱一首爱如潮水", "domain": "music", "intent": "inform", "slots": {"title": "爱如潮水[5, 9]"}, "weight": "0.300000"}
+{"query": "我想听小花仙", "domain": "music", "intent": "inform", "slots": {"title": "小花[3, 5]"}, "weight": "0.300000"}
+{"query": "播放匆匆那年这首歌", "domain": "music", "intent": "inform", "slots": {"title": "匆匆那年[2, 6]"}, "weight": "0.300000"}
+{"query": "我想听小熊宝宝", "domain": "music", "intent": "inform", "slots": {"title": "小熊[3, 5]"}, "weight": "0.300000"}
+{"query": "给我唱首生日快乐歌吧", "domain": "music", "intent": "inform", "slots": {"title": "生日快乐歌[4, 9]"}, "weight": "0.300000"}
+{"query": "我想听童年这首歌", "domain": "music", "intent": "inform", "slots": {"title": "童年[3, 5]"}, "weight": "0.300000"}
+{"query": "给我唱一个小星星吧", "domain": "music", "intent": "inform", "slots": {"title": "小星星[5, 8]"}, "weight": "0.300000"}
+{"query": "放一首摇篮曲", "domain": "music", "intent": "inform", "slots": {"tag": "摇篮曲[3, 6]"}, "weight": "0.300000"}
+{"query": "来一首交响乐", "domain": "music", "intent": "inform", "slots": {"tag": "交响乐[3, 6]"}, "weight": "0.300000"}
+来一首忧伤的歌
+{"query": "来一首摇滚", "domain": "music", "intent": "inform", "slots": {"tag": "摇滚[3, 5]"}, "weight": "0.300000"}
+{"query": "来点欢快的音乐吧", "domain": "music", "intent": "inform", "slots": {"tag": "欢快[2, 4]"}, "weight": "0.400000"}
+随便放一首民谣吧
+{"query": "放一首轻音乐", "domain": "music", "intent": "inform", "slots": {"tag": "轻音乐[3, 6]"}, "weight": "0.300000"}
+{"query": "来一首钢琴曲", "domain": "music", "intent": "inform", "slots": {"tag": "钢琴[3, 5]"}, "weight": "0.350000"}
+{"query": "来一首钢琴曲", "domain": "music", "intent": "inform", "slots": {"tag": "钢琴曲[3, 6]"}, "weight": "0.300000"}
+{"query": "来一首港台歌曲", "domain": "music", "intent": "inform", "slots": {"region": "港台[3, 5]"}, "weight": "0.400000"}
+{"query": "想听吉他曲", "domain": "music", "intent": "inform", "slots": {"tag": "吉他[2, 4]"}, "weight": "0.350000"}
+来一首催眠曲
+{"query": "来一个粤语歌", "domain": "music", "intent": "inform", "slots": {"language": "粤语[3, 5]"}, "weight": "0.300000"}
+来几首劲爆的歌曲
+{"query": "来一首吉他曲", "domain": "music", "intent": "inform", "slots": {"tag": "吉他[3, 5]"}, "weight": "0.350000"}
+来一个夜店歌曲
+{"query": "唱一个日文歌", "domain": "music", "intent": "inform", "slots": {"language": "日文[3, 5]"}, "weight": "0.300000"}
+{"query": "来一首日语歌", "domain": "music", "intent": "inform", "slots": {"language": "日语[3, 5]"}, "weight": "0.300000"}
+{"query": "来一首港台的歌曲", "domain": "music", "intent": "inform", "slots": {"region": "港台[3, 5]"}, "weight": "0.400000"}
+{"query": "来一首香港歌曲", "domain": "music", "intent": "inform", "slots": {"region": "香港[3, 5]"}, "weight": "0.400000"}
+{"query": "唱一个广场舞歌曲", "domain": "music", "intent": "inform", "slots": {"tag": "广场舞[3, 6]"}, "weight": "0.350000"}
+{"query": "来一首胎教音乐", "domain": "music", "intent": "inform", "slots": {"title": "胎教[3, 5]"}, "weight": "0.300000"}
+{"query": "可以唱一首情歌吗", "domain": "music", "intent": "inform", "slots": {"tag": "情歌[5, 7]"}, "weight": "0.300000"}
+{"query": "来一首爵士乐", "domain": "music", "intent": "inform", "slots": {"tag": "爵士[3, 5]"}, "weight": "0.350000"}
+{"query": "来一首英文儿歌", "domain": "music", "intent": "inform", "slots": {"language": "英文[3, 5]", "tag": "儿歌[5, 7]"}, "weight": "0.400000"}
+{"query": "来一首粤语歌", "domain": "music", "intent": "inform", "slots": {"language": "粤语[3, 5]"}, "weight": "0.300000"}
+{"query": "唱一个夜店歌曲", "domain": "music", "intent": "inform", "slots": {"tag": "夜店[3, 5]"}, "weight": "0.350000"}
+{"query": "来一首激情澎湃的歌", "domain": "music", "intent": "inform", "slots": {"title": "激情[3, 5]"}, "weight": "0.300000"}
+{"query": "播放下一首儿歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]", "val_rel": "1[-1, -1]"}, "weight": "0.300000"}
+播放我最喜欢的儿歌
+适合早晨听的歌
+适合驾车的音乐
+{"query": "我想睡觉了,给我唱首儿歌吧", "domain": "music", "intent": "inform", "slots": {"tag": "儿歌[10, 12]"}, "weight": "0.300000"}
+{"query": "奥特曼主题曲", "domain": "music", "intent": "inform", "slots": {"program": "奥特曼[0, 3]", "tag": "主题曲[3, 6]"}, "weight": "0.450000"}
+{"query": "巴拉小魔仙主题曲", "domain": "music", "intent": "inform", "slots": {"program": "巴拉小魔仙[0, 5]", "tag": "主题曲[5, 8]"}, "weight": "0.450000"}
+{"query": "王者荣耀主题曲", "domain": "music", "intent": "inform", "slots": {"program": "王者荣耀[0, 4]", "tag": "主题曲[4, 7]"}, "weight": "0.450000"}
+{"query": "汪汪队立大功的主题曲", "domain": "music", "intent": "inform", "slots": {"program": "汪汪队立大功[0, 6]", "tag": "主题曲[7, 10]"}, "weight": "0.450000"}
+{"query": "汪汪队的主题曲", "domain": "music", "intent": "inform", "slots": {"program": "汪汪队[0, 3]", "tag": "主题曲[4, 7]"}, "weight": "0.450000"}
+{"query": "播放大头儿子片头曲", "domain": "music", "intent": "inform", "slots": {"title": "大头[2, 4]"}, "weight": "0.300000"}
+{"query": "播放熊出没主题曲", "domain": "music", "intent": "inform", "slots": {"title": "熊出没[2, 5]"}, "weight": "0.300000"}
+{"query": "我要听射雕英雄传主题曲", "domain": "music", "intent": "inform", "slots": {"title": "射雕英雄传[3, 8]"}, "weight": "0.300000"}
+{"query": "海底小纵队的主题曲", "domain": "music", "intent": "inform", "slots": {"program": "海底小纵队[0, 5]", "tag": "主题曲[6, 9]"}, "weight": "0.450000"}
+{"query": "超级飞侠的主题曲", "domain": "music", "intent": "inform", "slots": {"program": "超级飞侠[0, 4]", "tag": "主题曲[5, 8]"}, "weight": "0.450000"}
+{"query": "我想听小羊肖恩的主题曲", "domain": "music", "intent": "inform", "slots": {"title": "小羊[3, 5]"}, "weight": "0.300000"}
+{"query": "我想听大头儿子和小头爸爸的主题曲", "domain": "music", "intent": "inform", "slots": {"program": "大头儿子和小头爸爸[3, 12]", "tag": "主题曲[13, 16]"}, "weight": "0.450000"}
+{"query": "我想听大头儿子和小头爸爸的主题曲", "domain": "music", "intent": "inform", "slots": {"title": "大头[3, 5]"}, "weight": "0.300000"}
+{"query": "我想听大头儿子的主题曲", "domain": "music", "intent": "inform", "slots": {"title": "大头[3, 5]"}, "weight": "0.300000"}
+葫芦娃的歌唱一个
+{"query": "放一下邋遢大王的主题曲", "domain": "music", "intent": "inform", "slots": {"title": "邋遢[3, 5]"}, "weight": "0.300000"}
+{"query": "我想听大头儿子的片头曲", "domain": "music", "intent": "inform", "slots": {"title": "大头[3, 5]"}, "weight": "0.300000"}
+{"query": "我要听巴巴爸爸的主题曲", "domain": "music", "intent": "inform", "slots": {"title": "巴巴爸爸[3, 7]"}, "weight": "0.300000"}
+来首爱探险的朵拉的主题曲
+{"query": "我想听大头儿子小头爸爸的片头曲", "domain": "music", "intent": "inform", "slots": {"program": "大头儿子小头爸爸[3, 11]", "tag": "片头曲[12, 15]"}, "weight": "0.450000"}
+{"query": "我想听大头儿子小头爸爸的片头曲", "domain": "music", "intent": "inform", "slots": {"title": "大头儿子小头爸爸[3, 11]"}, "weight": "0.300000"}
+{"query": "我想听海绵宝宝的主题曲", "domain": "music", "intent": "inform", "slots": {"title": "海绵宝宝[3, 7]"}, "weight": "0.300000"}
+{"query": "我想听小猪佩奇", "domain": "music", "intent": "inform", "slots": {"title": "小猪[3, 5]"}, "weight": "0.300000"}
+{"query": "我想听小猪佩奇的歌", "domain": "music", "intent": "inform", "slots": {"title": "小猪[3, 5]"}, "weight": "0.300000"}
+{"query": "大头儿子和小头爸爸", "domain": "submusic", "intent": "inform", "slots": {"program": "大头儿子和小头爸爸[0, 9]"}, "weight": "0.300000"}
+{"query": "大头儿子和小头爸爸", "domain": "music", "intent": "inform", "slots": {"title": "大头儿子和小头爸爸[0, 9]"}, "weight": "0.300000"}
+熊熊乐园
+{"query": "小星星", "domain": "submusic", "intent": "inform", "slots": {"title": "小星星[0, 3]"}, "weight": "0.300000"}
+{"query": "小星星", "domain": "music", "intent": "inform", "slots": {"title": "小星星[0, 3]"}, "weight": "0.300000"}
+{"query": "小苹果", "domain": "submusic", "intent": "inform", "slots": {"title": "小苹果[0, 3]"}, "weight": "0.300000"}
+{"query": "小苹果", "domain": "music", "intent": "inform", "slots": {"title": "小苹果[0, 3]"}, "weight": "0.300000"}
+{"query": "洗澡歌", "domain": "submusic", "intent": "inform", "slots": {"title": "洗澡歌[0, 3]"}, "weight": "0.300000"}
+{"query": "洗澡歌", "domain": "music", "intent": "inform", "slots": {"title": "洗澡歌[0, 3]"}, "weight": "0.300000"}
+{"query": "青春修炼手册", "domain": "music", "intent": "inform", "slots": {"title": "青春修炼手册[0, 6]"}, "weight": "0.300000"}
+{"query": "来首诗歌", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "背首诗", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "诗朗诵", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+诗歌朗诵一首吧
+诵读一首诗歌吧
+{"query": "随便朗诵一首诗吧", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+背首你最擅长的诗
+讲个耳熟能详的诗词吧
+{"query": "献上一首诗歌吧", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]", "val_rel": "-1[-1, -1]"}, "weight": "0.300000"}
+来首你擅长的诗歌吧
+{"query": "有没有李白的关山月", "domain": "subpoem", "intent": "inform", "slots": {"author": "李白[3, 5]", "title": "关山月[6, 9]"}, "weight": "0.900000"}
+{"query": "有没有李白的关山月", "domain": "poem", "intent": "inform", "slots": {"author": "李白[3, 5]", "title": "关山月[6, 9]"}, "weight": "0.400000"}
+{"query": "能不能读一下薛逢的宫词", "domain": "poem", "intent": "inform", "slots": {"author": "薛逢[6, 8]", "title": "宫词[9, 11]"}, "weight": "0.400000"}
+{"query": "朗诵孟浩然的春晓", "domain": "subpoem", "intent": "inform", "slots": {"author": "孟浩然[2, 5]", "title": "春晓[6, 8]"}, "weight": "0.900000"}
+{"query": "朗诵孟浩然的春晓", "domain": "poem", "intent": "inform", "slots": {"author": "孟浩然[2, 5]", "title": "春晓[6, 8]"}, "weight": "0.400000"}
+{"query": "想听李商隐的春雨", "domain": "subpoem", "intent": "inform", "slots": {"author": "李商隐[2, 5]", "title": "春雨[6, 8]"}, "weight": "0.900000"}
+{"query": "想听李商隐的春雨", "domain": "poem", "intent": "inform", "slots": {"author": "李商隐[2, 5]", "title": "春雨[6, 8]"}, "weight": "0.400000"}
+{"query": "我想听李白的梦游天姥吟留别", "domain": "subpoem", "intent": "inform", "slots": {"author": "李白[3, 5]", "title": "梦游天姥吟留别[6, 13]"}, "weight": "0.900000"}
+{"query": "我想听李白的梦游天姥吟留别", "domain": "poem", "intent": "inform", "slots": {"author": "李白[3, 5]", "title": "梦游天姥吟留别[6, 13]"}, "weight": "0.400000"}
+{"query": "背一下柳宗元的渔翁", "domain": "subpoem", "intent": "inform", "slots": {"author": "柳宗元[3, 6]", "title": "渔翁[7, 9]"}, "weight": "0.900000"}
+{"query": "背一下柳宗元的渔翁", "domain": "poem", "intent": "inform", "slots": {"author": "柳宗元[3, 6]", "title": "渔翁[7, 9]"}, "weight": "0.400000"}
+{"query": "读一下王维的渭城曲", "domain": "poem", "intent": "inform", "slots": {"author": "王维[3, 5]", "title": "渭城曲[6, 9]"}, "weight": "0.400000"}
+{"query": "我想听王勃的滕王阁序", "domain": "subpoem", "intent": "inform", "slots": {"author": "王勃[3, 5]", "title": "滕王阁序[6, 10]"}, "weight": "0.900000"}
+{"query": "我想听王勃的滕王阁序", "domain": "poem", "intent": "inform", "slots": {"author": "王勃[3, 5]", "title": "滕王阁序[6, 10]"}, "weight": "0.400000"}
+{"query": "来一个李白的静夜思", "domain": "subpoem", "intent": "inform", "slots": {"author": "李白[3, 5]", "title": "静夜思[6, 9]"}, "weight": "0.900000"}
+{"query": "来一个李白的静夜思", "domain": "poem", "intent": "inform", "slots": {"author": "李白[3, 5]", "title": "静夜思[6, 9]"}, "weight": "0.400000"}
+{"query": "来一个杜甫的静夜思", "domain": "subpoem", "intent": "inform", "slots": {"author": "杜甫[3, 5]", "title": "静夜思[6, 9]"}, "weight": "0.900000"}
+{"query": "来一个杜甫的静夜思", "domain": "poem", "intent": "inform", "slots": {"author": "杜甫[3, 5]", "title": "静夜思[6, 9]"}, "weight": "0.400000"}
+{"query": "好想听王维的渭川田家", "domain": "poem", "intent": "inform", "slots": {"author": "王维[3, 5]", "title": "渭川田家[6, 10]"}, "weight": "0.400000"}
+{"query": "好想听王维的渭川田家", "domain": "music", "intent": "inform", "slots": {"title": "好想[0, 2]"}, "weight": "0.300000"}
+{"query": "辛弃疾的青玉案,背来听听可好", "domain": "poem", "intent": "inform", "slots": {"author": "辛弃疾[0, 3]", "title": "青玉案[4, 7]"}, "weight": "0.400000"}
+{"query": "贺知章的回乡偶书背一下", "domain": "subpoem", "intent": "reqalts", "slots": {}, "weight": "0.900000"}
+{"query": "贺知章的回乡偶书背一下", "domain": "poem", "intent": "inform", "slots": {"title": "偶书[6, 8]"}, "weight": "0.300000"}
+朗诵个李白的描写春天的诗吧
+播放一首杜甫描写春天的诗
+{"query": "我想听李白描写月亮的诗", "domain": "poem", "intent": "inform", "slots": {"tag": "月亮的[7, 10]"}, "weight": "0.400000"}
+{"query": "我想听李白的诗", "domain": "poem", "intent": "inform", "slots": {"author": "李白[3, 5]"}, "weight": "0.300000"}
+{"query": "想听杜甫的诗", "domain": "poem", "intent": "inform", "slots": {"author": "杜甫[2, 4]"}, "weight": "0.300000"}
+{"query": "背首杜甫的诗", "domain": "poem", "intent": "inform", "slots": {"author": "杜甫[2, 4]"}, "weight": "0.300000"}
+{"query": "来一首白居易的诗", "domain": "poem", "intent": "inform", "slots": {"author": "白居易[3, 6]"}, "weight": "0.300000"}
+李白最喜欢的诗是什么
+背杜甫最有名的诗
+{"query": "讲个李白的诗吧", "domain": "poem", "intent": "inform", "slots": {"author": "李白[2, 4]"}, "weight": "0.300000"}
+读一下春晓
+{"query": "我想听弟子规", "domain": "subpoem", "intent": "inform", "slots": {"title": "弟子规[3, 6]"}, "weight": "0.900000"}
+{"query": "我想听弟子规", "domain": "poem", "intent": "inform", "slots": {"title": "弟子规[3, 6]"}, "weight": "0.300000"}
+{"query": "背首望天门山吧", "domain": "poem", "intent": "inform", "slots": {"title": "望天门山[2, 6]"}, "weight": "0.300000"}
+{"query": "我想听望庐山瀑布", "domain": "subpoem", "intent": "inform", "slots": {"title": "望庐山瀑布[3, 8]"}, "weight": "0.900000"}
+{"query": "我想听望庐山瀑布", "domain": "poem", "intent": "inform", "slots": {"title": "望庐山瀑布[3, 8]"}, "weight": "0.300000"}
+{"query": "我想听滕王阁序", "domain": "subpoem", "intent": "inform", "slots": {"title": "滕王阁序[3, 7]"}, "weight": "0.900000"}
+{"query": "我想听滕王阁序", "domain": "poem", "intent": "inform", "slots": {"title": "滕王阁序[3, 7]"}, "weight": "0.300000"}
+{"query": "朗诵一下登幽州台歌", "domain": "subpoem", "intent": "inform", "slots": {"title": "登幽州台歌[4, 9]"}, "weight": "0.900000"}
+{"query": "朗诵一下登幽州台歌", "domain": "poem", "intent": "inform", "slots": {"title": "登幽州台歌[4, 9]"}, "weight": "0.300000"}
+{"query": "想听过故人庄了", "domain": "poem", "intent": "inform", "slots": {"title": "过故人庄[2, 6]"}, "weight": "0.300000"}
+读一下长恨歌
+{"query": "朗诵静夜思", "domain": "subpoem", "intent": "inform", "slots": {"title": "静夜思[2, 5]"}, "weight": "0.900000"}
+{"query": "朗诵静夜思", "domain": "poem", "intent": "inform", "slots": {"title": "静夜思[2, 5]"}, "weight": "0.300000"}
+{"query": "来一个静夜思", "domain": "subpoem", "intent": "inform", "slots": {"title": "静夜思[3, 6]"}, "weight": "0.900000"}
+{"query": "来一个静夜思", "domain": "poem", "intent": "inform", "slots": {"title": "静夜思[3, 6]"}, "weight": "0.300000"}
+{"query": "来首静夜思", "domain": "subpoem", "intent": "inform", "slots": {"title": "静夜思[2, 5]"}, "weight": "0.900000"}
+{"query": "来首静夜思", "domain": "poem", "intent": "inform", "slots": {"title": "静夜思[2, 5]"}, "weight": "0.300000"}
+{"query": "背首静夜思", "domain": "subpoem", "intent": "inform", "slots": {"title": "静夜思[2, 5]"}, "weight": "0.900000"}
+{"query": "背首静夜思", "domain": "poem", "intent": "inform", "slots": {"title": "静夜思[2, 5]"}, "weight": "0.300000"}
+{"query": "背背望岳吧", "domain": "poem", "intent": "inform", "slots": {"title": "望岳[2, 4]"}, "weight": "0.300000"}
+我们一起背首登鹤雀楼吧
+{"query": "你教我背登幽州台歌吧", "domain": "poem", "intent": "inform", "slots": {"title": "登幽州台歌[4, 9]"}, "weight": "0.300000"}
+{"query": "朗诵一段桃花溪", "domain": "subpoem", "intent": "inform", "slots": {"title": "桃花溪[4, 7]"}, "weight": "0.900000"}
+{"query": "朗诵一段桃花溪", "domain": "poem", "intent": "inform", "slots": {"title": "桃花溪[4, 7]"}, "weight": "0.300000"}
+读一遍弟子规
+{"query": "讲首唐诗", "domain": "poem", "intent": "inform", "slots": {"tag": "唐[2, 3]"}, "weight": "0.400000"}
+{"query": "来一首励志的诗", "domain": "poem", "intent": "inform", "slots": {"tag": "励志的[3, 6]"}, "weight": "0.400000"}
+{"query": "来一个唐朝的经典诗歌", "domain": "poem", "intent": "inform", "slots": {"tag": "唐朝的[3, 6]", "tag": "经典[6, 8]"}, "weight": "0.400000"}
+{"query": "朗诵个宋词", "domain": "poem", "intent": "inform", "slots": {"tag": "宋[3, 4]"}, "weight": "0.400000"}
+{"query": "朗诵个宋词", "domain": "poem", "intent": "inform", "slots": {"tag": "宋词[3, 5]"}, "weight": "0.300000"}
+{"query": "背一首宋词", "domain": "poem", "intent": "inform", "slots": {"tag": "宋[3, 4]"}, "weight": "0.400000"}
+{"query": "背一首宋词", "domain": "poem", "intent": "inform", "slots": {"tag": "宋词[3, 5]"}, "weight": "0.300000"}
+{"query": "我想听山水田园诗", "domain": "subpoem", "intent": "inform", "slots": {"tag": "山水田园诗[3, 8]"}, "weight": "0.900000"}
+{"query": "我想听山水田园诗", "domain": "poem", "intent": "inform", "slots": {"tag": "田园[5, 7]"}, "weight": "0.400000"}
+{"query": "我想听山水田园诗", "domain": "music", "intent": "inform", "slots": {"title": "山水[3, 5]"}, "weight": "0.300000"}
+{"query": "来一个思乡的诗", "domain": "poem", "intent": "inform", "slots": {"tag": "思乡的[3, 6]"}, "weight": "0.400000"}
+{"query": "来一个思乡的诗", "domain": "music", "intent": "inform", "slots": {"title": "思乡[3, 5]"}, "weight": "0.300000"}
+{"query": "来一个月亮的诗歌", "domain": "poem", "intent": "inform", "slots": {"tag": "月亮的[3, 6]"}, "weight": "0.400000"}
+{"query": "来一个月亮的诗歌", "domain": "story", "intent": "inform", "slots": {"title": "月亮[3, 5]"}, "weight": "0.300000"}
+{"query": "朗诵一首爱国的诗吧", "domain": "poem", "intent": "inform", "slots": {"tag": "爱国的[4, 7]"}, "weight": "0.400000"}
+{"query": "来一个现代诗", "domain": "poem", "intent": "inform", "slots": {"tag": "现代[3, 5]"}, "weight": "0.400000"}
+{"query": "来一个现代诗", "domain": "poem", "intent": "inform", "slots": {"tag": "现代诗[3, 6]"}, "weight": "0.300000"}
+{"query": "来一个赠别诗", "domain": "subpoem", "intent": "inform", "slots": {"tag": "赠别诗[3, 6]"}, "weight": "0.900000"}
+{"query": "来一个赠别诗", "domain": "subpoem", "intent": "reqalts", "slots": {"tag": "赠别诗[3, 6]"}, "weight": "0.900000"}
+{"query": "来一个赠别诗", "domain": "poem", "intent": "inform", "slots": {"tag": "赠别[3, 5]"}, "weight": "0.400000"}
+{"query": "来一个边塞诗", "domain": "subpoem", "intent": "reqalts", "slots": {"tag": "边塞诗[3, 6]"}, "weight": "0.900000"}
+{"query": "来一个边塞诗", "domain": "subpoem", "intent": "inform", "slots": {"tag": "边塞诗[3, 6]"}, "weight": "0.900000"}
+表达高兴的诗词
+{"query": "来一首悲伤的诗", "domain": "poem", "intent": "inform", "slots": {"tag": "悲伤的[3, 6]"}, "weight": "0.400000"}
+讲个关于皇帝的诗吧
+朗诵个适合小孩子学习的诗词
+朗诵个名字带有春的诗
+{"query": "朗诵个忧伤诗词吧", "domain": "poem", "intent": "inform", "slots": {"tag": "忧伤[3, 5]"}, "weight": "0.400000"}
+{"query": "我想听白日依山尽这首诗", "domain": "music", "intent": "inform", "slots": {"title": "白日[3, 5]"}, "weight": "0.300000"}
+{"query": "讲个小故事吧", "domain": "story", "intent": "inform", "slots": {"tag": "故事[3, 5]"}, "weight": "0.300000"}
+{"query": "随便讲个故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[4, 6]"}, "weight": "0.300000"}
+{"query": "随机播放故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[4, 6]"}, "weight": "0.300000"}
+{"query": "随机播放故事", "domain": "control", "intent": "inform", "slots": {"mode": "random[-1, -1]", "object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.300000"}
+{"query": "教我讲故事吧", "domain": "story", "intent": "inform", "slots": {"tag": "故事[3, 5]"}, "weight": "0.300000"}
+讲个耳熟能详的故事吧
+{"query": "给我们讲个故事吧", "domain": "story", "intent": "inform", "slots": {"tag": "故事[5, 7]"}, "weight": "0.300000"}
+宋朝的司马光砸缸
+{"query": "我想听三只小猪的故事", "domain": "story", "intent": "inform", "slots": {"title": "三只小猪[3, 7]"}, "weight": "0.300000"}
+{"query": "听听乌鸦喝水的故事", "domain": "story", "intent": "inform", "slots": {"title": "乌鸦喝水[2, 6]"}, "weight": "0.300000"}
+{"query": "我想听卖火柴的小女孩", "domain": "story", "intent": "inform", "slots": {"title": "卖火柴的小女孩[3, 10]"}, "weight": "0.300000"}
+{"query": "小红帽", "domain": "story", "intent": "inform", "slots": {"title": "小红帽[0, 3]"}, "weight": "0.300000"}
+{"query": "很想听小红帽的故事", "domain": "story", "intent": "inform", "slots": {"title": "小红帽[3, 6]"}, "weight": "0.300000"}
+{"query": "讲一个小红帽的故事", "domain": "story", "intent": "inform", "slots": {"title": "小红帽[3, 6]"}, "weight": "0.300000"}
+{"query": "讲小红帽的故事", "domain": "story", "intent": "inform", "slots": {"title": "小红帽[1, 4]"}, "weight": "0.300000"}
+{"query": "狼来了的故事", "domain": "story", "intent": "inform", "slots": {"title": "狼来了[0, 3]"}, "weight": "0.300000"}
+{"query": "我想听白雪公主的故事", "domain": "story", "intent": "inform", "slots": {"character": "公主[5, 7]", "tag": "故事[8, 10]"}, "weight": "0.500000"}
+{"query": "我想听白雪公主的故事", "domain": "story", "intent": "inform", "slots": {"title": "白雪公主[3, 7]"}, "weight": "0.300000"}
+{"query": "白雪公主", "domain": "story", "intent": "inform", "slots": {"title": "白雪公主[0, 4]"}, "weight": "0.300000"}
+{"query": "讲一下白雪公主的故事吧", "domain": "story", "intent": "inform", "slots": {"character": "公主[5, 7]", "tag": "故事[8, 10]"}, "weight": "0.500000"}
+{"query": "讲一下白雪公主的故事吧", "domain": "story", "intent": "inform", "slots": {"title": "白雪公主[3, 7]"}, "weight": "0.300000"}
+{"query": "讲个白雪公主的故事", "domain": "story", "intent": "inform", "slots": {"character": "公主[4, 6]", "tag": "故事[7, 9]"}, "weight": "0.500000"}
+{"query": "讲个白雪公主的故事", "domain": "story", "intent": "inform", "slots": {"title": "白雪公主[2, 6]"}, "weight": "0.300000"}
+{"query": "我想听睡美人", "domain": "story", "intent": "inform", "slots": {"title": "睡美人[3, 6]"}, "weight": "0.300000"}
+{"query": "我想听龟兔赛跑的故事", "domain": "story", "intent": "inform", "slots": {"title": "龟兔赛跑[3, 7]"}, "weight": "0.300000"}
+{"query": "龟兔赛跑", "domain": "story", "intent": "inform", "slots": {"title": "龟兔赛跑[0, 4]"}, "weight": "0.300000"}
+{"query": "青蛙弗洛格成长系列故事", "domain": "story", "intent": "inform", "slots": {"title": "青蛙弗洛格[0, 5]"}, "weight": "0.300000"}
+{"query": "我要听小蝌蚪找妈妈的故事", "domain": "music", "intent": "inform", "slots": {"title": "小蝌蚪找妈妈[3, 9]"}, "weight": "0.300000"}
+讲个大闹天宫的故事吧
+给我讲一个齐天大圣的故事
+{"query": "海的女儿的故事讲", "domain": "story", "intent": "inform", "slots": {"title": "海的女儿[0, 4]"}, "weight": "0.300000"}
+农夫与蛇的故事
+可以告诉我后羿射日的故事吗
+{"query": "我想听格林童话长发公主的故事", "domain": "story", "intent": "inform", "slots": {"character": "公主[9, 11]", "tag": "故事[12, 14]"}, "weight": "0.500000"}
+{"query": "我想听格林童话长发公主的故事", "domain": "story", "intent": "inform", "slots": {"album": "格林童话[3, 7]"}, "weight": "0.300000"}
+{"query": "我想要听安徒生的拇指姑娘", "domain": "story", "intent": "inform", "slots": {"author": "安徒生[4, 7]", "title": "拇指姑娘[8, 12]"}, "weight": "0.400000"}
+{"query": "讲个伊索寓言的故事吧", "domain": "story", "intent": "inform", "slots": {"album": "伊索寓言[2, 6]"}, "weight": "0.300000"}
+说一下山海经的故事
+讲个熊出没的故事吧
+黑猫警长的故事
+{"query": "说一个5岁孩子睡前听的故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[11, 13]"}, "weight": "0.300000"}
+{"query": "有没有适合4岁小孩的故事", "domain": "story", "intent": "inform", "slots": {"tag": "4岁小孩[5, 9]", "tag1": "故事[10, 12]"}, "weight": "0.400000"}
+你会讲晚安故事吗
+{"query": "我想听睡前故事", "domain": "story", "intent": "inform", "slots": {"tag": "睡前[3, 5]", "tag2": "故事[5, 7]"}, "weight": "0.500000"}
+{"query": "讲个传说故事吧", "domain": "story", "intent": "inform", "slots": {"tag": "传说[2, 4]"}, "weight": "0.300000"}
+{"query": "讲个历史故事吧", "domain": "story", "intent": "inform", "slots": {"tag": "历史[2, 4]", "tag2": "故事[4, 6]"}, "weight": "0.500000"}
+{"query": "讲一个神话故事", "domain": "story", "intent": "inform", "slots": {"tag": "神话[3, 5]"}, "weight": "0.300000"}
+{"query": "讲一个科幻故事", "domain": "story", "intent": "inform", "slots": {"tag": "科幻[3, 5]", "tag2": "故事[5, 7]"}, "weight": "0.500000"}
+{"query": "来一个童话故事", "domain": "story", "intent": "inform", "slots": {"tag": "童话[3, 5]"}, "weight": "0.300000"}
+{"query": "讲个故事开心下", "domain": "story", "intent": "inform", "slots": {"tag": "故事[2, 4]"}, "weight": "0.300000"}
+{"query": "讲一个外国故事吧", "domain": "story", "intent": "inform", "slots": {"tag": "外国[3, 5]", "tag2": "故事[5, 7]"}, "weight": "0.500000"}
+{"query": "讲一个寓言故事吧", "domain": "story", "intent": "inform", "slots": {"tag": "寓言[3, 5]"}, "weight": "0.300000"}
+{"query": "想听一个寓言故事", "domain": "story", "intent": "inform", "slots": {"tag": "寓言[4, 6]"}, "weight": "0.300000"}
+{"query": "讲一个童话故事吧", "domain": "story", "intent": "inform", "slots": {"tag": "童话[3, 5]"}, "weight": "0.300000"}
+给我们讲个成语吧
+给我们讲个成语吧
+{"query": "给小朋友讲个故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[6, 8]"}, "weight": "0.300000"}
+讲个有意思的成语故事
+{"query": "我想听王子与公主的故事", "domain": "story", "intent": "inform", "slots": {"character": "王子[3, 5]", "character1": "公主[6, 8]", "tag": "故事[9, 11]"}, "weight": "0.500000"}
+{"query": "我想听王子与公主的故事", "domain": "music", "intent": "inform", "slots": {"title": "王子与公主[3, 8]"}, "weight": "0.300000"}
+讲一个光头强的故事
+{"query": "想听孙悟空的故事了", "domain": "story", "intent": "inform", "slots": {"character": "悟空[3, 5]", "tag": "故事[6, 8]"}, "weight": "0.500000"}
+{"query": "想听孙悟空的故事了", "domain": "music", "intent": "inform", "slots": {"title": "孙悟空[2, 5]"}, "weight": "0.300000"}
+讲一下大灰狼的故事
+我想听哈利波特的故事
+能不能讲一下大灰狼的故事
+{"query": "床前明月光", "domain": "submusic", "intent": "inform", "slots": {"title": "床前明月光[0, 5]"}, "weight": "0.300000"}
+{"query": "你好吗", "domain": "submusic", "intent": "inform", "slots": {"title": "你好吗[0, 3]"}, "weight": "0.300000"}
+妈妈什么时候回来
+我很闷,我不开心,你真好
+我下午3点有课
+很高兴见到你
+你叫什么名字啊
+你好
+{"query": "好久不见", "domain": "submusic", "intent": "inform", "slots": {"title": "好久不见[0, 4]"}, "weight": "0.300000"}
+{"query": "我想你了", "domain": "submusic", "intent": "inform", "slots": {"title": "我想你了[0, 4]"}, "weight": "0.300000"}
+{"query": "晚上好", "domain": "submusic", "intent": "inform", "slots": {"title": "晚上好[0, 3]"}, "weight": "0.300000"}
+{"query": "晚安", "domain": "submusic", "intent": "inform", "slots": {"title": "晚安[0, 2]"}, "weight": "0.300000"}
+{"query": "早上好", "domain": "submusic", "intent": "inform", "slots": {"title": "早上好[0, 3]"}, "weight": "0.300000"}
+{"query": "早安", "domain": "submusic", "intent": "inform", "slots": {"title": "早安[0, 2]"}, "weight": "0.300000"}
+中午好
+很高兴认识你
+我美么
+我帅么
+你喜欢我么
+{"query": "你爱我么", "domain": "submusic", "intent": "inform", "slots": {"title": "你爱我[0, 3]"}, "weight": "0.300000"}
+来亲亲我
+我厉害不
+我是不是最帅的人
+我是不是最美的人
+{"query": "今天吃什么", "domain": "submusic", "intent": "inform", "slots": {"title": "今天吃什么[0, 5]"}, "weight": "0.300000"}
+今天有什么好玩的
+我应该减肥么
+我是怎么来的
+我是捡来的么
+如何变得更聪明
+陪我玩吧
+陪我玩一会儿吧
+我好无聊啊
+陪我聊聊天吧
+能逗我开心么
+晚上跟我一起看电视吧
+明天要做什么呢
+咱俩算好朋友吧
+你的家长叫什么
+你今天吃饭了么
+我好困
+是哪个家伙开发的你
+{"query": "感觉不会再爱了", "domain": "submusic", "intent": "inform", "slots": {"title": "感觉不会再爱了[0, 7]"}, "weight": "0.300000"}
+重口味重口味
+宝宝心里苦但宝宝不说
+这次考试没考好好伤心
+惹妈妈生气了怎么办
+你太聪明了
+帮我记一个电话号码
+你会帮我做作业吗
+带你去见新朋友
+你想出去玩吗
+你怎么不上学去呀
+你还会说话好厉害
+你今年几岁啦
+你有妈妈吗
+你叫什么呀
+{"query": "能重复我说的话吗", "domain": "control", "intent": "inform", "slots": {"mode": "single_cycle[-1, -1]", "object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.400000"}
+您能帮我算数吗
+我们俩一起玩吧
+没人陪我玩怎么办
+我不想吃饭怎么办
+我不想上幼儿园你替我去吧
+咱们俩谁更聪明呢
+你是不是什么都懂
+你喜欢我跟你说话吗
+家里停电了怎么办
+我想买辣条吃
+你最喜欢吃什么啊
+我最喜欢红色了你呢
+你好厉害什么都懂
+你教我说英语吧
+咱们玩儿过家家吧
+你喜欢听我说话吗
+我想出去玩
+不想写作业
+你喜欢吃什么
+{"query": "你喜欢听歌吗", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+要不要给你洗澡澡
+一起去公园吧
+你要记得我哦
+你要照顾好自己
+{"query": "我舍不得你", "domain": "submusic", "intent": "inform", "slots": {"title": "我舍不得你[0, 5]"}, "weight": "0.300000"}
+{"query": "我好喜欢你", "domain": "submusic", "intent": "inform", "slots": {"title": "我好喜欢你[0, 5]"}, "weight": "0.300000"}
+你的耳朵呢
+你忙什么呢
+你为什么这么聪明
+你妈妈呢
+你几岁了
+你是女孩吗
+你的朋友呢
+你叫什么名字啊
+你来自地球么
+你在干什么
+你都会干什么
+你是人类么
+你聪明么
+你有小名么
+你昵称
+你小名
+你开心么
+你心情好么
+你是男的还是女的
+你是妹子么
+你几年级了
+你几岁啦
+你是哪个公司的
+你是什么牌子的
+是谁研制了你
+你是什么做的
+你爸爸是谁
+你妈妈是谁
+你有男朋友么
+你有女朋友么
+你最喜欢谁
+你最讨厌谁
+你好
+{"query": "好久不见", "domain": "submusic", "intent": "inform", "slots": {"title": "好久不见[0, 4]"}, "weight": "0.300000"}
+{"query": "我想你了", "domain": "submusic", "intent": "inform", "slots": {"title": "我想你了[0, 4]"}, "weight": "0.300000"}
+{"query": "晚上好", "domain": "submusic", "intent": "inform", "slots": {"title": "晚上好[0, 3]"}, "weight": "0.300000"}
+{"query": "晚安", "domain": "submusic", "intent": "inform", "slots": {"title": "晚安[0, 2]"}, "weight": "0.300000"}
+我是不是最帅的人
+我是不是最美的人
+{"query": "今天吃什么", "domain": "submusic", "intent": "inform", "slots": {"title": "今天吃什么[0, 5]"}, "weight": "0.300000"}
+今天有什么好玩的
+我应该减肥么
+我是怎么来的
+我是捡来的么
+怎么长得更高
+如何提高情商
+为什么树叶是绿的
+这个世界上真的有奥特曼吗
+机器人会伤害人类么
+机器人会毁灭人类么
+你是不是傻
+你太笨了
+你是不是脑子进水了
+为什么星星会发光
+{"query": "地球到太阳的距离有多远", "domain": "music", "intent": "inform", "slots": {"title": "多远[9, 11]"}, "weight": "0.300000"}
+{"query": "地球到月亮的距离有多远", "domain": "music", "intent": "inform", "slots": {"title": "多远[9, 11]"}, "weight": "0.300000"}
+为什么夏天会下冰雹
+什么样的动物会做梦
+为什么大海是蓝色
+爱屋及乌是什么意思
+十一是什么节日
+青蛙几条腿
+妈妈的爸爸叫什么
+西红柿是水果还是蔬菜
+一年有多少天
+大象为什么不长毛
+蜘蛛是不是节肢动物
+现在的美国总统是谁
+{"query": "中国有几个省份", "domain": "music", "intent": "inform", "slots": {"title": "中国[0, 2]"}, "weight": "0.300000"}
+广东省省会是哪个城市
+{"query": "中国有多少人口", "domain": "music", "intent": "inform", "slots": {"title": "多少人[3, 6]"}, "weight": "0.300000"}
+感冒了该吃什么药
+{"query": "西红柿有什么营养", "domain": "music", "intent": "inform", "slots": {"title": "西红柿[0, 3]"}, "weight": "0.300000"}
+一天喝多少水才健康
+天空为什么是蓝色的
+海水为什么是蓝色的
+{"query": "唐代诗人都有谁", "domain": "poem", "intent": "inform", "slots": {"tag": "唐代[0, 2]"}, "weight": "0.400000"}
+唐宋八大家都是谁
+姚明
+姚明是谁
+李白
+李白是谁
+李太白是谁
+姚明的老婆是谁
+中国第一个奥运会冠军是谁
+我国三大平原是哪些
+飞机上为什么要装黑匣子
+{"query": "春节有哪些风俗", "domain": "music", "intent": "inform", "slots": {"title": "春节[0, 2]"}, "weight": "0.300000"}
+谁发明蒸汽机
+中华人民共和国十大元帅是谁
+巧克力是从哪里来的
+鸟类的祖先是什么鸟
+第一个到达月球的两个宇航员是谁
+什么是海鲜过敏
+如何避免过敏
+为什么恐龙灭绝了
+恐龙是怎么灭绝的
+喜马拉雅山有多高
+世界上最高的山
+为什么先看见闪电后听到雷声
+为什么自行车能动
+药瓶为什么是浅色的
+为什么不能关灯看电视
+为什么兔子不用喝水
+什么是流星
+哪个省素来就有“天府之国”的美誉
+声音在哪里传播的更快
+海龟为什么会流泪
+星星为什么会发光
+自行车的轮胎为什么要充气
+钟表为什么有三根针
+今天天气怎样
+上海天气怎么样
+下周天气
+今天会下雨吗
+今天出去要带伞吗
+今天北京风大吗
+今天去南京要穿棉袄吗
+今天可以晒衣服吗
+今天可以穿短袖吗
+今天天气
+今天天气怎么样
+今天我要戴口罩吗
+今天的气温如何
+今天的空气质量如何
+周末天气
+明天天气
+明天天气怎么样
+明天的天气怎么样
+昨天天气
+晚上会下雨吗
+今天温度是多少
+今天有雨么
+拉萨下一周会是晴天吗
+无锡最近天气如何
+北京明天的天气适合去散步吗
+成都明天pm值是多少
+上海明天是高温吗
+明天适合出行吗
+明天南京风力如何
+现在几点
+今年是什么时候过年
+今天是农历几号
+现在的北京时间
+明天是星期几呀
+现在是什么时间
+6月1日是什么节日
+今天是什么节日
+情人节是几号
+今年过年是哪天
+12月份出生是哪个星座
+今年春节是哪天
+1990年出生属什么
+1990年的属相
+明年过年是哪天
+1月1号是元旦吗
+现在是什么季节
+13+2等于几
+一加一等于几呢
+一百的平方是多少
+二十五的平方
+根号三是多少
+圆周率是多少
+一点五的两倍是多少
+五分之三是多少
+5分钟后提醒我
+帮我设置明天早上5点闹钟
+提醒我明早10点开会
+明天早上6点叫我起床
+提醒我晚上去运动
+倒计时5秒
+给我讲一个笑话
+讲一个笑话
+来一个笑话
+说一个笑话
+笑话
+讲个笑话
+爸爸英语怎么讲
+西瓜的英文名是什么
+苹果的英文是什么
+香蕉的英文怎么说
+西瓜的英文是什么
+进入翻译模式
+你好很高兴认识你
+{"query": "你叫什么名字", "domain": "submusic", "intent": "inform", "slots": {"title": "你叫什么名字[0, 6]"}, "weight": "0.300000"}
+我们今晚吃什么
+退出翻译
+玩成语接龙
+成语接龙
+退出成语接龙
+{"query": "结束游戏", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+退出游戏
+不玩了
+说些谜语给我猜
+玩猜谜语
+{"query": "猜谜语", "domain": "submusic", "intent": "inform", "slots": {"title": "猜谜语[0, 3]"}, "weight": "0.300000"}
+退出猜谜语
+{"query": "结束游戏", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+退出游戏
+不玩了
+{"query": "提高音量", "domain": "control", "intent": "inform", "slots": {"object": "volumn[-1, -1]", "operation": "adjust[-1, -1]", "val_rel": "up[-1, -1]"}, "weight": "0.300000"}
+{"query": "降低音量", "domain": "control", "intent": "inform", "slots": {"object": "volumn[-1, -1]", "operation": "adjust[-1, -1]", "val_rel": "down[-1, -1]"}, "weight": "0.300000"}
+{"query": "大点声", "domain": "control", "intent": "inform", "slots": {"object": "volumn[-1, -1]", "operation": "adjust[-1, -1]", "val_rel": "up[-1, -1]"}, "weight": "0.300000"}
+{"query": "小点声", "domain": "control", "intent": "inform", "slots": {"object": "volumn[-1, -1]", "operation": "adjust[-1, -1]", "val_rel": "down[-1, -1]"}, "weight": "0.300000"}
+{"query": "静音", "domain": "control", "intent": "inform", "slots": {"object": "volumn[-1, -1]", "operation": "mute[-1, -1]"}, "weight": "0.200000"}
+{"query": "停止", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "暂停", "domain": "submusic", "intent": "inform", "slots": {"title": "暂停[0, 2]"}, "weight": "0.300000"}
+{"query": "暂停", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "关闭", "domain": "control", "intent": "inform", "slots": {"object": "robot[-1, -1]", "operation": "shutdown[-1, -1]"}, "weight": "0.450000"}
+开始猜谜语
+给我们讲个古诗吧
+{"query": "想听杜甫的乐府诗", "domain": "poem", "intent": "inform", "slots": {"author": "杜甫[2, 4]", "tag": "乐府诗[5, 8]"}, "weight": "0.400000"}
+{"query": "说一首王昌龄的乐府诗", "domain": "poem", "intent": "inform", "slots": {"author": "王昌龄[3, 6]", "tag": "乐府诗[7, 10]"}, "weight": "0.400000"}
+{"query": "讲讲国王的新衣吧", "domain": "story", "intent": "inform", "slots": {"title": "国王的新衣[2, 7]"}, "weight": "0.300000"}
+来一首网络歌曲
+{"query": "讲首安徒生童话吧", "domain": "story", "intent": "inform", "slots": {"album": "安徒生童话[2, 7]"}, "weight": "0.300000"}
+{"query": "给我讲一个伊索寓言", "domain": "substory", "intent": "reqalts", "slots": {"album": "伊索寓言[5, 9]"}, "weight": "0.800000"}
+{"query": "给我讲一个伊索寓言", "domain": "story", "intent": "inform", "slots": {"album": "伊索寓言[5, 9]"}, "weight": "0.300000"}
+明天会不会堵车
+{"query": "来一个咖啡馆歌曲", "domain": "music", "intent": "inform", "slots": {"title": "咖啡[3, 5]"}, "weight": "0.300000"}
+来一个运动时候听的歌
+来一首嗨爆了的歌
+{"query": "来一首台湾歌曲", "domain": "music", "intent": "inform", "slots": {"region": "台湾[3, 5]"}, "weight": "0.400000"}
+{"query": "来一首台湾歌曲", "domain": "music", "intent": "inform", "slots": {"title": "台湾[3, 5]"}, "weight": "0.300000"}
+我想知道星期一会不会下雨
+井冈山后天会不会下雪
+{"query": "播放周杰伦的叶惠美", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[2, 5]", "album": "叶惠美[6, 9]"}, "weight": "0.390000"}
+{"query": "我想听诗经", "domain": "subpoem", "intent": "inform", "slots": {"title": "诗经[3, 5]"}, "weight": "0.900000"}
+{"query": "我想听诗经", "domain": "poem", "intent": "inform", "slots": {"title": "诗经[3, 5]"}, "weight": "0.300000"}
+{"query": "离殇怎么背", "domain": "poem", "intent": "inform", "slots": {"title": "离殇[0, 2]"}, "weight": "0.300000"}
+来一首劲爆的摇滚
+{"query": "朗诵把酒问月", "domain": "subpoem", "intent": "inform", "slots": {"title": "把酒问月[2, 6]"}, "weight": "0.900000"}
+{"query": "朗诵把酒问月", "domain": "poem", "intent": "inform", "slots": {"title": "把酒问月[2, 6]"}, "weight": "0.300000"}
+{"query": "说一下鹿柴", "domain": "subpoem", "intent": "inform", "slots": {"title": "鹿柴[3, 5]"}, "weight": "0.900000"}
+{"query": "说一下鹿柴", "domain": "poem", "intent": "inform", "slots": {"title": "鹿柴[3, 5]"}, "weight": "0.300000"}
+{"query": "朗诵一首唐诗吧", "domain": "poem", "intent": "inform", "slots": {"tag": "唐[4, 5]"}, "weight": "0.400000"}
+{"query": "朗诵一首唐诗吧", "domain": "poem", "intent": "inform", "slots": {"tag": "唐诗[4, 6]"}, "weight": "0.300000"}
+{"query": "来一首唐诗", "domain": "poem", "intent": "inform", "slots": {"tag": "唐[3, 4]"}, "weight": "0.400000"}
+{"query": "来一首唐诗", "domain": "poem", "intent": "inform", "slots": {"tag": "唐诗[3, 5]"}, "weight": "0.300000"}
+{"query": "来一个抒情诗", "domain": "poem", "intent": "inform", "slots": {"tag": "抒情[3, 5]"}, "weight": "0.400000"}
+{"query": "来一个爱国的唐诗", "domain": "poem", "intent": "inform", "slots": {"tag": "爱国的[3, 6]", "tag": "唐诗[6, 8]"}, "weight": "0.400000"}
+{"query": "来一个爱国的唐诗", "domain": "poem", "intent": "inform", "slots": {"tag": "爱国的[3, 6]", "tag": "唐[6, 7]"}, "weight": "0.400000"}
+开始成语接龙
+{"query": "说说嫦娥奔月的故事呀", "domain": "story", "intent": "inform", "slots": {"title": "嫦娥奔月[2, 6]"}, "weight": "0.300000"}
+给我们讲个笑话吧
+{"query": "喜羊羊与灰太狼的片头曲", "domain": "music", "intent": "inform", "slots": {"program": "喜羊羊与灰太狼[0, 7]", "tag": "片头曲[8, 11]"}, "weight": "0.450000"}
+{"query": "放蓝皮鼠", "domain": "substory", "intent": "reqalts", "slots": {"album": "蓝皮鼠[1, 4]"}, "weight": "0.800000"}
+{"query": "放蓝皮鼠", "domain": "substory", "intent": "reqalts", "slots": {"character": "蓝皮鼠[1, 4]"}, "weight": "0.500000"}
+{"query": "放蓝皮鼠", "domain": "story", "intent": "inform", "slots": {"album": "蓝皮鼠[1, 4]"}, "weight": "0.300000"}
+{"query": "艾利的故事", "domain": "story", "intent": "inform", "slots": {"character": "艾利[0, 2]", "tag": "故事[3, 5]"}, "weight": "0.500000"}
+{"query": "我想听大头儿子和小头爸爸的片头曲", "domain": "music", "intent": "inform", "slots": {"program": "大头儿子和小头爸爸[3, 12]", "tag": "片头曲[13, 16]"}, "weight": "0.450000"}
+{"query": "我想听大头儿子和小头爸爸的片头曲", "domain": "music", "intent": "inform", "slots": {"title": "大头[3, 5]"}, "weight": "0.300000"}
+{"query": "讲一个葫芦娃和爷爷的故事", "domain": "story", "intent": "inform", "slots": {"character": "葫芦娃[3, 6]", "character1": "爷爷[7, 9]", "tag": "故事[10, 12]"}, "weight": "0.500000"}
+{"query": "唱儿歌给我听", "domain": "music", "intent": "inform", "slots": {"tag": "儿歌[1, 3]"}, "weight": "0.300000"}
+{"query": "我想听儿歌", "domain": "music", "intent": "inform", "slots": {"tag": "儿歌[3, 5]"}, "weight": "0.300000"}
+{"query": "来一首儿歌", "domain": "music", "intent": "inform", "slots": {"tag": "儿歌[3, 5]"}, "weight": "0.300000"}
+{"query": "随便唱首儿歌", "domain": "music", "intent": "inform", "slots": {"tag": "儿歌[4, 6]"}, "weight": "0.300000"}
+{"query": "爆裂飞车主题曲", "domain": "music", "intent": "inform", "slots": {"program": "爆裂飞车[0, 4]", "tag": "主题曲[4, 7]"}, "weight": "0.450000"}
+{"query": "有没有抒情的摇滚乐", "domain": "music", "intent": "inform", "slots": {"tag": "抒情[3, 5]", "tag1": "摇滚[6, 8]"}, "weight": "0.500000"}
+{"query": "有没有抒情的摇滚乐", "domain": "music", "intent": "inform", "slots": {"tag": "抒情[3, 5]"}, "weight": "0.350000"}
+我最喜欢听笑话了
+我想听关于小猴子的笑话
+电梯的英文说法
+魔方的英文说法
+白菜的英文说法
+小龙虾的英文说法
+耳机的英文
+大马哈鱼是怎样找到故乡的
+植物也喜欢听动听的话吗
+海平面是平的吗
+红楼梦的作者曹雪芹是一位女作家吗
+猜谜语开始
+欲穷千里目更上一层楼是谁的诗句
+足球的英文说法
+篮球的英文说法
+{"query": "神笔马良的作者是谁", "domain": "story", "intent": "request", "slots": {"title": "神笔马良[0, 4]"}, "weight": "0.800000"}
+{"query": "神笔马良的作者是谁", "domain": "story", "intent": "inform", "slots": {"title": "神笔马良[0, 4]"}, "weight": "0.300000"}
+成语接龙开始
+{"query": "唱歌你会吗", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "你会唱歌吗", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "给我来一首流行音乐", "domain": "music", "intent": "inform", "slots": {"tag": "流行[5, 7]"}, "weight": "0.350000"}
+{"query": "刘德华的冰雨你会么", "domain": "music", "intent": "inform", "slots": {"artist": "刘德华[0, 3]", "title": "冰雨[4, 6]"}, "weight": "0.400000"}
+{"query": "刘德华的冰雨你有么", "domain": "music", "intent": "inform", "slots": {"artist": "刘德华[0, 3]", "title": "冰雨[4, 6]"}, "weight": "0.400000"}
+{"query": "周杰伦的歌你会吗", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[0, 3]"}, "weight": "0.300000"}
+{"query": "刘德华的告白气球你有吗", "domain": "music", "intent": "inform", "slots": {"artist": "刘德华[0, 3]", "title": "告白气球[4, 8]"}, "weight": "0.400000"}
+告白气球你有吗
+告白气球播放
+{"query": "巴啦啦小魔仙主题曲", "domain": "music", "intent": "inform", "slots": {"program": "巴啦啦小魔仙[0, 6]", "tag": "主题曲[6, 9]"}, "weight": "0.450000"}
+朗诵个适合小孩子学习的诗词
+{"query": "说一个五岁孩子睡前听的故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[11, 13]"}, "weight": "0.300000"}
+{"query": "有没有适合四岁小孩的故事", "domain": "story", "intent": "inform", "slots": {"tag": "四岁小孩[5, 9]", "tag1": "故事[10, 12]"}, "weight": "0.400000"}
+{"query": "给小朋友讲个故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[6, 8]"}, "weight": "0.300000"}
+可以来一首许嵩的古风歌吗
+{"query": "你有周华健的情歌吗", "domain": "music", "intent": "inform", "slots": {"artist": "周华健[2, 5]", "tag": "情歌[6, 8]"}, "weight": "0.400000"}
+{"query": "放一首黄海波的把命都给你了", "domain": "music", "intent": "inform", "slots": {"artist": "黄海波[3, 6]", "title": "把命都给你了[7, 13]"}, "weight": "0.400000"}
+{"query": "唱首黄海波的把命都给你了好不好", "domain": "music", "intent": "inform", "slots": {"artist": "黄海波[2, 5]", "title": "把命都给你了[6, 12]"}, "weight": "0.400000"}
+给我来一首动感的歌
+我想听重金属
+我想听哥特风格的歌
+{"query": "我想听日式摇滚", "domain": "music", "intent": "inform", "slots": {"title": "日式[3, 5]"}, "weight": "0.300000"}
+播放适合出游时听的歌
+播放校园民谣
+点播拉丁爵士
+{"query": "点播洗脑歌", "domain": "music", "intent": "inform", "slots": {"tag": "洗脑歌[2, 5]"}, "weight": "0.300000"}
+点播饶舌
+{"query": "读一下酒神杜康", "domain": "story", "intent": "inform", "slots": {"title": "酒神杜康[3, 7]"}, "weight": "0.300000"}
+{"query": "讲一讲故事里的小熊", "domain": "story", "intent": "inform", "slots": {"title": "故事里的小熊[3, 9]"}, "weight": "0.300000"}
+{"query": "可不可以来一个经典绘本故事", "domain": "story", "intent": "inform", "slots": {"tag": "绘本[9, 11]", "tag2": "故事[11, 13]"}, "weight": "0.500000"}
+{"query": "可以讲一个千万别放弃吗", "domain": "story", "intent": "inform", "slots": {"title": "千万别放弃[5, 10]"}, "weight": "0.300000"}
+{"query": "可以讲一个华夏始祖黄帝吗", "domain": "story", "intent": "inform", "slots": {"title": "华夏始祖黄帝[5, 11]"}, "weight": "0.300000"}
+{"query": "给我讲个花木兰吧", "domain": "story", "intent": "inform", "slots": {"title": "花木兰[4, 7]"}, "weight": "0.300000"}
+{"query": "曹操的哲理诗有哪些", "domain": "poem", "intent": "inform", "slots": {"tag": "哲理[3, 5]"}, "weight": "0.400000"}
+{"query": "苏幕遮的第一句是什么", "domain": "poem", "intent": "inform", "slots": {"title": "苏幕遮[0, 3]", "tag": "第一句[4, 7]"}, "weight": "0.400000"}
+我要欣赏亲子儿歌
+给我唱热门动画片主题曲吧
+跟节日有关的儿歌
+我喜欢你更多一点
+{"query": "我要听唐诗宋词", "domain": "poem", "intent": "inform", "slots": {"tag": "唐[3, 4]"}, "weight": "0.400000"}
+{"query": "我要听唐诗宋词", "domain": "poem", "intent": "inform", "slots": {"tag": "唐诗[3, 5]"}, "weight": "0.300000"}
+{"query": "周杰伦的青花瓷", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[0, 3]", "title": "青花瓷[4, 7]"}, "weight": "0.400000"}
+{"query": "点播会爆炸的苹果", "domain": "story", "intent": "inform", "slots": {"title": "会爆炸的苹果[2, 8]"}, "weight": "0.300000"}
+{"query": "点播１００万只猫", "domain": "story", "intent": "inform", "slots": {"title": "１００万只猫[2, 8]"}, "weight": "0.300000"}
+{"query": "点播小鳄鱼的钱包", "domain": "story", "intent": "inform", "slots": {"title": "小鳄鱼的钱包[2, 8]"}, "weight": "0.300000"}
+{"query": "我想听会变色的小花猫", "domain": "story", "intent": "inform", "slots": {"title": "会变色的小花猫[3, 10]"}, "weight": "0.300000"}
+{"query": "想听二郎担山", "domain": "story", "intent": "inform", "slots": {"title": "二郎担山[2, 6]"}, "weight": "0.300000"}
+{"query": "播放小猪豆豆打喷嚏", "domain": "story", "intent": "inform", "slots": {"title": "小猪豆豆打喷嚏[2, 9]"}, "weight": "0.300000"}
+{"query": "我要听机智的蜗牛", "domain": "story", "intent": "inform", "slots": {"title": "机智的蜗牛[3, 8]"}, "weight": "0.300000"}
+{"query": "我想听绘本故事", "domain": "story", "intent": "inform", "slots": {"tag": "绘本[3, 5]", "tag2": "故事[5, 7]"}, "weight": "0.500000"}
+{"query": "我想听露露不想去上学的故事", "domain": "story", "intent": "inform", "slots": {"title": "露露不想去上学[3, 10]"}, "weight": "0.300000"}
+{"query": "点播飞飞姐姐的胡萝卜鼻子和黄瓜鼻子", "domain": "story", "intent": "inform", "slots": {"author": "飞飞姐姐[2, 6]", "title": "胡萝卜鼻子和黄瓜鼻子[7, 17]"}, "weight": "0.400000"}
+{"query": "你给我讲个可乐姐姐的小鳄鱼的钱包吧", "domain": "story", "intent": "inform", "slots": {"author": "可乐姐姐[5, 9]", "title": "小鳄鱼的钱包[10, 16]"}, "weight": "0.400000"}
+{"query": "来一个机智的蜗牛", "domain": "story", "intent": "inform", "slots": {"title": "机智的蜗牛[3, 8]"}, "weight": "0.300000"}
+{"query": "我要听小猪豆豆打喷嚏", "domain": "story", "intent": "inform", "slots": {"title": "小猪豆豆打喷嚏[3, 10]"}, "weight": "0.300000"}
+{"query": "我想听玻璃瓶中的妖怪", "domain": "story", "intent": "inform", "slots": {"title": "玻璃瓶中的妖怪[3, 10]"}, "weight": "0.300000"}
+{"query": "想听我和猪猪侠", "domain": "story", "intent": "inform", "slots": {"title": "我和猪猪侠[2, 7]"}, "weight": "0.300000"}
+{"query": "想听八仙过海", "domain": "story", "intent": "inform", "slots": {"title": "八仙过海[2, 6]"}, "weight": "0.300000"}
+我想听长亭外古道边那个歌
+{"query": "想听冬天的故事", "domain": "story", "intent": "inform", "slots": {"title": "冬天的故事[2, 7]"}, "weight": "0.300000"}
+{"query": "鱼儿水中游你会唱吗", "domain": "music", "intent": "inform", "slots": {"title": "鱼儿水中游[0, 5]"}, "weight": "0.300000"}
+{"query": "来一首经典宋词吧", "domain": "poem", "intent": "inform", "slots": {"tag": "经典[3, 5]", "tag": "宋词[5, 7]"}, "weight": "0.400000"}
+{"query": "来一首经典宋词吧", "domain": "poem", "intent": "inform", "slots": {"tag": "经典[3, 5]", "tag": "宋[5, 6]"}, "weight": "0.400000"}
+{"query": "来一首经典唐诗吧", "domain": "poem", "intent": "inform", "slots": {"tag": "经典[3, 5]", "tag": "唐诗[5, 7]"}, "weight": "0.400000"}
+{"query": "来一首经典唐诗吧", "domain": "poem", "intent": "inform", "slots": {"tag": "经典[3, 5]", "tag": "唐[5, 6]"}, "weight": "0.400000"}
+{"query": "来一首小学必背古诗词", "domain": "poem", "intent": "inform", "slots": {"tag": "古诗词[7, 10]"}, "weight": "0.300000"}
+{"query": "出师表的第一句是什么", "domain": "poem", "intent": "inform", "slots": {"title": "出师表[0, 3]", "tag": "第一句[4, 7]"}, "weight": "0.400000"}
+{"query": "周杰伦的千里之外有吗", "domain": "music", "intent": "inform", "slots": {"artist": "周杰伦[0, 3]", "title": "千里之外[4, 8]"}, "weight": "0.400000"}
+{"query": "播放五月天的你不是真正的快乐", "domain": "music", "intent": "inform", "slots": {"artist": "五月天[2, 5]", "title": "你不是真正的快乐[6, 14]"}, "weight": "0.400000"}
+{"query": "我想听五月天的歌", "domain": "music", "intent": "inform", "slots": {"artist": "五月天[3, 6]"}, "weight": "0.300000"}
+{"query": "点播五月天的歌", "domain": "music", "intent": "inform", "slots": {"artist": "五月天[2, 5]"}, "weight": "0.300000"}
+深圳今天热吗
+{"query": "能别再给我放歌了吗", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "能不能不要再给我放歌了", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "你能别再放歌了吗", "domain": "control", "intent": "inform", "slots": {"mode": "single_cycle[-1, -1]", "object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.400000"}
+{"query": "你能别再放歌了吗", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.350000"}
+{"query": "你能别再放歌了吗", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "别再给我放歌了", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "能别再放歌了吗", "domain": "control", "intent": "inform", "slots": {"mode": "single_cycle[-1, -1]", "object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.400000"}
+{"query": "能别再放歌了吗", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.350000"}
+{"query": "能别再放歌了吗", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "能不能不要再放音乐了", "domain": "control", "intent": "inform", "slots": {"mode": "single_cycle[-1, -1]", "object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.400000"}
+{"query": "能不能不要再放音乐了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.350000"}
+{"query": "能不能不要再放音乐了", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "不要给我放歌了", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "我不想再听歌了", "domain": "control", "intent": "inform", "slots": {"mode": "single_cycle[-1, -1]", "object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.400000"}
+{"query": "我不想再听歌了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.350000"}
+{"query": "我不想再听歌了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想继续听歌了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.350000"}
+{"query": "我不想继续听歌了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不喜欢听歌", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "我不要听歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "能别放歌了吗", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "你能别放歌了吗", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "可不可以不要唱告白气球", "domain": "music", "intent": "deny", "slots": {"title": "告白气球[7, 11]"}, "weight": "0.900000"}
+{"query": "可不可以不要唱告白气球", "domain": "music", "intent": "inform", "slots": {"title": "告白气球[7, 11]"}, "weight": "0.300000"}
+{"query": "可不可以别放告白气球这首歌了", "domain": "music", "intent": "deny", "slots": {"title": "告白气球[6, 10]"}, "weight": "0.900000"}
+{"query": "可不可以别放告白气球这首歌了", "domain": "music", "intent": "inform", "slots": {"title": "告白气球[6, 10]"}, "weight": "0.300000"}
+{"query": "我不想听这首歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "不要听音乐", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "不要听音乐", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "不要听歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "别给我放歌", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "我不想听歌了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听这个了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听歌了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听这首歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "不要听音乐", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "不要听音乐", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "不要听歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "别给我放歌", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "我不想听告白气球了", "domain": "music", "intent": "deny", "slots": {"title": "告白气球[4, 8]"}, "weight": "0.900000"}
+{"query": "我不想听告白气球了", "domain": "music", "intent": "inform", "slots": {"title": "告白气球[4, 8]"}, "weight": "0.300000"}
+{"query": "我不想听告白气球了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "别给我放告白气球了", "domain": "music", "intent": "deny", "slots": {"title": "告白气球[4, 8]"}, "weight": "0.900000"}
+{"query": "别给我放告白气球了", "domain": "music", "intent": "inform", "slots": {"title": "告白气球[4, 8]"}, "weight": "0.300000"}
+{"query": "别放这首歌了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "别唱这首歌了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+能别再给我读诗了吗
+能不能不要再给我读诗了
+你能别再读诗了吗
+{"query": "别再给我播放诗词了", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+能别再读诗了吗
+能不能不要再读诗了
+{"query": "不要给我播放诗词了", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "能不能别再给我播放诗词了", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+我不要读诗
+{"query": "别再给我放诗了", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+能别再读诗了吗
+{"query": "能不能不要再放诗了", "domain": "control", "intent": "inform", "slots": {"mode": "single_cycle[-1, -1]", "object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.400000"}
+{"query": "能不能不要再放诗了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.350000"}
+{"query": "能不能不要再放诗了", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+别再给我读诗了
+能别再读诗了吗
+能不能不要再读诗了
+{"query": "我不想听诗了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+我不要读诗
+不要读诗了
+{"query": "能不能别放诗了", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "不要放诗了", "domain": "poem", "intent": "inform", "slots": {}, "weight": "0.300000"}
+别给我读诗了
+{"query": "我不想听诗了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不要听苏幕遮了", "domain": "poem", "intent": "deny", "slots": {"title": "苏幕遮[4, 7]"}, "weight": "0.900000"}
+{"query": "我不要听苏幕遮了", "domain": "poem", "intent": "inform", "slots": {"title": "苏幕遮[4, 7]"}, "weight": "0.300000"}
+{"query": "我不要听苏幕遮了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+别给我读诗了
+{"query": "可不可以别放苏幕遮这首诗了", "domain": "poem", "intent": "deny", "slots": {"title": "苏幕遮[6, 9]"}, "weight": "0.900000"}
+{"query": "可不可以别放苏幕遮这首诗了", "domain": "poem", "intent": "inform", "slots": {"title": "苏幕遮[6, 9]"}, "weight": "0.300000"}
+可不可以不要读诗
+{"query": "别放这首诗了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "能别再给我讲故事了吗", "domain": "story", "intent": "inform", "slots": {"tag": "故事[6, 8]"}, "weight": "0.300000"}
+{"query": "能不能不要再给我讲故事了", "domain": "story", "intent": "inform", "slots": {"tag": "故事[9, 11]"}, "weight": "0.300000"}
+{"query": "我不要听故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[4, 6]"}, "weight": "0.300000"}
+{"query": "我不要听故事", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不要听这个故事", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+能不能不要故事
+{"query": "能不能别播故事了", "domain": "story", "intent": "inform", "slots": {"tag": "故事[5, 7]"}, "weight": "0.300000"}
+不要故事
+{"query": "不要听故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[3, 5]"}, "weight": "0.300000"}
+{"query": "不要听故事", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不要听故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[4, 6]"}, "weight": "0.300000"}
+{"query": "我不要听故事", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[4, 6]"}, "weight": "0.300000"}
+{"query": "我不想听故事", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "别再给我讲故事了", "domain": "story", "intent": "inform", "slots": {"tag": "故事[5, 7]"}, "weight": "0.300000"}
+{"query": "能别再播故事了吗", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]"}, "weight": "0.350000"}
+{"query": "能别再播故事了吗", "domain": "story", "intent": "inform", "slots": {"tag": "故事[4, 6]"}, "weight": "0.300000"}
+{"query": "能不能不要再讲故事了", "domain": "story", "intent": "inform", "slots": {"tag": "故事[7, 9]"}, "weight": "0.300000"}
+{"query": "我不想听这个了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+我不要读诗
+不要读诗了
+{"query": "我不想听故事了", "domain": "story", "intent": "inform", "slots": {"tag": "故事[4, 6]"}, "weight": "0.300000"}
+{"query": "我不想听故事了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听花神造花了", "domain": "story", "intent": "inform", "slots": {"title": "花神造花[4, 8]"}, "weight": "0.300000"}
+{"query": "我不要听田螺姑娘", "domain": "music", "intent": "deny", "slots": {"title": "田螺姑娘[4, 8]"}, "weight": "0.900000"}
+{"query": "我不要听田螺姑娘", "domain": "story", "intent": "inform", "slots": {"title": "田螺姑娘[4, 8]"}, "weight": "0.300000"}
+{"query": "我不要听田螺姑娘", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不要听田螺姑娘", "domain": "music", "intent": "inform", "slots": {"title": "田螺姑娘[4, 8]"}, "weight": "0.300000"}
+{"query": "别给我放大脚丫游巴黎了", "domain": "story", "intent": "inform", "slots": {"title": "大脚丫游巴黎[4, 10]"}, "weight": "0.300000"}
+{"query": "可不可以别放面包狼和糊涂先生这个故事了", "domain": "story", "intent": "deny", "slots": {"title": "面包狼和糊涂先生[6, 14]"}, "weight": "0.800000"}
+{"query": "可不可以别放面包狼和糊涂先生这个故事了", "domain": "story", "intent": "inform", "slots": {"title": "面包狼和糊涂先生[6, 14]"}, "weight": "0.300000"}
+可不可以不要讲这个故事
+白雪歌送武判官归京诗词赏析
+{"query": "我想听蜜桃姐姐讲故事", "domain": "story", "intent": "inform", "slots": {"tag": "故事[8, 10]"}, "weight": "0.300000"}
+{"query": "我想听晚安妈妈讲故事", "domain": "story", "intent": "inform", "slots": {"title": "晚安妈妈讲故事[3, 10]"}, "weight": "0.300000"}
+{"query": "讲一下格林童话", "domain": "substory", "intent": "reqalts", "slots": {"author": "格林童话[3, 7]"}, "weight": "0.900000"}
+{"query": "讲一下格林童话", "domain": "substory", "intent": "reqalts", "slots": {"album": "格林童话[3, 7]"}, "weight": "0.800000"}
+{"query": "讲一下格林童话", "domain": "story", "intent": "inform", "slots": {"album": "格林童话[3, 7]"}, "weight": "0.300000"}
+{"query": "我不想听这种伤感的诗词", "domain": "poem", "intent": "inform", "slots": {"tag": "伤感的[6, 9]"}, "weight": "0.400000"}
+{"query": "我不想听这种伤感的诗词", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "不要再朗诵唐诗了", "domain": "poem", "intent": "inform", "slots": {"tag": "唐[5, 6]"}, "weight": "0.400000"}
+{"query": "不要再朗诵唐诗了", "domain": "poem", "intent": "inform", "slots": {"tag": "唐诗[5, 7]"}, "weight": "0.300000"}
+{"query": "我不想听你背李白的诗", "domain": "poem", "intent": "inform", "slots": {"author": "李白[6, 8]"}, "weight": "0.300000"}
+{"query": "停止播放密州出猎", "domain": "poem", "intent": "inform", "slots": {"title": "密州出猎[4, 8]"}, "weight": "0.300000"}
+{"query": "停止朗诵唐诗", "domain": "poem", "intent": "inform", "slots": {"tag": "唐[4, 5]"}, "weight": "0.400000"}
+{"query": "停止朗诵唐诗", "domain": "poem", "intent": "inform", "slots": {"tag": "唐诗[4, 6]"}, "weight": "0.300000"}
+{"query": "停止朗诵唐诗", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听你朗诵唐诗了", "domain": "poem", "intent": "inform", "slots": {"tag": "唐[7, 8]"}, "weight": "0.400000"}
+{"query": "我不想听你朗诵唐诗了", "domain": "poem", "intent": "inform", "slots": {"tag": "唐诗[7, 9]"}, "weight": "0.300000"}
+{"query": "我不想听你朗诵唐诗了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听你背诗", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听你播故事了", "domain": "story", "intent": "inform", "slots": {"tag": "故事[6, 8]"}, "weight": "0.300000"}
+{"query": "我不想听你播故事了", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "停止播放格林童话", "domain": "story", "intent": "inform", "slots": {"album": "格林童话[4, 8]"}, "weight": "0.300000"}
+我讨厌格林童话这个故事
+{"query": "停止播放歌曲", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "停止播放歌曲", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不想听你唱歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "别唱汪汪队的主题曲了", "domain": "music", "intent": "inform", "slots": {"program": "汪汪队[2, 5]", "tag": "主题曲[6, 9]"}, "weight": "0.450000"}
+{"query": "我不想听汪汪队的主题曲", "domain": "music", "intent": "inform", "slots": {"program": "汪汪队[4, 7]", "tag": "主题曲[8, 11]"}, "weight": "0.450000"}
+{"query": "我不想听汪汪队的主题曲", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "我不喜欢听你唱歌了", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+我不喜欢你唱这首歌
+{"query": "停止唱这首歌", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "pause[-1, -1]"}, "weight": "0.300000"}
+{"query": "你会背唐诗三百首吗", "domain": "poem", "intent": "inform", "slots": {"tag": "唐[3, 4]"}, "weight": "0.400000"}
+{"query": "你会背唐诗三百首吗", "domain": "poem", "intent": "inform", "slots": {"tag": "唐诗[3, 5]"}, "weight": "0.300000"}
+{"query": "你会唱小猪佩琪的主题曲吗", "domain": "music", "intent": "inform", "slots": {"title": "小猪[3, 5]"}, "weight": "0.300000"}
+{"query": "想听孙悟空的故事了", "domain": "story", "intent": "inform", "slots": {"character": "悟空[3, 5]", "tag": "故事[6, 8]"}, "weight": "0.500000"}
+{"query": "想听孙悟空的故事了", "domain": "music", "intent": "inform", "slots": {"title": "孙悟空[2, 5]"}, "weight": "0.300000"}
+来一个科学小故事
+{"query": "晚安妈妈讲故事给我来一个", "domain": "subpoem", "intent": "reqalts", "slots": {}, "weight": "0.900000"}
+{"query": "晚安妈妈讲故事给我来一个", "domain": "story", "intent": "inform", "slots": {"title": "晚安妈妈讲故事[0, 7]"}, "weight": "0.300000"}
+我想学春天在哪里
+{"query": "下一首", "domain": "control", "intent": "inform", "slots": {"object": "history[-1, -1]", "operation": "play[-1, -1]", "val_rel": "1[-1, -1]"}, "weight": "0.300000"}
+{"query": "唱个歌给我听一下", "domain": "subpoem", "intent": "reqalts", "slots": {}, "weight": "0.900000"}
+{"query": "唱个歌给我听一下", "domain": "music", "intent": "inform", "slots": {}, "weight": "0.300000"}
+{"query": "观刈麦是李白的诗吗", "domain": "poem", "intent": "inform", "slots": {"author": "李白[4, 6]"}, "weight": "0.300000"}
+{"query": "我想听晚安妈妈讲故事", "domain": "story", "intent": "inform", "slots": {"title": "晚安妈妈讲故事[3, 10]"}, "weight": "0.300000"}

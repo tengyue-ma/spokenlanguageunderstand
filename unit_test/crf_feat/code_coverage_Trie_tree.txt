@@ -1,0 +1,189 @@
+File '../../feat_extractor/crf_feat/src/Trie_tree.cpp'
+Lines executed:100.00% of 82
+Creating 'Trie_tree.cpp.gcov'
+        -:    0:Source:../../feat_extractor/crf_feat/src/Trie_tree.cpp
+        -:    0:Graph:Trie_tree.gcno
+        -:    0:Data:Trie_tree.gcda
+        -:    0:Runs:2
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: Trie_tree.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 一  1/29 14:17:08 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include "utils.h"
+        -:   10:#include "Trie_tree.h"
+        -:   11:#include "CrfFeatErrorCode.h"
+        -:   12:#include "SluLog.h"
+        -:   13:using namespace std;
+        -:   14:using namespace utils;
+        -:   15:
+        -:   16:/*
+        -:   17: * @brief 节点类
+        -:   18: */
+        -:   19:
+        -:   20://< 构造函数
+      722:   21:TrieNode::TrieNode(){
+      722:   22:    flag = false;
+      722:   23:}
+        -:   24:
+        -:   25://< 析构函数
+      152:   26:TrieNode::~TrieNode(){
+      146:   27:    for (unordered_map<string, TrieNode*>::iterator iter = children.begin(); iter != children.end(); iter++){
+       70:   28:        delete iter->second;
+        -:   29:    }
+       76:   30:}
+        -:   31:
+        -:   32:/*
+        -:   33: * @brief 字典树
+        -:   34: */
+        -:   35:
+        -:   36://< 构造函数
+       80:   37:TrieTree::TrieTree(const string filepath){
+        -:   38:    //< 如果路径为空则root = NULL
+       80:   39:    if (filepath == ""){
+        6:   40:        root = NULL;
+        -:   41:    }
+        -:   42:    //< load 词典
+        -:   43:    else{
+       74:   44:        root = NULL;
+       74:   45:        load_dict(filepath);
+        -:   46:    }
+       80:   47:}
+        -:   48:
+        -:   49://< 批量load不同位置的词典到同一棵树中
+        6:   50:TrieTree::TrieTree(const vector<string> filepaths){
+        -:   51:    //< 如果0条路径
+        6:   52:    if (filepaths.size() <= 0){
+        2:   53:        root = NULL;
+        -:   54:    }
+        -:   55:    else {
+        4:   56:        root = NULL;
+        -:   57:        //< flag 标志着是否存在一个非空路径
+        4:   58:        bool flag = false;
+       10:   59:        for (size_t i = 0; i < filepaths.size(); i++){
+        6:   60:            if (filepaths[i] != ""){
+        4:   61:                flag = true;
+        4:   62:                load_dict(filepaths[i]);
+        -:   63:            }
+        -:   64:        }
+        -:   65:
+        -:   66:        //< 如果所有路径都为空root = NULL
+        4:   67:        if (!flag){
+        2:   68:            root = NULL;
+        -:   69:        }
+        -:   70:    }
+        6:   71:}
+        -:   72:
+        -:   73://< 析构函数
+       36:   74:TrieTree::~TrieTree(){
+       18:   75:    delete root; 
+       18:   76:}
+        -:   77:
+        -:   78://< load dict 可以重复load
+       78:   79:int TrieTree::load_dict(const string filepath){
+       78:   80:    ifstream dict;
+        -:   81:    //< 打开文件
+       78:   82:    dict.open(filepath);
+        -:   83:
+       78:   84:    if (!dict){
+        2:   85:        loginstance->error("[SLU]: failed to open dict file: " + filepath );
+        2:   86:        return ERR_TRIE_TREE_OPEN_DICT_FILE;
+        -:   87:    }
+        -:   88:
+      152:   89:    string line;
+      380:   90:    while(getline(dict, line)){
+      228:   91:        insert(line);
+        -:   92:    }
+        -:   93:
+        -:   94:    //< 关闭文件
+       76:   95:    dict.close();
+        -:   96:
+       76:   97:    loginstance->info("[SLU]: load dict success! dict name: " + filepath);
+        -:   98:
+      154:   99:    return 0;
+        -:  100:}
+        -:  101:
+        -:  102://< 插入数据到Tree
+      228:  103:int TrieTree::insert(const string seq){
+      228:  104:    if (root == NULL){
+       74:  105:        root = new TrieNode();
+        -:  106:    }
+        -:  107:
+      228:  108:    TrieNode *ptr = root;
+        -:  109:    //< 单字切分 utf8
+      228:  110:    strSplit2simple(seq, cha_vec);
+        -:  111:    
+      228:  112:    size_t count = cha_vec.size();
+      876:  113:    for (size_t i = 0; i < count; i++){
+      648:  114:        if (ptr->children.find(cha_vec[i]) == ptr->children.end()){
+      648:  115:            ptr->children[cha_vec[i]] = new TrieNode();
+        -:  116:        }
+      648:  117:        ptr = ptr->children[cha_vec[i]];
+        -:  118:    }
+        -:  119:
+      228:  120:    ptr->flag = true;
+        -:  121:
+      228:  122:    return 0;
+        -:  123:}
+        -:  124:
+        -:  125://< 查询是否存在该路径
+        6:  126:bool TrieTree::has_dict(const string seq){
+        6:  127:    if (root == NULL || seq.size() == 0){
+        2:  128:        return false;
+        -:  129:    }
+        -:  130:
+        4:  131:    TrieNode* ptr = root;
+        -:  132:    //< 单字切分
+        4:  133:    strSplit2simple(seq, cha_vec);
+        -:  134:
+        4:  135:    size_t count = cha_vec.size();
+        -:  136:    size_t i;
+       10:  137:    for (i = 0; i < count; i++){
+        8:  138:        if (ptr->children.find(cha_vec[i]) == ptr->children.end()){
+        2:  139:            break;
+        -:  140:        }
+        6:  141:        ptr = ptr->children[cha_vec[i]];
+        -:  142:    }
+        -:  143:
+        4:  144:    if (i < count || !ptr->flag){
+        2:  145:        return false;
+        -:  146:    }
+        -:  147:
+        2:  148:    return true;
+        -:  149:}
+        -:  150:
+        -:  151://< 最大匹配
+       34:  152:int TrieTree::match(const vector<string>& seq_vec, 
+        -:  153:                    int idx){
+       34:  154:    if (root == NULL || seq_vec.size() == 0){
+        2:  155:        return 0;
+        -:  156:    }
+        -:  157:
+       32:  158:    TrieNode* ptr = root;
+        -:  159:
+       32:  160:    size_t count = seq_vec.size();
+       32:  161:    int len = 0;
+       32:  162:    int n = 0;
+        -:  163:
+       40:  164:    for (size_t i = idx; i < count; i++){
+       40:  165:        if (ptr->children.find(seq_vec[i]) == ptr->children.end()){
+       32:  166:            break;
+        -:  167:        }
+        -:  168:        else {
+        8:  169:            n++;
+        8:  170:            ptr = ptr->children[seq_vec[i]];
+        8:  171:            if (ptr->flag){
+        4:  172:                len += n;
+        4:  173:                n = 0;
+        -:  174:            }
+        -:  175:        }
+        -:  176:    }
+        -:  177:
+       32:  178:    return len;
+        6:  179:}
+        -:  180:
+        -:  181:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

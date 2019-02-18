@@ -1,0 +1,75 @@
+File '../../regex_v1.3/src/link.cc'
+Lines executed:81.82% of 44
+Creating 'link.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/link.cc
+        -:    0:Graph:link.gcno
+        -:    0:Data:link.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <stdexcept>
+        -:    2:
+        -:    3:#include "state.h"
+        -:    4:#include "charset.h"
+        -:    5:#include "link.h"
+        -:    6:
+        -:    7:namespace SemanticRegex{
+        -:    8:
+    #####:    9:Link::Link(){
+    #####:   10:	start = NULL;
+    #####:   11:	end   = NULL;
+    #####:   12:	cs	  = NULL;
+    #####:   13:	ltype = STRING;
+    #####:   14:}
+        -:   15:
+    81007:   16:Link::~Link(){
+    81007:   17:	if(ltype == STRING && cs!=NULL){
+    80303:   18:		delete cs;
+        -:   19:	}
+    81007:   20:}
+        -:   21:
+        -:   22:
+   836559:   23:Link::Link(State *start, State *end, CharSet *cs){
+   836559:   24:	this->start = start;
+   836559:   25:	this->end	= end;
+   836559:   26:	this->cs	= cs;
+   836559:   27:	this->ltype = STRING;
+        -:   28:
+   836559:   29:	start->olinks.push_back(this);
+   819616:   30:	end->ilinks.push_back(this);
+        -:   31:	
+   820883:   32:	start->eflag = false;
+   820883:   33:	end->sflag = false;
+   820883:   34:}
+        -:   35:
+     5354:   36:Link::Link(State* start, State* end, LinkType lt, unsigned index){
+     5354:   37:	this->start = start;
+     5354:   38:	this->end   = end;
+     5354:   39:	this->cs    = NULL;
+     5354:   40:	if(lt == STRING)
+        -:   41:		throw std::runtime_error("You should"
+    #####:   42:		" use another constructor for STRING link type!");
+     5354:   43:	this->ltype = lt;
+     5354:   44:	if(lt == CAPS || lt == CAPE)
+     4920:   45:		if(index<=0)
+        -:   46:			throw std::runtime_error("A positive"
+    #####:   47:			" integer must be provided for CAPS and CAPE link type!");
+     5354:   48:	this->index = index;
+        -:   49:
+     5354:   50:	start->olinks.push_back(this);
+     5335:   51:	end->ilinks.push_back(this);
+        -:   52:
+     5332:   53:	start->eflag = false;
+     5332:   54:	end->sflag = false;
+     5332:   55:}
+        -:   56:
+    14788:   57:void Link::set_start(State* start){
+    14788:   58:	this->start = start;
+    14788:   59:	start->olinks.push_back(this);
+    14789:   60:}
+        -:   61:
+       19:   62:void Link::set_end(State* end){
+       19:   63:	this->end = end;
+       19:   64:	end->ilinks.push_back(this);
+       19:   65:}
+        -:   66:
+        -:   67:}

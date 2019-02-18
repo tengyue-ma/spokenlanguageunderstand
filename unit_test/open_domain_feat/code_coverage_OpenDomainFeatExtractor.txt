@@ -1,0 +1,280 @@
+File '../../feat_extractor/open_domain_feat/src/OpenDomainFeatExtractor.cpp'
+Lines executed:79.59% of 147
+Creating 'OpenDomainFeatExtractor.cpp.gcov'
+        -:    0:Source:../../feat_extractor/open_domain_feat/src/OpenDomainFeatExtractor.cpp
+        -:    0:Graph:OpenDomainFeatExtractor.gcno
+        -:    0:Data:OpenDomainFeatExtractor.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: OpenDomainFeatExtractor.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: Mon 19 Mar 2018 01:57:44 PM CST
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include "OpenDomainFeatExtractor.h"
+        -:   10:#include "OpenDomainFeatErrorCode.h"
+        -:   11:#include "FeatExtractor.h"
+        -:   12:#include "ul_log.h"
+        -:   13:#include "Configure.h"
+        -:   14:#include "spreg.h"
+        -:   15:#include "SluLog.h"
+        -:   16:using namespace std;
+        -:   17:
+        -:   18:using namespace hobotlog;
+        -:   19:LogModule * loginstance;
+        -:   20:
+        -:   21:namespace feat_extractor{
+        -:   22:
+        2:   23:extern "C" FeatExtractor* create_feat_extr(const string confpath, 
+        -:   24:                                           PreProcessor* pre){
+        2:   25:    OpenDomainFeatExtractor* ods_feat_extr = new OpenDomainFeatExtractor(confpath, pre);
+        2:   26:    return dynamic_cast<FeatExtractor *>(ods_feat_extr);
+        -:   27:}
+        -:   28:
+        1:   29:extern "C" void delete_feat_extr(FeatExtractor* feat_extr){
+        1:   30:    OpenDomainFeatExtractor* ods_feat_extr = dynamic_cast<OpenDomainFeatExtractor *>(feat_extr);
+        -:   31:
+        -:   32:    //< delete me_feat_extr;
+        1:   33:    ods_feat_extr = NULL;
+        1:   34:}
+        -:   35:
+        -:   36://< 构造函数
+       17:   37:OpenDomainFeatExtractor::OpenDomainFeatExtractor(const string confpath, 
+       17:   38:                                                 PreProcessor* pre){
+       17:   39:	int ret = 0;
+       17:   40:	ret = init_conf(confpath, pre);
+       17:   41:    if (ret < 0){
+    #####:   42:		cout << "failed to init open domain feat slot type ! "<< endl;
+    #####:   43:		cout << "error code: "<< ret << endl;
+    #####:   44:        exit(-1);
+        -:   45:    }
+        -:   46:
+       17:   47:	ret = init_ltp(pre);
+       17:   48:    if (ret < 0){
+    #####:   49:		loginstance->error("[SLU]: failed to init open domain feat ltp: " + confpath);
+        -:   50:		//loginstance->error("error code: " + (itoa)ret);
+    #####:   51:        exit(-1);
+        -:   52:    }
+        -:   53:
+       17:   54:	ret = init_slot_type();
+       17:   55:    if (ret < 0){
+    #####:   56:		loginstance->error("[SLU]: failed to init open domain feat slot type: " + confpath);
+        -:   57:		//loginstance->error("error code: ");
+    #####:   58:		exit(-1);
+        -:   59:    }
+        -:   60:	
+       17:   61:	loginstance->info("[SLU]: construct OpenDomainFeatExtractor success: " + confpath);
+        -:   62:	
+       17:   63:}
+        -:   64:
+        -:   65://< 析构函数
+        3:   66:OpenDomainFeatExtractor::~OpenDomainFeatExtractor(){
+        1:   67:    this->pre = NULL;
+        1:   68:    this->_slot_type = NULL;
+        2:   69:}
+        -:   70:
+       17:   71:int OpenDomainFeatExtractor::init_ltp(PreProcessor* pre){
+       17:   72:    this->pre = pre;
+       17:   73:    if (pre == NULL){
+    #####:   74:        cout << "LTP init error. pre is NULL." << endl;
+    #####:   75:        return ERR_OPEN_DOMAIN_FEAT_LTP_PRE_NULL;
+        -:   76:    }
+       17:   77:    return 0;
+        -:   78:}
+        -:   79:
+        -:   80://< 这里pre没有使用
+       17:   81:int OpenDomainFeatExtractor::init_conf(const string confpath, 
+        -:   82:                                       PreProcessor* pre){
+       17:   83:    comcfg::Configure config;
+       17:   84:    int ret = config.load("./", confpath.c_str());
+       17:   85:    if (ret < 0){
+    #####:   86:        cout << "failed to load config file in " << confpath << endl;
+    #####:   87:        return ERR_OPEN_DOMAIN_FEAT_LOAD_CONFIG;
+        -:   88:    }
+        -:   89:	
+        -:   90:    //init log
+        -:   91:    try {
+       17:   92:        string log_file = config["OPEN_DOMAIN_FEAT_LOG_CONF"].to_cstr();
+       17:   93:		if(NULL == loginstance){
+        1:   94:			loginstance = new hobotlog::LogModule(log_file);
+        1:   95:			loginstance->info("[SLU]: load open domain feat log conf, and init loginstance success!");
+       17:   96:		}
+    =====:   97:    }catch(...){
+    =====:   98:        cout << "do not set log file in open domain feat conf: " << confpath << endl;
+    =====:   99:        return ERR_OPEN_DOMAIN_FEAT_NOT_SET_LOG_FILE;
+        -:  100:    }
+        -:  101:    
+        -:  102:    //< load
+        -:  103:    try {
+        -:  104:        //< load slotname
+       17:  105:        int slotname_size = static_cast<int>(config["SLOT_NAME"].size());
+       17:  106:        if (slotname_size != 1){
+    #####:  107:            loginstance->error("[SLU]: failed to load open domain feat config file: " + confpath + ", the FEAT_EXTRACTOR number is wrong");
+    #####:  108:            return ERR_OPEN_DOMAIN_FEAT_CONFIG_FEAT_NUM;
+        -:  109:        }
+       17:  110:        this->nh = config["SLOT_NAME"][0]["SLOT_NAME_NH"].to_cstr();
+       17:  111:        this->ns = config["SLOT_NAME"][0]["SLOT_NAME_NS"].to_cstr();
+       17:  112:        this->ni = config["SLOT_NAME"][0]["SLOT_NAME_NI"].to_cstr();
+       17:  113:        this->rh = config["SLOT_NAME"][0]["SLOT_NAME_RH"].to_cstr();
+       17:  114:        this->rs = config["SLOT_NAME"][0]["SLOT_NAME_RS"].to_cstr();
+        -:  115:
+        -:  116:        //< load代词关键词
+       17:  117:        int word_rh_size = static_cast<int>(config["WORD_RH"][0]["WORD"].size());
+       51:  118:        for (int i = 0; i < word_rh_size; i++){
+       34:  119:            string word = config["WORD_RH"][0]["WORD"][i].to_cstr();
+       34:  120:            this->rh_words.push_back(word);
+       34:  121:        }
+        -:  122:
+       17:  123:        int word_rs_size = static_cast<int>(config["WORD_RS"][0]["WORD"].size());
+       51:  124:        for (int i = 0; i < word_rs_size; i++){
+       34:  125:            string word = config["WORD_RS"][0]["WORD"][i].to_cstr();
+       34:  126:            this->rs_words.push_back(word);
+       34:  127:        }
+        -:  128:
+        -:  129:        //< load slotname&词典地址
+       17:  130:        int dict_size = static_cast<int>(config["DICT"].size());
+       34:  131:        for (int i = 0; i < dict_size; i++){
+       17:  132:            string dictname = config["DICT"][i]["DICT_NAME"].to_cstr();
+       34:  133:            string dictpath = config["DICT"][i]["DICT_PATH"].to_cstr();
+       17:  134:            this->vec_dict.push_back(pair<string, string>(dictname, dictpath));
+       17:  135:        }
+        -:  136:
+    =====:  137:    } catch (...) {
+    =====:  138:        loginstance->error("[SLU]: failed to load open domain feat config file: " + confpath + ", conf content is wrong");
+    =====:  139:        return ERR_OPEN_DOMAIN_FEAT_CONFIG_CONTENT;
+        -:  140:    }
+        -:  141:	
+       17:  142:	loginstance->info("[SLU]: load open domain feat config file success！");
+        -:  143:
+       17:  144:    return 0;
+        -:  145:}
+        -:  146:
+       17:  147:int OpenDomainFeatExtractor::init_slot_type(){
+       17:  148:    if (this->vec_dict.size() <= 0){
+    #####:  149:        this->_slot_type = NULL;
+    #####:  150:		loginstance->error("[SLU]: open domain feat dict is null！");
+    #####:  151:		loginstance->error("[SLU]: open domain feat slot type init fault！");
+    #####:  152:        return ERR_OPEN_DOMAIN_FEAT_INIT_SLOT_TYPE;
+        -:  153:    }
+        -:  154:    else {
+       17:  155:        this->_slot_type = new slotType(this->vec_dict);
+        -:  156:    }
+        -:  157:	
+       17:  158:	loginstance->info("[SLU]: open domain feat init slot type success！");
+        -:  159:
+       17:  160:    return 0;
+        -:  161:}
+        -:  162:
+        -:  163://< 判断字符串是否存在并返回位置，不存在返回-1
+        -:  164://< 或可直接用map
+      127:  165:int hasLabel(string label, 
+        -:  166:             vector<string> str_vec){
+      532:  167:    for (size_t i = 0; i < str_vec.size(); i++){
+      414:  168:        if (label == str_vec[i]){
+        9:  169:            return i;
+        -:  170:        }
+        -:  171:    }
+        -:  172:
+      118:  173:    return -1;
+        -:  174:}
+        -:  175:
+        -:  176://< push to feat list
+       25:  177:int OpenDomainFeatExtractor::pushfeat(feature::Feature& feats, 
+        -:  178:                                      string default_name, 
+        -:  179:                                      string value){
+       25:  180:    if (_slot_type == NULL){
+    #####:  181:        string feat = default_name + " " + value;
+        -:  182:    }
+        -:  183:
+       25:  184:    string feat = _slot_type->getSlotname(value, default_name) + " " + value;
+       25:  185:    feats.add_feature(feat);
+        -:  186:
+       25:  187:    return 0;
+        -:  188:}
+        -:  189:
+        9:  190:int OpenDomainFeatExtractor::get_feat(feature::Feature& feats, 
+        -:  191:                                      const string query){
+        9:  192:    int ret = 0;
+        -:  193:	
+        9:  194:	vector<string> ws_vec;
+       18:  195:    vector<string> ner_vec;
+       18:  196:    vector<string> pos_vec;
+        -:  197:
+        -:  198:    //< ltp deal
+        9:  199:	ret = pre->wordseg(query, ws_vec);
+        9:  200:    if (ret < 0){
+        -:  201:        //< wordseg error;
+    #####:  202:		loginstance->error("[SLU]: failed to get pre wordseg while open domain get feat!");
+    #####:  203:        return ret;
+        -:  204:    }
+        9:  205:	ret = pre->postag(ws_vec, pos_vec);
+        9:  206:    if (ret < 0){
+        -:  207:        //< postag error;
+    #####:  208:		loginstance->error("[SLU]: failed to get pre postag while open domain get feat!");
+    #####:  209:        return ret;
+        -:  210:    }
+        9:  211:	ret = pre->ner(ws_vec, pos_vec, ner_vec);
+        9:  212:    if (ret < 0){
+        -:  213:        //< ner error;
+    #####:  214:		loginstance->error("[SLU]: failed to get pre ner while open domain get feat!");
+    #####:  215:        return ret;
+        -:  216:    }
+        -:  217:
+       18:  218:    string rh_rs = "r";
+       18:  219:    string nh_labels[4] = {"S-Nh", "B-Nh", "I-Nh", "E-Nh"}; 
+       18:  220:    string ns_labels[4] = {"S-Ns", "B-Ns", "I-Ns", "E-Ns"};
+       18:  221:    string ni_labels[4] = {"S-Ni", "B-Ni", "I-Ni", "E-Ni"};
+       18:  222:    vector<string> nh_label(nh_labels, nh_labels+4);
+       18:  223:    vector<string> ns_label(ns_labels, ns_labels+4);
+       18:  224:    vector<string> ni_label(ni_labels, ni_labels+4);
+        -:  225:
+        -:  226:    //< 解析
+        9:  227:    size_t count = ws_vec.size();
+       34:  228:    for (size_t i = 0; i < count; i++){
+        -:  229:        //< nh
+       25:  230:        if (hasLabel(ner_vec[i], nh_label) != -1){
+        1:  231:            pushfeat(feats, nh, ws_vec[i]);
+        -:  232:        }
+        -:  233:        //< ns
+       24:  234:        else if (hasLabel(ner_vec[i], ns_label) != -1){
+        3:  235:            pushfeat(feats, ns, ws_vec[i]);
+        -:  236:        }
+        -:  237:        //< ni => S-Ni
+       21:  238:        else if (hasLabel(ner_vec[i], ni_label) == 0){
+        1:  239:            pushfeat(feats, ni, ws_vec[i]);
+        -:  240:        }
+        -:  241:        //< ni => B-Ni --- E-ni
+       20:  242:        else if (hasLabel(ner_vec[i], ni_label) == 1){
+        1:  243:            string word = "";
+        2:  244:            for (size_t j = i; j < count; j++){
+        2:  245:                word += ws_vec[j];
+        2:  246:                i = j;
+        2:  247:                if (ner_vec[j] == ni_label[3]){
+        1:  248:                    break;
+        -:  249:                }
+        -:  250:            }
+        1:  251:            pushfeat(feats, ni, word);
+        -:  252:        }
+        -:  253:        //< 人称代词
+       19:  254:        else if (hasLabel(ws_vec[i], rh_words) != -1 && pos_vec[i] == rh_rs){
+        1:  255:            pushfeat(feats, rh, ws_vec[i]);
+        -:  256:        }
+        -:  257:        //< 地点代词
+       18:  258:        else if (hasLabel(ws_vec[i], rs_words) != -1 && pos_vec[i] == rh_rs){
+        1:  259:            pushfeat(feats, rs, ws_vec[i]);
+        -:  260:        }
+        -:  261:        //< 其他
+        -:  262:        else {
+       17:  263:            pushfeat(feats, "O", ws_vec[i]);
+        -:  264:        }
+        -:  265:    }
+        -:  266:	
+        9:  267:	loginstance->info("[SLU]: open domain get feat success!");
+        -:  268:
+       18:  269:    return 0;
+        -:  270:}
+        -:  271:
+        3:  272:} //< namespace feat_extractor;

@@ -1,0 +1,1 @@
+int hobot_print();

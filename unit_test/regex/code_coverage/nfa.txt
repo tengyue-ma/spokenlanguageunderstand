@@ -1,0 +1,1279 @@
+File '../../regex_v1.3/src/nfa.cc'
+Lines executed:77.57% of 758
+Creating 'nfa.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/nfa.cc
+        -:    0:Graph:nfa.gcno
+        -:    0:Data:nfa.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <iostream>
+        -:    2:#include <map>
+        -:    3:#include <set>
+        -:    4:#include <ctime>
+        -:    5:#include <queue>
+        -:    6:#include <cstdlib>
+        -:    7:#include <cstring>
+        -:    8:#include <fstream>
+        -:    9:
+        -:   10:#include "nfa.h"
+        -:   11:#include "nfa_char_union.h"
+        -:   12:#include "utils.h"
+        -:   13:#include "variable.h"
+        -:   14:#include "queue.hpp"
+        -:   15:
+        -:   16:using namespace std;
+        -:   17:
+        -:   18:namespace SemanticRegex{
+        -:   19:
+        -:   20:#define PUSH(que1, que2, que3, que4, que5, val1, val2, val3, val4, val5) \
+        -:   21:	que1.push(val1);	\
+        -:   22:	que2.push(val2);	\
+        -:   23:	que3.push(val3);	\
+        -:   24:	que4.push(val4);	\
+        -:   25:	que5.push(val5);
+        -:   26:
+        -:   27:#define POP(que1, que2, que3, que4, que5) \
+        -:   28:	que1.pop();	\
+        -:   29:	que2.pop();	\
+        -:   30:	que3.pop();	\
+        -:   31:	que4.pop();	\
+        -:   32:	que5.pop();
+        -:   33:
+        -:   34:
+        -:   35://< 支持的元字符
+        -:   36:char _meta_chars[] = {'\\', '$', '^', '*', '(', ')', '+', '[', ']', '{', '}', '?', '<', '>', '&', ':'};
+        1:   37:set<char> meta_chars(_meta_chars, _meta_chars+sizeof(_meta_chars));
+        -:   38:
+        -:   39:
+        -:   40:/*
+        -:   41: * 把集合v1中的元素加入到集合v中
+        -:   42: */
+  6656302:   43:void extend(set<State*>& v, const set<State*>& v1){
+223753431:   44:	for(set<State*>::iterator iter=v1.begin();
+150091646:   45:		iter!=v1.end(); iter++)
+ 65252966:   46:		v.insert(*iter);
+  6582953:   47:}
+        -:   48:
+        -:   49:
+       20:   50:NFA::NFA(){
+       20:   51:	start = NULL;
+       20:   52:	end	  = NULL;
+       20:   53:	width = 0;
+       20:   54:}
+        -:   55:
+        -:   56:/*
+        -:   57: * 拷贝构造函数,复制pnfa指向的NFA的所有状态和边
+        -:   58: */
+     7663:   59:NFA::NFA(const NFA* pnfa){
+     7663:   60:	start = new State();
+     7659:   61:	queue<State*> sque;
+    15325:   62:	queue<State*> sque1;
+     7661:   63:	sque1.push(start);
+     7658:   64:	sque.push(pnfa->start);
+        -:   65:
+    15324:   66:	set<State*> visited;
+    15316:   67:	map<State*, State*> smap;
+     7658:   68:	smap.insert(std::pair<State*, State*>(pnfa->start, start));
+        -:   69:
+   758763:   70:	while(sque.size()>0){
+   734287:   71:		State* ps  = sque.front();
+   737304:   72:		State* ps1 = sque1.front();
+   741295:   73:		sque.pop();
+   736641:   74:		sque1.pop();
+   732524:   75:		if(visited.find(ps) != visited.end())
+   151212:   76:			continue;
+   583340:   77:		visited.insert(ps);
+  1336085:   78:		for(size_t i=0; i<ps->olinks.size(); i++){
+   746541:   79:			Link* pl   = ps->olinks[i];
+        -:   80:			//< 若ps1->olinks[i]->end已经创建过了，则不能重复创建
+   744632:   81:			State* ps2 = NULL;
+   744632:   82:			if(smap.find(pl->end) != smap.end()){
+   152224:   83:				ps2 = smap.find(pl->end)->second;
+        -:   84:			}else{
+   591940:   85:				ps2 = new State();
+   596976:   86:				smap.insert(std::pair<State*, State*>(pl->end, ps2));
+        -:   87:			}
+   750516:   88:			if(pl->ltype == STRING){
+   750516:   89:				CharSet* cs = new CharSet(pl->cs);
+   748492:   90:				Link* pl1  = new Link(ps1, ps2, cs);
+        -:   91:			}else
+    #####:   92:				Link* pl1  = new Link(ps1, ps2, pl->ltype);
+   738009:   93:			if(pl->end->eflag)
+    15485:   94:				end = ps2;
+   738009:   95:			sque.push(pl->end);
+   731847:   96:			sque1.push(ps2);
+        -:   97:		}
+        -:   98:	}
+        -:   99:
+        -:  100:	//< 复制宽度
+     7657:  101:	width = pnfa->width;
+        -:  102:
+     7657:  103:	start->sflag = true;
+    15320:  104:	end->eflag = true;
+     7662:  105:}
+        -:  106:
+        -:  107:/*
+        -:  108: * 创建仅包含一个ltype类型边的NFA,例如:
+        -:  109: * 	start --(CAPS)--> end
+        -:  110: */
+      434:  111:NFA::NFA(LinkType ltype){
+      434:  112:	YES(ltype==STRING, "misused constructor!");
+      434:  113:	start = new State();
+      434:  114:	end   = new State();
+      434:  115:	Link* pl     = new Link(start, end, ltype);
+      432:  116:	start->sflag = true;
+      432:  117:	end->eflag   = true;
+      432:  118:	width = 1;
+      432:  119:}
+        -:  120:
+        -:  121:/*
+        -:  122: * 创建仅包含一条STRING类型边的NFA,例如:
+        -:  123: *  start --播放--> end
+        -:  124: */
+    18745:  125:NFA::NFA(const string& str, CharSetType ctype){
+    18745:  126:	start = new State();
+    18741:  127:	end   = new State();
+    18737:  128:	CharSet* cs = new CharSet(ctype, str);
+    18745:  129:	Link* pl = new Link(start, end, cs);
+    18733:  130:	start->sflag 	= true;
+    18733:  131:	end->eflag 		= true;
+    18733:  132:	width = 1;
+    18733:  133:}
+        -:  134:
+        -:  135:/*
+        -:  136: * 仅释放该NFA所占空间，并不释放
+        -:  137: * NFA中的边和状态所占的空间
+        -:  138: */
+    23367:  139:NFA::~NFA(){
+    23367:  140:}
+        -:  141:
+        -:  142:/*
+        -:  143: * 释放状态及边所占空间
+        -:  144: */
+      299:  145:void NFA::destruct(){
+      299:  146:	set<State*> state_set;
+      598:  147:	queue<State*> state_que;
+      299:  148:	state_que.push(start);
+    81904:  149:	while(state_que.size()>0){
+    81306:  150:		State* ps = state_que.front();
+    81306:  151:		state_que.pop();
+    81306:  152:		if(state_set.find(ps) != state_set.end())
+    16614:  153:			continue;
+    64692:  154:		state_set.insert(ps);
+   145699:  155:		for(size_t i=0; i<ps->olinks.size(); i++){
+    81007:  156:			state_que.push(ps->olinks[i]->end);
+        -:  157:			//< 删除这条边，同时会删除该边上的CharSet
+    81007:  158:			delete ps->olinks[i];
+        -:  159:		}
+    64692:  160:		ps->olinks.clear();
+    64692:  161:		ps->ilinks.clear();
+        -:  162:		//< 删除这个状态节点
+    64692:  163:		delete ps;
+      299:  164:	}
+      299:  165:}
+        -:  166:
+    #####:  167:ostream& operator<<(ostream& out, Group& group){
+    #####:  168:	out << group.grp_idx << ": \"" << group.str << 
+    #####:  169:	"[" << group.start << ", " << group.end << "]\"";
+    #####:  170:	return out;
+        -:  171:}
+        -:  172:
+        -:  173:/*
+        -:  174: * 预匹配,跟正常匹配(即match函数)不同的是,若通过了某条边link到达新状态s,
+        -:  175: * 则下一个考虑的不是s的epsilon闭包状态,而是s的关键状态包
+        -:  176: * 且若当前状态不是关键状态,则直接pass,不进行任何匹配
+        -:  177: */
+      165:  178:size_t NFA::pre_match(const string& raw_sentence,
+        -:  179:					const vector<string>& sentence,
+        -:  180:					const vector< vector<size_t> >& vec_idx){
+        -:  181:
+      165:  182:	size_t sentence_size = sentence.size();
+     1075:  183:	for(size_t i=0; i<sentence_size; i++){
+      945:  184:	    queue<size_t> idx_que;
+     1855:  185:	    queue<State*> state_que;
+    53109:  186:		for(set<State*>::iterator iter=start->key_closure.begin();
+    35406:  187:			iter!=start->key_closure.end(); iter++){
+    16758:  188:			idx_que.push(i);
+    16758:  189:			state_que.push(*iter);
+        -:  190:		}
+        -:  191:
+    18879:  192:		while(state_que.size()>0){
+    17024:  193:            size_t idx = idx_que.front();
+    17024:  194:            State *pstate = state_que.front();
+    17024:  195:            idx_que.pop();
+    17024:  196:            state_que.pop();
+        -:  197:
+    17024:  198:			if(pstate->eflag){
+       35:  199:				return i;
+        -:  200:			}
+        -:  201:
+        -:  202:			//< 若pstate不是关键状态节点,则直接pass
+    16989:  203:			if(!pstate->kflag){
+    #####:  204:				continue;
+        -:  205:			}
+        -:  206:
+        -:  207:			//< 否则,考虑pstate的所有出边
+    68040:  208:			for(size_t j=0; j<pstate->olinks.size(); j++){
+    17031:  209:				Link *pl = pstate->olinks[j];
+    17031:  210:				State *reach_state = pl->end;
+    17031:  211:				bool flag = false;
+    17031:  212:				size_t new_idx = idx;
+        -:  213:				//< 若出边是STRING类型,且字符为普通字符类型,
+        -:  214:				//< 则查看字符串是否出现在用户的query中
+    17031:  215:				if(pl->ltype == STRING && pl->cs->type==ORDINARY){
+    16989:  216:					size_t str_idx = pl->cs->str_idx;
+    17001:  217:					for(size_t i=0; i<vec_idx[str_idx].size(); i++){
+       86:  218:						if(vec_idx[str_idx][i] > idx){
+       74:  219:							new_idx = vec_idx[str_idx][i];
+       74:  220:							flag = true;
+       74:  221:							break;
+        -:  222:						}
+    16989:  223:					}
+        -:  224:				//< 若出边是HEAD类型且idx不等于0,则肯定匹配不上
+       42:  225:				}else if(pl->ltype == HEAD && idx != 0){
+    #####:  226:					return sentence_size;
+        -:  227:				//< 若出边是TAIL类型且idx不等于最后一个位置,则肯定匹配不上
+       42:  228:				}else if(pl->ltype == TAIL && idx != sentence_size-1){
+    #####:  229:					return sentence_size;
+        -:  230:				}
+    17031:  231:				if(flag){
+     1020:  232:					for(set<State*>::iterator iter=reach_state->key_closure.begin();
+      680:  233:						iter!=reach_state->key_closure.end(); iter++){
+      266:  234:						idx_que.push(new_idx);
+      266:  235:						state_que.push(*iter);
+        -:  236:					}
+        -:  237:				}
+        -:  238:			}
+        -:  239:		}
+      910:  240:	}
+        -:  241:
+        -:  242:	//< 若一个都未匹配上,则说明预匹配失败
+      130:  243:	return sentence_size;
+        -:  244:}
+        -:  245:
+        -:  246:/*
+        -:  247: * 匹配语句sentence.匹配的具体过程如下:
+        -:  248: * 从开始状态出发,把
+        -:  249: *  (状态,位置,当前匿名组的开始位置,
+        -:  250: *   已经匹配好的最后一个Group,上一条具有group_name的边link)
+        -:  251: * 入队,然后从队列里面取值,从队列取出每一个值后,判断当前状态的所有出边类型
+        -:  252: * 若下一个字符符合条件,则把出边的到达状态的所有epsilon闭包加入队列中
+        -:  253: * 否则pass.以上过程循环重复,直到队列为空结束.
+        -:  254: * 然后抽取出所有Group,填到一个vector中,返回
+        -:  255: */
+      165:  256:vector<Group> NFA::match(const string& raw_sentence,
+        -:  257:						 const vector<string>& sentence,
+        -:  258:						 const vector< vector<size_t> >& vec_idx,
+        -:  259:						 map<string, int>* log,
+        -:  260:						 string& matched_string, 
+        -:  261:						 RedisWrapper *redis_wrapper){
+      165:  262:	vector<Group> MATCH_GROUP;
+      165:  263:	MATCH_GROUP.clear();
+        -:  264:
+      165:  265:    if(raw_sentence == ""){
+    #####:  266:		return MATCH_GROUP;
+        -:  267:	}
+        -:  268:
+      165:  269:    matched_string = "";
+      165:  270:    size_t sentence_size = sentence.size();
+        -:  271:	
+        -:  272:	//< 先进行预匹配
+      165:  273:	size_t start_idx = pre_match(raw_sentence, sentence, vec_idx);
+        -:  274:
+        -:  275:	//< 从预匹配成功的位置开始进行精确匹配
+        -:  276:	//< 若预匹配失败,则返回的是raw_sentence的长度,则相当于直接pass
+      193:  277:    for(size_t i=start_idx; i<sentence_size; i++){
+       59:  278:		set<Group*> group_set;
+       87:  279:		vector<size_t> final_mc_idx;
+       87:  280:		vector<Group*> final_mc_group;
+        -:  281:
+        -:  282:		//< 已经匹配到的位置
+       87:  283:		queue<size_t> cur_idx_que;
+        -:  284:		//< 已经匹配到的状态节点
+       87:  285:		queue<State*> state_que;
+        -:  286:		//< 当前group的开始位置
+       87:  287:		queue<size_t> beg_idx_que;
+        -:  288:		//< 到当前位置,已经匹配到的group节点
+       87:  289:		queue<Group*> group_que;
+        -:  290:		//< 记录上一条end状态具有group_name的边link
+       87:  291:		queue<Link*>  link_que;
+        -:  292:
+      354:  293:		for(set<State*>::iterator iter=start->closure.begin();
+      236:  294:			iter!=start->closure.end(); iter++){
+       59:  295:			PUSH(cur_idx_que, state_que, beg_idx_que, group_que, link_que,
+        -:  296:				 i, *iter, sentence_size, NULL, NULL);
+        -:  297:			// cout << "pushing (" << i << ", " << *iter << ", "
+        -:  298:			// << sentence_size << ", NULL, NULL)" << endl;
+        -:  299:		}
+        -:  300:
+      793:  301:		while(state_que.size()>0){
+      675:  302:			size_t idx    	= cur_idx_que.front();
+      675:  303:			State* pstate 	= state_que.front();
+      675:  304:			size_t beg_idx	= beg_idx_que.front();
+      675:  305:			Group* group	= group_que.front();
+      675:  306:			Link* link 		= link_que.front();
+      675:  307:			POP(cur_idx_que, state_que, beg_idx_que, group_que, link_que);
+        -:  308:			/*if(group){
+        -:  309:				cout << "Poping (" << idx << ", " << pstate << ", " <<
+        -:  310:				beg_idx << ", " << *group << ", " << link << ")" << endl;
+        -:  311:			}else{
+        -:  312:				cout << "Poping (" << idx << ", " << pstate << ", " <<
+        -:  313:				beg_idx << ", NULL, " << link << ")" << endl;
+        -:  314:			}*/
+        -:  315:
+      675:  316:            if(pstate->eflag){
+       35:  317:				final_mc_idx.push_back(idx);
+       35:  318:				final_mc_group.push_back(group);
+        -:  319:            }
+        -:  320:
+      675:  321:            size_t olinks_size = pstate->olinks.size();
+     1369:  322:            for(size_t j=0; j<olinks_size; j++){
+      694:  323:				bool flag = false;
+      694:  324:				Link* pl = pstate->olinks[j];
+        -:  325:
+      694:  326:				size_t new_idx     = idx+1;
+      694:  327:				size_t new_beg_idx = beg_idx;
+      694:  328:				Group  *new_group  = group;
+      694:  329:				Link   *new_link   = link;
+      694:  330:				if(pl->end->group_name!="")
+    #####:  331:					new_link = pl;
+        -:  332:
+      694:  333:				if(idx<sentence_size && pl->ltype == STRING){
+      441:  334:                    string str = pl->cs->str;
+      441:  335:					if(pl->cs->type == ORDINARY){
+      371:  336:						string tmp = Utils::join(sentence, idx, idx+pl->cs->vec_str.size());
+      371:  337:						if(tmp == pl->cs->str){
+       85:  338:							flag = true;
+       85:  339:							new_idx = idx + pl->cs->vec_str.size();
+      371:  340:						}
+       70:  341:					}else if(pl->cs->type == DATABASE){
+        -:  342:						redisReply *reply;
+        -:  343:						//< 查询redis数据库,从前往后匹配,有一个不匹配则break
+       56:  344:						for(size_t k=idx+1; k<=sentence_size; k++){
+       52:  345:							string tmp = Utils::join(sentence, idx, k);
+       92:  346:                            string key = pl->cs->db_set + "_" + tmp;
+       92:  347:							string cmd = "GET " + key;
+        -:  348:                            //< 查看是否已查询过该key
+       52:  349:							int db_val = -1;
+       52:  350:                            map<string, int>::iterator db_query = log->find(key);
+       52:  351:                            if(db_query == log->end()){
+       36:  352:				                reply = redis_wrapper->query_redis(cmd);
+       36:  353:                                if(reply->str == NULL){
+        8:  354:									db_val   = -1;
+        8:  355:									(*log)[key] = -1;
+       28:  356:                                }else if(reply->str[0]=='1'){
+       12:  357:									db_val   = 1;
+       12:  358:									(*log)[key] = 1;
+        -:  359:                                }else{
+       16:  360:									db_val   = 0;
+       16:  361:									(*log)[key] = 0;
+        -:  362:                                }
+       36:  363:                                freeReplyObject(reply);
+        -:  364:                            }else{
+       16:  365:								db_val = db_query->second;
+        -:  366:							}
+        -:  367:
+       52:  368:							if(db_val == -1){
+       12:  369:								break;
+       40:  370:							}else if(db_val == 1){
+       96:  371:                            	for(set<State*>::iterator iter=pl->end->closure.begin();
+       64:  372:                                   iter!=pl->end->closure.end(); iter++){
+       16:  373:									PUSH(cur_idx_que, state_que, beg_idx_que, group_que, link_que,
+        -:  374:								    	k, *iter, beg_idx, group, new_link);
+        -:  375:									/*if(group){
+        -:  376:										cout << "\tpushing (" << k << ", " << *iter << ", " << 
+        -:  377:										beg_idx << ", " << *group << ", " << new_link << ")" << endl;
+        -:  378:									}else{
+        -:  379:										cout << "\tpushing (" << k << ", " << *iter << ", " << 
+        -:  380:										beg_idx << ", NULL, " << new_link << ")" << endl;
+        -:  381:									}*/
+        -:  382:                         		}
+        -:  383:							}
+       40:  384:						}
+       54:  385:					}else if(pl->cs->type == RANGE){
+    #####:  386:						if(pl->cs->min <= sentence[idx] &&
+    #####:  387:					   	   pl->cs->max >= sentence[idx])
+    #####:  388:							flag = true;
+       54:  389:					}else if(pl->cs->type == NOT){
+    #####:  390:						if(pl->cs->except != sentence[idx])
+    #####:  391:							flag = true;
+       54:  392:					}else if(pl->cs->type == ANY){
+    #####:  393:						flag = true;
+       54:  394:					}else if(pl->cs->type == NOTRANGE){
+    #####:  395:						if(sentence[idx] < pl->cs->min ||
+    #####:  396:						   sentence[idx] > pl->cs->max)
+    #####:  397:						   flag = true;
+      441:  398:					}
+      253:  399:				}else if(CAPS == pl->ltype){
+      124:  400:					flag = true;
+      124:  401:					new_idx = idx;
+      124:  402:					new_beg_idx = idx;
+      129:  403:				}else if(CAPE == pl->ltype){
+        -:  404:					//< CAPE类型,说明匹配完了一个Group,因此需要创建一个新的Group来存储它
+       97:  405:					flag = true;
+       97:  406:					new_idx = idx;
+       97:  407:					new_beg_idx = sentence_size;
+       97:  408:					new_link = NULL;
+        -:  409:					//< 创建一个新的Group
+       97:  410:					new_group = new Group();
+       97:  411:					group_set.insert(new_group);
+       97:  412:					new_group->start = beg_idx;
+       97:  413:					new_group->end   = idx;
+       97:  414:					new_group->pre_group = group;
+       97:  415:					new_group->grp_idx = pl->index;
+       97:  416:					new_group->str = Utils::join(sentence, beg_idx, idx);
+       97:  417:					if(link!=NULL && link->end->group_name!="")
+    #####:  418:						new_group->name = link->end->group_name;
+       97:  419:					new_group->total_group_len = new_group->end - new_group->start;
+       97:  420:					if(new_group->pre_group != NULL)
+       62:  421:						new_group->total_group_len += new_group->pre_group->total_group_len;
+       32:  422:				}else if(HEAD == pl->ltype){
+       32:  423:					if(idx == 0){
+        8:  424:						flag = true;
+        8:  425:						new_idx = idx;
+        -:  426:					}
+    #####:  427:				}else if(TAIL == pl->ltype){
+    #####:  428:					if(idx == sentence_size){
+    #####:  429:						flag = true;
+    #####:  430:						new_idx = idx;
+        -:  431:					}
+        -:  432:				}
+        -:  433:
+      694:  434:				set<State*>::iterator iter;
+      694:  435:				set<State*>& closure = pl->end->closure;
+      694:  436:				if(flag){
+        -:  437:					//< 把reach_state的epsilon闭包这些状态全部加入到队列中
+      914:  438:					for(iter=closure.begin(); iter!=closure.end(); iter++){
+      600:  439:						PUSH(cur_idx_que, state_que, beg_idx_que, group_que, link_que, 
+        -:  440:							 new_idx, *iter, new_beg_idx, new_group, new_link);
+        -:  441:						/*if(new_group){
+        -:  442:							cout << "\tpushing (" << new_idx << ", " << *iter << ", " << 
+        -:  443:							new_beg_idx << ", " << *new_group << ", " << new_link << ")" << endl;
+        -:  444:						}else{
+        -:  445:							cout << "\tpushing (" << new_idx << ", " << *iter << ", " << 
+        -:  446:							new_beg_idx << ", NULL, " << new_link << ")" << endl;
+        -:  447:						}*/
+        -:  448:					}
+        -:  449:				}
+        -:  450:			}
+        -:  451:		}
+        -:  452:
+        -:  453:		//< 若有多个匹配结果，返回最长的一个
+       59:  454:		if(final_mc_idx.size()>0){
+       31:  455:			size_t max_idx = 0;
+       35:  456:			for(size_t j=1; j<final_mc_idx.size(); j++)
+        4:  457:				if(final_mc_idx[j] > final_mc_idx[max_idx])
+        4:  458:					max_idx = j;
+    #####:  459:				else if(final_mc_idx[j]==final_mc_idx[max_idx] &&
+    #####:  460:						final_mc_group[j]!=NULL && final_mc_group[max_idx]!=NULL &&
+    #####:  461:						final_mc_group[j]->total_group_len < final_mc_group[max_idx]->total_group_len)
+    #####:  462:					max_idx = j;
+       31:  463:			matched_string = Utils::join(sentence, i, final_mc_idx[max_idx]);
+       31:  464:			Group *group = final_mc_group[max_idx];
+       31:  465:			MATCH_GROUP.resize(group_num+1);
+      151:  466:			while(group!=NULL)
+        -:  467:			{
+       89:  468:				size_t index = group->grp_idx;
+       89:  469:				MATCH_GROUP[index].start = group->start;
+       89:  470:				MATCH_GROUP[index].end   = group->end;
+       89:  471:				MATCH_GROUP[index].grp_idx = index;
+       89:  472:				MATCH_GROUP[index].name  = group->name;
+       89:  473:				MATCH_GROUP[index].str   = group->str;
+       89:  474:				MATCH_GROUP[index].pre_group = NULL;
+       89:  475:				group = group->pre_group;
+        -:  476:			}
+        -:  477:		}
+        -:  478:
+      468:  479:		for(set<Group*>::iterator iter=group_set.begin();
+      312:  480:			iter!=group_set.end(); iter++){
+       97:  481:			delete *iter;
+        -:  482:		}
+        -:  483:
+       59:  484:		if(final_mc_idx.size()>0)
+       31:  485:			break;
+       28:  486:	}
+        -:  487:
+      165:  488:	return MATCH_GROUP;
+        -:  489:}
+        -:  490:
+        -:  491:/*
+        -:  492: * 为了能捕获到该NFA中的匹配内容
+        -:  493: * 在两端加上CAPS以及CAPE边
+        -:  494: */
+     2461:  495:void NFA::add_cap_links(unsigned idx){
+     2461:  496:	State* ps1 = new State();
+     2460:  497:	State* ps2 = new State();
+     2460:  498:	Link* pl1  = new Link(ps1, start, CAPS, idx);
+     2455:  499:	Link* pl2  = new Link(end, ps2, CAPE, idx);
+     2453:  500:	ps1->sflag = true;
+     2453:  501:	ps2->eflag = true;
+     2453:  502:	start = ps1;
+     2453:  503:	end   = ps2;
+     2453:  504:}
+        -:  505:
+        -:  506:/*
+        -:  507: * 串联两个NFA，实现串联功能
+        -:  508: * 把pnfa->start状态的所有出边链到当前NFA的结束状态上
+        -:  509: * 再把pnfa->start状态的所有入边也链到当前NFA的结束状态上
+        -:  510: * 最后更新当前NFA的宽度
+        -:  511: */
+     8229:  512:void NFA::concat(NFA* pnfa){
+    23015:  513:	for(size_t i=0; i<pnfa->start->olinks.size(); i++){
+    14790:  514:		Link* pl = pnfa->start->olinks[i];
+    14789:  515:		pl->set_start(this->end);
+        -:  516:	}
+     8247:  517:	for(size_t i=0; i<pnfa->start->ilinks.size(); i++){
+       19:  518:		Link* pl = pnfa->start->ilinks[i];
+       19:  519:		pl->set_end(this->end);
+        -:  520:	}
+     8227:  521:	end->eflag = false;
+     8227:  522:	pnfa->start->sflag = false;
+     8227:  523:	if(!pnfa->start->kflag)
+     2208:  524:		end->kflag = false;
+     8227:  525:	this->end = pnfa->end;
+     8227:  526:	delete pnfa->start;
+        -:  527:
+        -:  528:	//< 宽度设置
+     8231:  529:	if(width < pnfa->width)
+     3157:  530:		width = pnfa->width;
+        -:  531:
+     8231:  532:	delete pnfa;
+     8231:  533:}
+        -:  534:
+        -:  535:/*
+        -:  536: * 或两个NFA，实现'|'功能
+        -:  537: * 创建两个新的状态s1和s2
+        -:  538: * 创建两条从s1出发的epsilon边,一条到start,另一条到pnfa->start
+        -:  539: * 创建两条到达s2的epsilon边,一条从end出发,另一条从pnfa->end出发
+        -:  540: * 将s1和s2分别设为当前NFA新的开始状态start和结束状态end
+        -:  541: * 更新宽度
+        -:  542: */
+    14810:  543:void NFA::multiple(NFA* pnfa){
+    14810:  544:	if(NULL == start){
+    #####:  545:		throw std::runtime_error("Cannot or an NFA with an empty NFA!");
+        -:  546:	}else{
+        -:  547:		//< "(ab)|(cd)"这种表达式会产生捕获的歧义性，因此强制用户按规范书写
+    14810:  548:		if(start->olinks.size()==1 && start->olinks[0]->ltype==CAPS){
+    #####:  549:			if(pnfa->start->olinks.size()==1 && pnfa->start->olinks[0]->ltype==CAPS)
+    #####:  550:				YES(true, "to correctly capture matched string, you are suggested to write\n"
+        -:  551:					"regular expressions like \"(ab|cd)\" instead of \"(ab)|(cd)\"\n");
+        -:  552:		}
+    14810:  553:		State *s1 = new State();
+    14808:  554:		State *s2 = new State();
+        -:  555:
+    14807:  556:		Link *pl1 = new Link(s1, start, new CharSet());
+    14807:  557:		Link *pl2 = new Link(s1, pnfa->start, new CharSet());
+        -:  558:
+    14805:  559:		Link *pl3 = new Link(end, s2, new CharSet());
+    14806:  560:		Link *pl4 = new Link(pnfa->end, s2, new CharSet());
+        -:  561:
+    14809:  562:		s1->sflag = true;
+    14809:  563:		s2->eflag = true;
+        -:  564:
+    14809:  565:		start = s1;
+    14809:  566:		end = s2;
+        -:  567:
+        -:  568:		//< 注意更新宽度
+    14809:  569:		width = width + pnfa->width;
+        -:  570:
+    14809:  571:		delete pnfa;
+        -:  572:	}
+    14811:  573:}
+        -:  574:
+        -:  575:/*
+        -:  576: * 使得NFA可选，实现'?'功能
+        -:  577: * 创建一条从start到end状态的epsilon边即可
+        -:  578: * 但是,要同时设置从start状态开始,到end状态(不包含end)
+        -:  579: * 的所有状态全部为非关键状态
+        -:  580: */
+     2999:  581:void NFA::optional(){
+     2999:  582:	CharSet* cs = new CharSet();
+     2999:  583:	State *s1 = start, *s2 = end;
+        -:  584:	//< 考虑匿名捕获的问题: (a|b)?
+     2999:  585:	if(start->olinks.size() == 1 && start->olinks[0]->ltype == CAPS)
+      634:  586:		s1 = start->olinks[0]->end;
+     3000:  587:	if(end->ilinks.size() == 1 && end->ilinks[0]->ltype == CAPE)
+      634:  588:		s2 = end->ilinks[0]->start;
+     3000:  589:	Link* pl = new Link(s1, s2, cs);
+        -:  590:
+        -:  591:	//< 设置中间状态全部为非关键节点
+     3000:  592:	set<State*> visited;
+     5998:  593:	queue<State*> s_que;
+     2999:  594:	s_que.push(s1);
+   119788:  595:	while(s_que.size()>0){
+   112940:  596:		State* pstate = s_que.front();
+   113131:  597:		s_que.pop();
+   113021:  598:		if(visited.find(pstate) != visited.end())
+    53199:  599:			continue;
+    87951:  600:		visited.insert(pstate);
+    89469:  601:		if(pstate == s2 || !pstate->kflag)
+     2999:  602:			continue;
+   197065:  603:		for(size_t i=0; i<pstate->olinks.size(); i++){
+   111262:  604:			s_que.push(pstate->olinks[i]->end);
+        -:  605:		}
+    85691:  606:		pstate->kflag = false;
+     2998:  607:	}
+     2998:  608:}
+        -:  609:
+        -:  610:/*
+        -:  611: * 使得NFA可重复多次，实现'+'功能
+        -:  612: */
+       42:  613:void NFA::repeat(){
+       42:  614:	CharSet* cs = new CharSet();
+       42:  615:	State *s1 = start, *s2 = end;
+       42:  616:	if(start->olinks.size() == 1 && start->olinks[0]->ltype == CAPS)
+       42:  617:		s1 = start->olinks[0]->end;
+       42:  618:	if(end->ilinks.size() == 1 && end->ilinks[0]->ltype == CAPE)
+       42:  619:		s2 = end->ilinks[0]->start;
+       42:  620:	Link* pl = new Link(s2, s1, cs);
+        -:  621:	//< 创建pl时,s1的sflag会被赋为false,所以再设一遍
+        -:  622:	//< 同样,s2的eflag也会被赋为false,所以再设一遍
+       42:  623:	start->sflag = true;
+       42:  624:	end->eflag   = true;
+       42:  625:}
+        -:  626:
+        -:  627:/*
+        -:  628: * 使得NFA可重复0次或多次，实现'*'功能
+        -:  629: */
+       21:  630:void NFA::repeat0(){
+       21:  631:	optional();
+       21:  632:	repeat();
+       21:  633:}
+        -:  634:
+        -:  635:/*
+        -:  636: * 使得NFA可重复m~n次，实现'{m, n}'功能
+        -:  637: */
+      329:  638:void NFA::repeatn(int min_num, int max_num){
+      329:  639:	unsigned index = 0;
+      329:  640:	if(start->olinks.size() == 1 && start->olinks[0]->ltype == CAPS){
+    #####:  641:		if(end->ilinks[0]->ltype != CAPE)
+    #####:  642:			YES(true, "expression illegal!");
+    #####:  643:		State *s1 = start, *s2 = end;
+    #####:  644:		index = start->olinks[0]->index;
+    #####:  645:		this->start = start->olinks[0]->end;
+    #####:  646:		this->end   = end->ilinks[0]->start;
+    #####:  647:		this->start->sflag = true;
+    #####:  648:		this->end->eflag   = true;
+        -:  649:		//< 删除原start->olinks[0]->end的入边中的CAPS边
+    #####:  650:		for(vector<Link*>::iterator iter=start->ilinks.begin();
+    #####:  651:			iter!=start->ilinks.end(); iter++){
+    #####:  652:			if(*iter == s1->olinks[0]){
+    #####:  653:				start->ilinks.erase(iter);
+    #####:  654:				break;
+        -:  655:			}
+        -:  656:		}
+        -:  657:		//< 删除原end->ilinks[0]->start的出边中的CAPE边
+    #####:  658:		for(vector<Link*>::iterator iter=end->olinks.begin();
+    #####:  659:			iter!=end->olinks.end(); iter++){
+    #####:  660:			if(*iter == s2->ilinks[0]){
+    #####:  661:				end->olinks.erase(iter);
+    #####:  662:				break;
+        -:  663:			}
+        -:  664:		}
+    #####:  665:		delete s1->olinks[0];
+    #####:  666:		delete s2->ilinks[0];
+    #####:  667:		delete s1;
+    #####:  668:		delete s2;
+        -:  669:	}
+        -:  670:
+        -:  671:	//< 先备份当前NFA，因为当前NFA后面会扩展
+      329:  672:	NFA* orig_nfa = new NFA(this);
+      329:  673:	State* last_nfa_start = this->start;
+        -:  674:
+        -:  675:	//< 指定了最小重复次数
+      329:  676:	if(min_num > 0){
+      538:  677:		for(size_t i=1; i<min_num; i++){
+      228:  678:			last_nfa_start = this->end;
+      228:  679:			NFA* spnfa = new NFA(orig_nfa);
+      228:  680:			this->concat(spnfa);
+        -:  681:		}
+        -:  682:	}
+        -:  683:
+        -:  684:	//< 未指定最大重复次数，即相当于可重复无限次
+      329:  685:	if(max_num == -1){
+       19:  686:		CharSet* cs = new CharSet();
+       19:  687:		Link* pl = new Link(end, last_nfa_start, cs);
+        -:  688:	//< 指定了最大重复次数，相当于增加max_num-min_num个NFA进去
+        -:  689:	}else{
+      310:  690:		int diff = max_num - min_num;
+      310:  691:		vector<State*> start_states;
+      310:  692:		if(min_num<=0){
+       19:  693:			start_states.push_back(this->start);
+       19:  694:			diff = max_num - 1;
+        -:  695:		}
+     2482:  696:		for(size_t j=0; j<diff; j++){
+     2172:  697:			start_states.push_back(this->end);
+     2171:  698:			NFA* spnfa = new NFA(orig_nfa);
+     2172:  699:			this->concat(spnfa);
+        -:  700:		}
+     2501:  701:		for(size_t k=0; k<start_states.size(); k++){
+     2191:  702:			CharSet* cs = new CharSet();
+     2191:  703:			Link* pl = new Link(start_states[k], this->end, cs);
+      310:  704:		}
+        -:  705:	}
+        -:  706:
+      329:  707:	if(index)
+    #####:  708:		this->add_cap_links(index);
+        -:  709:	//< print();
+        -:  710:
+      329:  711:	delete orig_nfa;
+      329:  712:}
+        -:  713:
+        -:  714:/*
+        -:  715: * 计算NFA的epsilon闭包以及key闭包，从结束状态
+        -:  716: * 往前走，采用闭包回传的机制，结果
+        -:  717: * 保存到每个节点的closure变量中
+        -:  718: */
+      970:  719:void NFA::epsilon_closure(){
+        -:  720:	//< 从结束状态出发，往前走
+      970:  721:	map<State*, unsigned> old_size;
+     1939:  722:	map<State*, unsigned> key_old_size;
+     1937:  723:	queue<State*> sque;
+      969:  724:	sque.push(end);
+      969:  725:	end->closure.insert(end);
+      970:  726:	end->key_closure.insert(end);
+        -:  727:
+  3287712:  728:	while( sque.size()>0 ){
+  3267102:  729:		State* ps = sque.front();
+  3267396:  730:		sque.pop();
+  3263865:  731:		old_size.clear();
+  3284461:  732:		key_old_size.clear();
+  7705567:  733:		for(size_t i=0; i<ps->ilinks.size(); i++){
+  4455214:  734:			Link* pl = ps->ilinks[i];
+  4453190:  735:			State* pstart = pl->start;
+  4453190:  736:			if(old_size.find(pstart) == old_size.end())
+  4410087:  737:				old_size[pstart] = pstart->closure.size();
+  4423347:  738:			if(key_old_size.find(pstart) == key_old_size.end())
+  4379614:  739:				key_old_size[pstart] = pstart->key_closure.size();
+  4428133:  740:			if(pl->ltype == STRING && pl->cs->type == EPSILON){
+  3231801:  741:				extend(pstart->closure, ps->closure);
+        -:  742:			}else{
+  1196332:  743:				pstart->closure.insert(pstart);
+        -:  744:			}
+        -:  745:			//< 若边为STRING类型,而且字符集为普通字符,且为关键状态
+  4425616:  746:			if(pl->ltype == STRING && pl->cs->type == ORDINARY && pstart->kflag){
+   953232:  747:				pstart->key_closure.insert(pstart);
+        -:  748:			}else{
+  3472384:  749:				extend(pstart->key_closure, ps->key_closure);
+        -:  750:			}
+        -:  751:		}
+  3266809:  752:		set<State*> tmp_set;
+ 23037412:  753:		for(map<State*, unsigned>::iterator iter=old_size.begin();
+ 15410313:  754:			iter!=old_size.end(); iter++){
+        -:  755:			//< 若iter->first指向的节点的闭包发生了变化，则需要把这个变化回传
+  4408171:  756:			if(iter->second != iter->first->closure.size()){
+  2495531:  757:				sque.push(iter->first);
+  2494532:  758:				tmp_set.insert(iter->first);
+        -:  759:			}
+        -:  760:		}
+ 23009136:  761:		for(map<State*, unsigned>::iterator iter=key_old_size.begin();
+ 15383832:  762:			iter!=key_old_size.end(); iter++){
+        -:  763:			//< 若iter->first指向的节点的key闭包发生了变化，则也需要把这个变化回传
+  4426952:  764:			if(iter->second != iter->first->key_closure.size()){
+  3033081:  765:				if(tmp_set.find(iter->first) == tmp_set.end())
+   778060:  766:					sque.push(iter->first);
+        -:  767:			}
+        -:  768:		}
+  3277465:  769:	}
+      967:  770:}
+        -:  771:
+    #####:  772:void NFA::print(const char* dot_file){
+    #####:  773:	cout << endl << endl;
+    #####:  774:	set<State*> ss;
+    #####:  775:	if(NULL == dot_file){
+    #####:  776:		cout << "\t\tStart state: " << this->start << endl;
+    #####:  777:		cout << "\t\tEnd state: " << this->end << endl;
+        -:  778:	}
+    #####:  779:	queue<State*> sque;
+    #####:  780:	sque.push(start);
+    #####:  781:	while(sque.size()>0){
+    #####:  782:		State* ps = sque.front();
+    #####:  783:		sque.pop();
+    #####:  784:		if(ss.find(ps) != ss.end())	// 若未访问过，则pass掉
+    #####:  785:			continue;
+    #####:  786:		if(ps->sflag)
+    #####:  787:			cout << "\t\t+++ State " << ps << " (start state, ";
+    #####:  788:		else if(ps->eflag)
+    #####:  789:			cout << "\t\t+++ State " << ps << " (end state, ";
+        -:  790:		else
+    #####:  791:			cout << "\t\t+++ State " << ps << ", ";
+    #####:  792:		if(ps->kflag)
+    #####:  793:			cout << "key state): ";
+        -:  794:		else
+    #####:  795:			cout << "not-key state): ";
+    #####:  796:		cout << "epsilon closure( ";
+    #####:  797:		for(set<State*>::iterator iter=ps->closure.begin();
+    #####:  798:			iter!=ps->closure.end(); iter++){
+    #####:  799:			cout << *iter << ", ";
+        -:  800:		}
+    #####:  801:		cout << "), ";
+    #####:  802:		cout << "key closure( ";
+    #####:  803:		for(set<State*>::iterator iter=ps->key_closure.begin();
+    #####:  804:			iter!=ps->key_closure.end(); iter++){
+    #####:  805:			cout << *iter << ", ";
+        -:  806:		}
+    #####:  807:		cout << ")" << endl;
+    #####:  808:		for(size_t i=0; i<ps->olinks.size(); i++){
+    #####:  809:			cout << "\t\t\t";
+    #####:  810:			if(ps->olinks[i]->ltype == STRING){
+    #####:  811:					if(ps->olinks[i]->cs->type == ORDINARY)
+    #####:  812:						cout << ps->olinks[i]->cs->str;
+    #####:  813:					else if(ps->olinks[i]->cs->type == ANY)
+    #####:  814:						cout << "ANY";
+    #####:  815:					else if(ps->olinks[i]->cs->type == EPSILON)
+    #####:  816:						cout << "EPSILON";
+    #####:  817:					else if(ps->olinks[i]->cs->type == RANGE)
+    #####:  818:						cout << "(" << ps->olinks[i]->cs->min << " - " << ps->olinks[i]->cs->max << ")";
+    #####:  819:					else if(ps->olinks[i]->cs->type == NOT)
+    #####:  820:						cout << "^" << ps->olinks[i]->cs->except;
+    #####:  821:					else if(ps->olinks[i]->cs->type == NOTRANGE)
+    #####:  822:						cout << "^(" << ps->olinks[i]->cs->min << " - " << ps->olinks[i]->cs->max << ")";
+    #####:  823:					else if(ps->olinks[i]->cs->type == DATABASE)
+    #####:  824:						cout << "DATABASE: " << ps->olinks[i]->cs->db_set;
+        -:  825:					else
+    #####:  826:						cout << "OTHER";
+    #####:  827:			}else if(ps->olinks[i]->ltype == CAPS){
+    #####:  828:				cout << "CAPS";
+    #####:  829:			}else if(ps->olinks[i]->ltype == CAPE){
+    #####:  830:				cout << "CAPE";
+    #####:  831:			}else if(ps->olinks[i]->ltype == HEAD){
+    #####:  832:				cout << "HEAD";
+    #####:  833:			}else if(ps->olinks[i]->ltype == TAIL){
+    #####:  834:				cout << "TAIL";
+        -:  835:			}
+    #####:  836:			cout << " ---> " << ps->olinks[i]->end << endl;
+    #####:  837:			sque.push(ps->olinks[i]->end);
+        -:  838:		}
+    #####:  839:		ss.insert(ps);
+        -:  840:	}
+        -:  841:
+    #####:  842:	cout << endl << endl;
+    #####:  843:}
+        -:  844:
+    #####:  845:void print_nfa_vec(const vector<Nfa_Char_Union*>& nfa_vec){
+    #####:  846:	cout << "====== Nfa_Char_Union in stack ======" << endl;
+    #####:  847:	for(size_t i=0; i<nfa_vec.size(); i++){
+    #####:  848:		cout << "\telement " << i+1 << ":" << endl;
+    #####:  849:		if(nfa_vec[i]->pnfa == NULL){
+    #####:  850:			cout << "\t\t" << nfa_vec[i]->c << endl;
+        -:  851:		}else{
+    #####:  852:			nfa_vec[i]->pnfa->print();
+        -:  853:		}
+        -:  854:	}
+    #####:  855:	cout << "###### Nfa_Char_Union in stack ######" << endl << endl;
+    #####:  856:}
+        -:  857:
+        -:  858:/*
+        -:  859: * merge函数,在读到一个"|"或")"时,需要先把前面的NFA合并
+        -:  860: * 由于两者的合并过程是一样的,所以写成一个函数,两种case都可以调用
+        -:  861: *	nfa_vec:	Nfa_Char_Union组成的一个栈,存于vector中
+        -:  862: *	c	   :	当前处理的字符,仅可能为"|"或")"
+        -:  863: *	brac_num:	已经有多少个"("左括号,左括号个数大于1时,不增加CAPS和CAPE边
+        -:  864: *	group_num:	指明第几个匿名组
+        -:  865: *	expression:	当前是在给变量还是表达式创建NFA,若是表达式,则增加CAPS和CAPE以支持匿名捕获
+        -:  866: */
+    21313:  867:void merge(vector<Nfa_Char_Union*>& nfa_vec, char c, 
+        -:  868:			int& brac_num, int& group_num, bool expression=true){
+    21313:  869:	YES(nfa_vec.size()==0 || nfa_vec.back()->pnfa==NULL, "expression illegal! merge");
+    21311:  870:	Nfa_Char_Union *cur_ptr=NULL, *pre_ptr=NULL;
+    21311:  871:	cur_ptr = pre_ptr = nfa_vec.back();
+    21310:  872:	nfa_vec.pop_back();
+    63258:  873:	while(nfa_vec.size()>0){
+    25487:  874:		cur_ptr = nfa_vec.back();
+    25492:  875:		if(cur_ptr->pnfa == NULL){
+    19663:  876:			if(cur_ptr->c == '|'){
+    14810:  877:				delete cur_ptr;
+    14811:  878:				nfa_vec.pop_back();
+    14811:  879:				cur_ptr = nfa_vec.back();
+    14810:  880:				YES(NULL==cur_ptr->pnfa, "expression illegal! merge");
+    14810:  881:				cur_ptr->pnfa->multiple(pre_ptr->pnfa);
+     4853:  882:			}else if(cur_ptr->c == '('){
+     4853:  883:				if(c==')'){
+     3018:  884:					delete cur_ptr;
+     3018:  885:					nfa_vec.pop_back();
+     3019:  886:					brac_num--;
+     3019:  887:					if(expression && 0 == brac_num){
+     2461:  888:						group_num++;
+     2461:  889:						pre_ptr->pnfa->add_cap_links(group_num);
+        -:  890:					}
+        -:  891:				}
+        -:  892:				//< 在最后合并时，肯定已经没有了括号
+     4846:  893:				break;
+        -:  894:			}else{
+    #####:  895:				YES(true, "expression illegal!");
+        -:  896:			}
+        -:  897:		}else{
+     5829:  898:			cur_ptr->pnfa->concat(pre_ptr->pnfa);
+        -:  899:		}
+    20639:  900:		delete pre_ptr;
+    20642:  901:		pre_ptr = cur_ptr;
+    20642:  902:		nfa_vec.pop_back();
+        -:  903:	}
+    21303:  904:	nfa_vec.push_back(pre_ptr);
+    21308:  905:}
+        -:  906:
+        -:  907:/*
+        -:  908: * 根据正则表达式建立一个NFA
+        -:  909: *	expr:		正则表达式内容
+        -:  910: *	var_table:	正则表达式可能会引用到变量,因此需要一张变量表,key为变量表达式,value为相应的NFA
+        -:  911: *	expression:	是规则中的export 表达式类型还是变量定义
+        -:  912: *	return:		返回最终的NFA
+        -:  913: */
+     3489:  914:NFA* build_NFA(const char* expr, map<string, Variable*>& var_table, bool expression=true){
+        -:  915:	//< 一元操作符: ? * + ^
+        -:  916:	//<	二元操作符:  | ( ) [ ] { } -
+     3489:  917:	vector<string> exprs;
+        -:  918:
+        -:  919:	//< 先切割出所有的utf-8字符
+     3490:  920:	Utils::utf8strs(expr, exprs);
+        -:  921:
+        -:  922:	//< 栈
+     6979:  923:	vector<Nfa_Char_Union*> nfa_vec;
+        -:  924:	//< 括号数量
+     3489:  925:	int brac_num = 0;
+        -:  926:	//< 匿名捕获的数量
+     3489:  927:	int group_num = 0;
+        -:  928:
+    52073:  929:	for(size_t i=0; i<exprs.size(); i++){
+    48605:  930:		if(exprs[i].size()==1){
+    32311:  931:			switch(exprs[i][0]){
+        -:  932:				case '\\':
+        -:  933:				{
+        -:  934:					//< 转义，后面必须跟元字符
+       19:  935:					YES(i+1>=exprs.size(), "expression illegal, \
+        -:  936:						\\ must be followed by a meta char!");
+       19:  937:					YES(exprs[i+1].size()!=1, "expression illegal, \
+        -:  938:						\\ must be followed by a meta char!");
+       19:  939:					YES(meta_chars.find(exprs[i+1][0])==meta_chars.end(),
+        -:  940:						"expression illegal, \\ must be followed by a meta char!");
+       19:  941:					i++;
+        -:  942:					//< 当成普通的字符加入进去
+       19:  943:					nfa_vec.push_back(new Nfa_Char_Union(new NFA(exprs[i])));
+      -24:  944:					break;
+        -:  945:				}
+        -:  946:
+        -:  947:				case '|':
+        -:  948:				{
+    14810:  949:					merge(nfa_vec, '|', brac_num, group_num);
+    14805:  950:					nfa_vec.push_back(new Nfa_Char_Union('|'));
+    14810:  951:					break;
+        -:  952:				}
+        -:  953:
+        -:  954:				case '?':
+        -:  955:				{
+     2977:  956:					YES(nfa_vec.empty() || nfa_vec.back()->pnfa==NULL, "expression illegal for ? !");
+     2978:  957:					nfa_vec.back()->pnfa->optional();
+     2977:  958:					break;
+        -:  959:				}
+        -:  960:
+        -:  961:				case '*':
+        -:  962:				{
+       21:  963:					YES(nfa_vec.empty() || nfa_vec.back()->pnfa==NULL, "expression illegal for * !");
+       21:  964:					nfa_vec.back()->pnfa->repeat0();
+       21:  965:					break;
+        -:  966:				}
+        -:  967:
+        -:  968:				case '+':
+        -:  969:				{
+       21:  970:					YES(nfa_vec.empty() || nfa_vec.back()->pnfa==NULL, "expression illegal for + !");
+       21:  971:					nfa_vec.back()->pnfa->repeat();
+       21:  972:					break;
+        -:  973:				}
+        -:  974:
+        -:  975:				case '^':
+        -:  976:				{
+      280:  977:					if(i == 0)
+      280:  978:						nfa_vec.push_back(new Nfa_Char_Union(new NFA(HEAD)));
+        -:  979:					else
+    #####:  980:						YES(true, "expression illegal! '^' must be the "
+        -:  981:						"first character or follow '\\'!");
+      279:  982:					break;
+        -:  983:				}
+        -:  984:
+        -:  985:				case '$':
+        -:  986:				{
+        -:  987:					//< 代表元字符，表示结尾
+      154:  988:					if(i == exprs.size()-1){
+      154:  989:						YES(nfa_vec.back()->pnfa==NULL, "expression illegal! "
+        -:  990:						"'$' must be the last character or follow '\\'!");
+      154:  991:						nfa_vec.push_back(new Nfa_Char_Union(new NFA(TAIL)));
+        -:  992:					}else{
+    #####:  993:						YES(true, "expression illegal! '$' must be "
+        -:  994:						"the last character or follow '\\'!");
+        -:  995:					}
+      154:  996:					break;
+        -:  997:				}
+        -:  998:
+        -:  999:				case '{':
+        -: 1000:				{
+        -: 1001:					//< 若后面是数字，则为重复次数,否则当成普通字符串
+      329: 1002:					i++;
+      329: 1003:					bool flag = true;
+      658: 1004:					string min="", max="";
+      329: 1005:					int min_num = -1, max_num = -1;
+     1759: 1006:					while(i<exprs.size()){
+     1430: 1007:						if(exprs[i].size() == 1){
+     1430: 1008:							if(exprs[i][0] == ','){
+      310: 1009:								if(flag)
+      310: 1010:									flag = false;
+        -: 1011:								else
+    #####: 1012:									YES(true, "exression illegal!");
+     1120: 1013:							}else if((exprs[i][0]>=48 && exprs[i][0]<=57) || exprs[i][0]==' '){
+      791: 1014:								if(flag)
+      329: 1015:									min += exprs[i];
+        -: 1016:								else
+      462: 1017:									max += exprs[i];
+        -: 1018:							}else
+      329: 1019:								break;
+        -: 1020:						}else{
+    #####: 1021:							break;
+        -: 1022:						}
+     1101: 1023:						i++;
+        -: 1024:					}
+      329: 1025:					min = Utils::strip(min);
+      329: 1026:					max = Utils::strip(max);
+        -: 1027:					//< 不以'}'结尾，或上限及下限都不存在，则直接当成普通字符串考虑
+      329: 1028:					if(i==exprs.size() || exprs[i]!="}" || (min.size()==0 && max.size()==0))
+    #####: 1029:						YES(true, "expression illegal!");
+        -: 1030:
+      329: 1031:					if(min.size()>0)
+      310: 1032:						min_num = Utils::str2uint(min);
+      329: 1033:					if(max.size()>0)
+      291: 1034:						max_num = Utils::str2uint(max);
+        -: 1035:					//< 若未指定最大值，则最小值肯定已指
+        -: 1036:					//< ','未出现，说明最大值最小值相同
+      329: 1037:					if(-1 == max_num){
+       38: 1038:						if(flag)
+       19: 1039:							max_num = min_num;
+        -: 1040:					}else{
+      291: 1041:						YES(max_num<min_num, "the maximum repeat "
+        -: 1042:						"number must be larger than the minimum!");
+        -: 1043:					}
+      329: 1044:					YES(nfa_vec.back()->pnfa==NULL, "expression illegal! "
+        -: 1045:						"the '{' must follow a concrete regular expression!");
+      329: 1046:					nfa_vec.back()->pnfa->repeatn(min_num, max_num);
+      658: 1047:					break;
+        -: 1048:				}
+        -: 1049:
+        -: 1050:				case '}':
+        -: 1051:				{
+    #####: 1052:					nfa_vec.push_back(new Nfa_Char_Union(new NFA(exprs[i])));
+    #####: 1053:					break;
+        -: 1054:				}
+        -: 1055:
+        -: 1056:				case '[':
+        -: 1057:				{
+        -: 1058:					//< 字符集合
+       19: 1059:					i++;
+       19: 1060:					vector<CharSet*> cs_vec;
+       57: 1061:					for(; i<exprs.size() && exprs[i]!="]"; i++){
+       38: 1062:						if(exprs[i] == "-"){
+        -: 1063:							//< 后面已经没有了字符
+       19: 1064:							if(i+1>=exprs.size() || exprs[i+1]=="]"){
+    #####: 1065:								cs_vec.push_back(new CharSet(ORDINARY, "-"));
+        -: 1066:							//< 或者前面没有字符
+       19: 1067:							}else if(cs_vec.size()<=0 || cs_vec.back()->type!=ORDINARY){
+    #####: 1068:								cs_vec.push_back(new CharSet(ORDINARY, "-"));
+        -: 1069:							//< 否则，当成RANGE字符集
+        -: 1070:							}else{
+       19: 1071:								CharSet* cs = cs_vec.back();
+       19: 1072:								cs_vec.pop_back();
+       19: 1073:								i++;
+       19: 1074:								cs_vec.push_back(new CharSet(cs->str, exprs[i], RANGE));
+       19: 1075:								delete cs;
+        -: 1076:							}
+       19: 1077:						}else if(exprs[i] == "^"){
+        -: 1078:							//< 后面已经没有了字符，则表达式非法
+    #####: 1079:							if(i+1>=exprs.size() || exprs[i+1]=="]")
+    #####: 1080:								YES(true, "expression illegal!");
+    #####: 1081:							cs_vec.push_back(new CharSet(NOT, exprs[i]));
+       19: 1082:						}else if(exprs[i] == "\\"){
+    #####: 1083:							i++;
+    #####: 1084:							YES(i>=exprs.size(), "expression illegal!");
+    #####: 1085:							YES(exprs[i].size()!=1 || meta_chars.find(exprs[i][0])==meta_chars.end(),
+        -: 1086:							"\\must be followed by meta characters like * + . ^ $ !");
+    #####: 1087:							cs_vec.push_back(new CharSet(ORDINARY, exprs[i+1]));
+        -: 1088:						}else{
+       19: 1089:							cs_vec.push_back(new CharSet(ORDINARY, exprs[i]));
+        -: 1090:						}
+        -: 1091:					}
+       19: 1092:					if(i==exprs.size()){
+        -: 1093:						//< 若表达式非法,先释放空间再抛出异常
+    #####: 1094:						for(size_t j=0; j<cs_vec.size(); j++)
+    #####: 1095:							delete cs_vec[j];
+    #####: 1096:						cs_vec.clear();
+    #####: 1097:						YES(true, "expression illegal!");
+        -: 1098:					}
+       19: 1099:					NFA* pnfa 	 = new NFA();
+       19: 1100:					State* start = new State();
+       19: 1101:					State* end   = new State();
+        -: 1102:					//< 处理栈里面的非字符集
+       38: 1103:					for(size_t j=0; j<cs_vec.size(); j++){
+       19: 1104:						if(cs_vec[j]->type == NOT){
+    #####: 1105:							YES(j+1>=cs_vec.size(), "expression illegal!");
+        -: 1106:							//< 先删除当前的CharSet
+    #####: 1107:							delete cs_vec[j];
+    #####: 1108:							j++;
+    #####: 1109:							if(cs_vec[j]->type == ORDINARY){
+    #####: 1110:								cs_vec[j]->type   = NOT;
+    #####: 1111:								cs_vec[j]->except = cs_vec[j]->str;
+    #####: 1112:								cs_vec[j]->str 	  = "";
+    #####: 1113:							}else if(cs_vec[j]->type == RANGE){
+    #####: 1114:								cs_vec[j]->type   = NOTRANGE;
+        -: 1115:							}else{
+    #####: 1116:								delete start;
+    #####: 1117:								delete end;
+    #####: 1118:								delete pnfa;
+    #####: 1119:								YES(true, "expression illegal!");
+        -: 1120:							}
+        -: 1121:						}
+       19: 1122:						Link* pl = new Link(start, end, cs_vec[j]);
+       19: 1123:						pnfa->width++;
+        -: 1124:					}
+       19: 1125:					start->sflag = true;
+       19: 1126:					end->eflag = true;
+       19: 1127:					pnfa->start = start;
+       19: 1128:					pnfa->end   = end;
+       19: 1129:					cs_vec.clear();
+       19: 1130:					nfa_vec.push_back(new Nfa_Char_Union(pnfa));
+       19: 1131:					break;
+        -: 1132:				}
+        -: 1133:
+        -: 1134:				case ']':
+        -: 1135:				{
+    #####: 1136:					nfa_vec.push_back(new Nfa_Char_Union(new NFA(exprs[i])));
+    #####: 1137:					break;
+        -: 1138:				}
+        -: 1139:
+        -: 1140:				case '.':
+        -: 1141:				{
+        -: 1142:					//< 通配符
+       19: 1143:					nfa_vec.push_back(new Nfa_Char_Union(new NFA(exprs[i], ANY)));
+       19: 1144:					break;
+        -: 1145:				}
+        -: 1146:
+        -: 1147:				case '<':
+        -: 1148:				{
+        -: 1149:					//< 变量开始的标记
+     4932: 1150:					string var_name = "";
+    22327: 1151:					for(++i; i<exprs.size() && exprs[i]!=">"; i++)
+    17387: 1152:						var_name += exprs[i];
+     4933: 1153:					if(i==exprs.size() || var_name.size()==0)
+    #####: 1154:						YES(true, "expression illegal! '<' must follow '\\' or variable names ended by '>'!");
+     4933: 1155:					if(var_table.find(var_name) == var_table.end()){
+    #####: 1156:						string msg = "expression illegal! variable " + var_name + " undefined!";
+    #####: 1157:						YES(true, msg);
+     4930: 1158:					}else if(var_table[var_name]->pnfa_ == NULL){
+      659: 1159:						Variable *var = var_table[var_name];
+      659: 1160:						var->pnfa_ = build_NFA(var->var_value_.c_str(), var_table, false);
+        -: 1161:					}
+     4933: 1162:					nfa_vec.push_back(new Nfa_Char_Union(new NFA(var_table[var_name]->pnfa_)));
+     4935: 1163:					break;
+        -: 1164:				}
+        -: 1165:
+        -: 1166:				case '>':
+        -: 1167:				{
+    #####: 1168:					nfa_vec.push_back(new Nfa_Char_Union(new NFA(exprs[i])));
+    #####: 1169:					break;
+        -: 1170:				}
+        -: 1171:
+        -: 1172:				case '&':
+        -: 1173:				{	//< 数据库标志，说明该变量来自数据库
+      588: 1174:					YES(i+1>=exprs.size()||exprs[i+1]!="<", "expression illegal for case &!");
+      588: 1175:					string set_name;
+     7560: 1176:					for(i += 2; i<exprs.size()&&exprs[i]!=">"; i++)
+     6972: 1177:						set_name += exprs[i];
+      588: 1178:					YES(i>=exprs.size(), "expression illegal for case &!");
+      588: 1179:					nfa_vec.push_back(new Nfa_Char_Union(new NFA(set_name, DATABASE)));
+      588: 1180:					break;
+        -: 1181:				}
+        -: 1182:
+        -: 1183:				case '(':
+        -: 1184:				{
+        -: 1185:					//< 说明入栈了一个左括号
+     3017: 1186:					nfa_vec.push_back(new Nfa_Char_Union('('));
+     3018: 1187:					brac_num++;
+     3018: 1188:					break;
+        -: 1189:				}
+        -: 1190:
+        -: 1191:				case ')':
+        -: 1192:				{
+        -: 1193:					//< 往前合并，直到遇见第一个左括号'('为止
+     3017: 1194:					merge(nfa_vec, ')', brac_num, group_num, expression);
+     3015: 1195:					break;
+        -: 1196:				}
+        -: 1197:
+        -: 1198:				case ':':
+        -: 1199:				{
+        -: 1200:					//< 往后读该匿名组的名称,匿名组名称只能包含大小写字母
+      304: 1201:					string group_name = "";
+      304: 1202:					i++;
+      608: 1203:					while(i<exprs.size() && exprs[i] == " ")
+    #####: 1204:						i++;
+     2546: 1205:					while(i<exprs.size() && exprs[i].size()==1){
+     2166: 1206:						bool flag = false;
+     2166: 1207:						if(exprs[i][0]>=65 && exprs[i][0]<=90)
+    #####: 1208:							flag = true;
+     2166: 1209:						else if(exprs[i][0]>=97 && exprs[i][0]<=122)
+     1938: 1210:							flag = true;
+      228: 1211:						else if(exprs[i][0]=='_' || (exprs[i][0]>=48 && exprs[i][0]<=57 && group_name.size()>0))
+    #####: 1212:							flag = true;
+     2166: 1213:						if(!flag)
+      228: 1214:							break;
+        -: 1215:						else
+     1938: 1216:							group_name += exprs[i];
+     1938: 1217:						i++;
+        -: 1218:					}
+      304: 1219:					YES(group_name.size()<=0, "':' must be followed by a group name consist of alphabet, digits and '_'!")
+        -: 1220:					//< 以':'定义的匿名组名称只能包含在最外层的匿名组中
+        -: 1221:					//< YES(brac_num!=1, "':' group name must be used in first layer '()' group!");
+      304: 1222:					YES(nfa_vec.empty() || nfa_vec.back()->pnfa==NULL, "':' must follow NFAs!");
+      608: 1223:					set<State*> closure = nfa_vec.back()->pnfa->end->re_epsilon_closure();
+    58531: 1224:					for(set<State*>::iterator it=closure.begin(); it!=closure.end(); it++){
+    57684: 1225:						(*it)->group_name = group_name;
+        -: 1226:					}
+      304: 1227:					i--;
+      608: 1228:					break;
+        -: 1229:				}
+        -: 1230:
+        -: 1231:				default:
+        -: 1232:				{
+        -: 1233:					//< 单字情况，直接push一个新的NFA即可
+     1810: 1234:					nfa_vec.push_back(new Nfa_Char_Union(new NFA(exprs[i])));
+     1810: 1235:					break;
+        -: 1236:				}
+        -: 1237:			}
+        -: 1238:		}else{
+    16305: 1239:            string word = exprs[i++];
+    44860: 1240:            while(i<exprs.size() && exprs[i].size()>1){
+    12242: 1241:				bool tflag = false;
+        -: 1242:				//< 若是最后一个字符,自然可以添加
+    12242: 1243:				if(i+1 == exprs.size())
+      828: 1244:					tflag = true;
+        -: 1245:				//< 否则,后一个字符必须不为{'?', '+', '{'}中的字符
+    11413: 1246:				else if(exprs[i+1]!="?" && exprs[i+1]!="+" && exprs[i+1]!="{")
+    11410: 1247:					tflag = true;
+    12238: 1248:				if(!tflag)
+    #####: 1249:					break;
+    12238: 1250:                word += exprs[i];
+    12242: 1251:                i++;
+    16309: 1252:            } i--;
+    16309: 1253:			nfa_vec.push_back(new Nfa_Char_Union(new NFA(word)));
+        -: 1254:		}
+        -: 1255:	}
+        -: 1256:
+        -: 1257:	//< 合并nfa_vec中的所有NFA
+     3488: 1258:	YES(nfa_vec.empty(), "empty regular expression!");
+     3488: 1259:	merge(nfa_vec, '|', brac_num, group_num);
+        -: 1260:
+        -: 1261:	//< 为变量建立NFA时，不计算epsilon闭包
+        -: 1262:	//< 为正则表达式建立NFA时，要计算epsilon闭包
+     3490: 1263:	if(expression){
+      970: 1264:		nfa_vec.back()->pnfa->epsilon_closure();
+      967: 1265:		nfa_vec.back()->pnfa->group_num = group_num;
+        -: 1266:	}
+        -: 1267:
+     6977: 1268:	return nfa_vec.back()->pnfa;
+        -: 1269:}
+        -: 1270:
+        3: 1271:}

@@ -1,0 +1,373 @@
+File '../work_flow/src/SemanticInfo.cpp'
+Lines executed:77.78% of 180
+去除判空及日志后：94% 0f 118
+Creating 'SemanticInfo.cpp.gcov'
+        -:    0:Source:../work_flow/src/SemanticInfo.cpp
+        -:    0:Graph:SemanticInfo.gcno
+        -:    0:Data:SemanticInfo.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: SemanticInfo.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: Tue 06 Mar 2018 04:50:37 PM CST
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <algorithm>
+        -:   10:#include "utils.h"
+        -:   11:#include "SemanticInfo.h"
+        -:   12:#include "SluErrorCode.h"
+        -:   13:#include "SluLog.h"
+        -:   14:
+        -:   15:using namespace std;
+        -:   16:
+        -:   17:extern
+        -:   18://< 存入query
+        -:   19://< 对query切分为单字符并存储到seq_vec
+        6:   20:int SemanticInfo::set_query(const string& query){
+        -:   21:    //< set query
+        6:   22:    this->query = query;
+        -:   23:
+        -:   24:    //< set seq_vec
+        6:   25:    if (!utils::strSplit2simple(query, this->seq_vec)){
+    #####:   26:        loginstance->error("[SLU]: failed to split query!");
+    #####:   27:        return ERR_SEMANTIC_INFO_SPLIT_QUERY;
+        -:   28:    }
+        -:   29:
+        6:   30:    loginstance->info("[SLU]: split query success!");
+        -:   31:
+        6:   32:    return 0;
+        -:   33:}
+        -:   34:
+        -:   35://< 存入无领域序列标注结果
+        4:   36:int SemanticInfo::set_null_slots(const vector<string>& tags){
+        4:   37:    this->global_slots = tags2slots(tags);
+        -:   38:
+        4:   39:    return 0;
+        -:   40:}
+        -:   41:
+        1:   42:int SemanticInfo::set_null_slots(const vector<_slot>& slots){
+        1:   43:    this->global_slots = slots;
+        -:   44:
+        1:   45:    return 0;
+        -:   46:}
+        -:   47:
+        -:   48://< 存入domain信息 one-best & n-best
+        4:   49:int SemanticInfo::set_domain(const vector<pair<string, float> >& domain_vec){
+        -:   50:    //< 先清空vec
+        4:   51:    this->form_vec.clear();
+        -:   52:    //< 循环填充
+        8:   53:    for (size_t i = 0; i < domain_vec.size(); i++){
+        4:   54:        _form form;
+        4:   55:        form.domain.classes = domain_vec[i].first;
+        4:   56:        form.domain.score = domain_vec[i].second;
+        -:   57:        //< push
+        4:   58:        this->form_vec.push_back(form);
+        4:   59:    }
+        -:   60:    
+        4:   61:    if (this->form_vec.size() <= 0){
+    #####:   62:        loginstance->error("[SLU]: failed to set domain!");
+    #####:   63:        return ERR_SEMANTIC_INFO_SET_DOMAIN;
+        -:   64:    }
+        -:   65:
+        4:   66:    loginstance->info("[SLU]: set domain success!");
+        -:   67:
+        4:   68:    return 0;
+        -:   69:}
+        -:   70:
+        1:   71:int SemanticInfo::set_domain(const vector<clf_info>& domain_vec){
+        -:   72:    //< 清空vec
+        1:   73:    this->form_vec.clear();
+        -:   74:    //< 循环填充
+        2:   75:    for (size_t i = 0; i < domain_vec.size(); i++){
+        1:   76:        _form form;
+        1:   77:        form.domain = domain_vec[i];
+        -:   78:
+        -:   79:        //< push
+        1:   80:        this->form_vec.push_back(form);
+        1:   81:    }
+        -:   82:    
+        1:   83:    if (this->form_vec.size() <= 0){
+    #####:   84:        loginstance->error("[SLU]: failed to set domain!!");
+    #####:   85:        return ERR_SEMANTIC_INFO_SET_DOMAIN;
+        -:   86:    }
+        -:   87:
+        1:   88:    loginstance->info("[SLU]: set domain success!!");
+        -:   89:
+        1:   90:    return 0;
+        -:   91:}
+        -:   92:
+        -:   93://< 存入限定领域的intent信息 one-best
+        4:   94:int SemanticInfo::set_intent(const string& domain, 
+        -:   95:                             const vector<pair<string, float> >& intent_vec){
+        4:   96:    bool flag = false;
+        -:   97:
+        -:   98:    //< 找到对应的限定领域
+        5:   99:    for (size_t i = 0; i < this->form_vec.size(); i++){
+        4:  100:        if (domain == this->form_vec[i].domain.classes){
+        -:  101:            //< one-best
+        6:  102:            for (size_t j = 0; j < 1 && j < intent_vec.size(); j++){
+        3:  103:                this->form_vec[i].intent.classes = intent_vec[j].first;
+        3:  104:                this->form_vec[i].intent.score = intent_vec[j].second;
+        3:  105:                flag = true;
+        -:  106:            }
+        3:  107:            break;
+        -:  108:        }
+        -:  109:    }
+        -:  110:
+        4:  111:    if (!flag){
+        1:  112:        loginstance->error("[SLU]: failed to set intent!");
+        1:  113:        return ERR_SEMANTIC_INFO_SET_INTENT;
+        -:  114:    }
+        -:  115:
+        3:  116:    loginstance->info("[SLU]: set intent success!");
+        -:  117:
+        3:  118:    return 0;
+        -:  119:}
+        -:  120:
+        2:  121:int SemanticInfo::set_intent(const string& domain, 
+        -:  122:                             const clf_info& intent){
+        2:  123:    bool flag = false;
+        -:  124:
+        -:  125:    //< 找到对应的限定领域
+        3:  126:    for (size_t i = 0; i < this->form_vec.size(); i++){
+        2:  127:        if (domain == this->form_vec[i].domain.classes){
+        -:  128:            //< one-best
+        1:  129:            this->form_vec[i].intent = intent;
+        -:  130:
+        1:  131:            flag = true;
+        1:  132:            break;
+        -:  133:        }
+        -:  134:    }
+        -:  135:
+        2:  136:    if (!flag){
+        1:  137:        loginstance->error("[SLU]: failed to set intent!!");
+        1:  138:        return ERR_SEMANTIC_INFO_SET_INTENT;
+        -:  139:    }
+        -:  140:
+        1:  141:    loginstance->info("[SLU]: set intent success!!");
+        -:  142:
+        1:  143:    return 0;
+        -:  144:}
+        -:  145:
+        -:  146://< 存入限定领域的序列标注结果
+        2:  147:int SemanticInfo::set_slots(const string& domain, 
+        -:  148:                            const vector<string>& tags){
+        2:  149:    bool flag = false;
+        -:  150:
+        -:  151:    //< 找到对应的限定领域
+        3:  152:    for (size_t i = 0; i < this->form_vec.size(); i++){
+        2:  153:        if (domain == this->form_vec[i].domain.classes){
+        1:  154:            this->form_vec[i].slots = tags2slots(tags);
+        -:  155:
+        1:  156:            flag = true;
+        1:  157:            break;
+        -:  158:        }
+        -:  159:    }
+        -:  160:
+        2:  161:    if (!flag){
+        1:  162:        loginstance->error("[SLU]: failed to set slots!");
+        1:  163:        return ERR_SEMANTIC_INFO_SET_SLOTS;
+        -:  164:    }
+        -:  165:
+        1:  166:    loginstance->info("[SLU]: set slots success!");
+        -:  167:
+        1:  168:    return 0;
+        -:  169:}
+        -:  170:
+        3:  171:int SemanticInfo::set_slots(const string& domain, 
+        -:  172:                            const vector<_slot>& slots){
+        3:  173:    bool flag = false;
+        -:  174:
+        -:  175:    //< 找到对应的限定领域
+        4:  176:    for (size_t i = 0; i < this->form_vec.size(); i++){
+        3:  177:        if(domain == this->form_vec[i].domain.classes){
+        2:  178:            this->form_vec[i].slots = slots;
+        -:  179:
+        2:  180:            flag = true;
+        2:  181:            break;
+        -:  182:        }
+        -:  183:    }
+        -:  184:
+        3:  185:    if (!flag){
+        1:  186:        loginstance->error("[SLU]: failed to set slots!!");
+        1:  187:        return ERR_SEMANTIC_INFO_SET_SLOTS;
+        -:  188:    }
+        -:  189:
+        2:  190:    loginstance->info("[SLU]: set slots success!!");
+        -:  191:
+        2:  192:    return 0;
+        -:  193:}
+        -:  194:
+        1:  195:int SemanticInfo::set_form(const _form& form){
+        1:  196:    this->form_vec.push_back(form);
+        -:  197:
+        1:  198:    return 0;
+        -:  199:}
+        -:  200:
+        1:  201:int SemanticInfo::set_forms(vector<_form>& forms){
+        1:  202:    this->form_vec = forms;
+        -:  203:
+        1:  204:    return 0;
+        -:  205:}
+        -:  206:
+        2:  207:int SemanticInfo::set_match_mode(string match_mode){
+        2:  208:    this->match_mode = match_mode;
+        2:  209:    return 0;
+        -:  210:}
+        -:  211:
+        -:  212://< 获取domain信息
+        1:  213:vector<string> SemanticInfo::get_domain(){
+        1:  214:    vector<string> domains;
+        -:  215:
+        2:  216:    for (size_t i = 0; i < this->form_vec.size(); i++){
+        1:  217:        domains.push_back(this->form_vec[i].domain.classes);
+        -:  218:    }
+        -:  219:
+        1:  220:    return domains;
+        -:  221:}
+        -:  222:
+        -:  223://< 获取限定领域的intent信息
+        1:  224:string SemanticInfo::get_intent(const string& domain){
+        1:  225:    string intent;
+        -:  226:
+        1:  227:    for (size_t i = 0; i < this->form_vec.size(); i++){
+        1:  228:        if (domain == this->form_vec[i].domain.classes){
+        1:  229:            intent = this->form_vec[i].intent.classes;
+        1:  230:            break;
+        -:  231:        }    
+        -:  232:    }
+        -:  233:
+        1:  234:    return intent;
+        -:  235:}
+        -:  236:
+        -:  237://< 获取限定领域的slots信息
+        2:  238:vector<_slot> SemanticInfo::get_slots(const string& domain){
+        2:  239:    vector<_slot> slots;
+        -:  240:
+        2:  241:    if (domain == "null"){
+        1:  242:        return this->global_slots;
+        -:  243:    }
+        -:  244:
+        1:  245:    for (size_t i = 0; i < this->form_vec.size(); i++){
+        1:  246:        if (domain == this->form_vec[i].domain.classes){
+        1:  247:            slots = this->form_vec[i].slots;
+        1:  248:            break;
+        -:  249:        }
+        -:  250:    }
+        -:  251:
+        1:  252:    return slots;
+        -:  253:}
+        -:  254:
+        -:  255://< 获取完整的form信息
+        1:  256:vector<_form> SemanticInfo::get_forms(){
+        1:  257:    return this->form_vec;
+        -:  258:}
+        -:  259:
+        -:  260://< 获取match_mode信息
+        1:  261:string SemanticInfo::get_match_mode(){
+        1:  262:    return this->match_mode;
+        -:  263:}
+        -:  264:
+        -:  265://< 获取query信息
+        1:  266:string SemanticInfo::get_query(){
+        1:  267:    return this->query;
+        -:  268:}
+        -:  269:
+        -:  270://< 获取ner_query
+        1:  271:string SemanticInfo::get_ner_query(string domain){
+        1:  272:    string res;
+        1:  273:    if (domain == "null"){
+        1:  274:        res = slots2ner_query(this->global_slots);
+        -:  275:    }
+        -:  276:    else {
+    #####:  277:        for (size_t i = 0; i < this->form_vec.size(); i++){
+    #####:  278:            if (domain == this->form_vec[i].domain.classes){
+    #####:  279:                res = slots2ner_query(this->form_vec[i].slots);
+    #####:  280:                break;
+        -:  281:            }
+        -:  282:        }
+        -:  283:    }
+        -:  284:
+        1:  285:    return res;
+        -:  286:}
+        -:  287:
+        -:  288://< tags to slots
+        5:  289:vector<_slot> SemanticInfo::tags2slots(const vector<string>& tags){
+        5:  290:    vector<_slot> slots;
+       10:  291:    vector<pair<string, string> > slot_list;
+       10:  292:    vector<pair<int, int> > slot_range;
+        -:  293:
+        5:  294:    if (utils::ner_decode(slot_list, slot_range, tags, this->seq_vec) == -1){
+    #####:  295:        loginstance->error("[SLU]: failed to ner decode!");
+        -:  296:    }
+        -:  297:    
+        5:  298:    if (slot_list.size() != slot_range.size()){
+    #####:  299:        loginstance->error("[SLU]: lot count error!");
+        -:  300:    }
+        -:  301:
+       15:  302:    for (size_t i = 0; i < slot_list.size(); i++){
+       10:  303:        _slot slot;
+       10:  304:        slot.name  = slot_list[i].first;
+       10:  305:        slot.value = slot_list[i].second;
+       10:  306:        slot.start = slot_range[i].first;
+       10:  307:        slot.end   = slot_range[i].second;
+        -:  308:
+       10:  309:        slots.push_back(slot);
+       10:  310:    }
+        -:  311:
+        5:  312:    loginstance->info("[SLU]: tags to slots success!");
+        -:  313:
+       10:  314:    return slots;
+        -:  315:}
+        -:  316:
+        -:  317://< sort slot start
+        2:  318:bool compare(const _slot& slot1, const _slot& slot2){
+        2:  319:    return slot1.start < slot2.start;
+        -:  320:}
+        -:  321:
+        -:  322://< slots to ner query
+        1:  323:string SemanticInfo::slots2ner_query(const vector<_slot>& slots){
+        -:  324:    //< 判断value是否存在于原query
+        -:  325:    //< 如果不存在直接返回query
+        3:  326:    for (size_t i = 0; i < slots.size(); i++){
+        2:  327:        string value;
+        8:  328:        for (size_t j = slots[i].start; j <= slots[i].end && j < this->seq_vec.size(); j++){
+        6:  329:            value += this->seq_vec[j];
+        -:  330:        }
+        2:  331:        if (value != slots[i].value){
+    #####:  332:            return this->query;
+        -:  333:        }
+        2:  334:    }
+        -:  335:    //< 如果全部存在;
+        1:  336:    string ner_query;
+        1:  337:    int idx = 0;
+        1:  338:    bool flag = false;
+        -:  339:
+        2:  340:    vector<_slot> slots_c = slots;
+        1:  341:    sort(slots_c.begin(), slots_c.end(), compare);
+        -:  342:
+        3:  343:    for (size_t i = 0; i < slots_c.size(); i++){
+        2:  344:        flag = true;
+        2:  345:        int start = slots_c[i].start;
+        2:  346:        int end   = slots_c[i].end;
+        -:  347:
+        3:  348:        for ( ; idx < start && idx < this->seq_vec.size(); idx++){
+        1:  349:            ner_query += this->seq_vec[idx];
+        -:  350:        }
+        2:  351:        ner_query += "[" + slots_c[i].value + ":" + slots_c[i].name + "]";
+        2:  352:        idx = end+1;
+        -:  353:    } 
+        -:  354:
+        1:  355:    for ( ; idx < this->seq_vec.size(); idx++){
+    #####:  356:        ner_query += this->seq_vec[idx];
+        -:  357:    }
+        -:  358:
+        1:  359:    if (!flag){
+    #####:  360:        ner_query = this->query;   
+        -:  361:    }
+        -:  362:
+        2:  363:    return ner_query;
+        3:  364:}

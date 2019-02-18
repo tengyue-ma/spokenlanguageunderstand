@@ -1,0 +1,134 @@
+music	inform	我想听张学友的一千个伤心的理由	artist=张学友,title=一千个伤心的理由	0.9	regex	371.90ms
+music	inform	刘德华的冰雨唱一个	artist=刘德华,title=冰雨	0.90	regex	122.79ms
+music	inform	刘德华的冰雨	artist=刘德华,title=冰雨	0.70	regex	69.67ms
+music	inform	我要听林志炫的单身情歌	artist=林志炫,title=单身情歌	0.90	regex	198.07ms
+music	inform	周杰伦的告白气球	artist=周杰伦,title=告白气球	0.70	regex	99.64ms
+music	inform	陈奕迅的好久不见	artist=陈奕迅,title=好久不见	0.70	regex	100.19ms
+music	inform	筷子兄弟的小苹果	artist=筷子兄弟,title=小苹果	0.70	regex	98.12ms
+music	inform	来一首凤凰传奇的最炫民族风	artist=凤凰传奇,title=最炫民族风	0.90	regex	227.14ms
+music	inform	刘德华的男人哭吧不是罪	artist=刘德华,title=男人哭吧不是罪	0.70	regex	159.02ms
+music	inform	播放周杰伦的稻香	artist=周杰伦,title=稻香	0.90	regex	116.96ms
+music	inform	我想听周杰伦的青花瓷	artist=周杰伦,title=青花瓷	0.90	regex	172.01ms
+music	inform	随便播放张杰的一首歌	artist=张杰	14.45	model	209.35ms
+music	inform	我想听周杰伦的歌	artist=周杰伦	1.00	regex	139.84ms
+music	inform	来一首周杰伦的歌	artist=周杰伦	1.00	regex	119.43ms
+music	inform	放首张杰的歌	artist=张杰	1.00	regex	89.45ms
+music	inform	我要听张震岳的歌	artist=张震岳	1.00	regex	139.53ms
+music	inform	来一首林俊杰的歌	artist=林俊杰	1.00	regex	125.36ms
+music	inform	来一首王俊凯的歌	artist=王俊凯	1.00	regex	129.15ms
+music	inform	周杰伦的歌	artist=周杰伦	1.00	regex	66.95ms
+music	inform	周董的歌	artist=周董	1.00	regex	57.27ms
+music	inform	想听周杰伦的伤感音乐	artist=周杰伦,tag=伤感	1.00	regex	166.44ms
+music	inform	唱一首蔡依林唱的英文歌	artist=蔡依林,language=英文	1.00	regex	193.26ms
+music	inform	想听凤凰传奇的广场舞歌曲	artist=凤凰传奇,tag=广场舞	1.00	regex	212.09ms
+music	inform	来首英文的字母歌吧	language=英文,title=字母歌	1.00	regex	132.16ms
+music	inform	来一个粤语的十年	language=粤语,title=十年	1.00	regex	117.82ms
+music	confirm	可以放一首七里香吗	title=七里香	0.80	regex	175.87ms
+music	inform	我要听小乌龟	title=小乌龟	0.90	regex	92.24ms
+music	inform	唱首两只老虎	title=两只老虎	0.90	regex	71.26ms
+music	inform	播放两只老虎	title=两只老虎	0.90	regex	78.06ms
+music	inform	来一首两只老虎	title=两只老虎	0.90	regex	96.93ms
+music	inform	来一首两只老虎吧	title=两只老虎	0.90	regex	107.88ms
+music	inform	我要听小苹果	title=小苹果	0.90	regex	88.90ms
+music	inform	唱首平凡之路吧	title=平凡之路	0.90	regex	86.94ms
+poem	inform	有没有李白的关山月	author=李白,title=关山月	2.40	regex	144.33ms
+poem	inform	能不能读一下李白的静夜思	author=李白,title=静夜思	2.40	regex	256.06ms
+poem	inform	朗诵孟浩然的春晓	author=孟浩然,title=春晓	2.40	regex	95.62ms
+poem	inform	想听李商隐的春雨	author=李商隐,title=春雨	2.40	regex	114.33ms
+poem	inform	我想听望庐山瀑布	title=望庐山瀑布	2.40	regex	125.99ms
+poem	inform	背一下柳宗元的渔翁	author=柳宗元,title=渔翁	2.40	regex	122.36ms
+poem	inform	读一下王维的渭城曲	author=王维,title=渭城曲	2.40	regex	128.40ms
+poem	inform	我想听王勃的滕王阁序	author=王勃,title=滕王阁序	2.40	regex	165.16ms
+poem	inform	来一个李白的静夜思	author=李白,title=静夜思	2.40	regex	136.36ms
+poem	inform	好想听王维的渭川田家	author=王维,title=渭川田家	8.29	model	159.82ms
+poem	inform	贺知章的回乡偶书背一下	author=贺知章,title=回乡偶书	17.53	model	152.86ms
+poem	inform	朗诵个李白的描写春天的诗吧	author=李白,tag=春天	23.49	model	196.12ms
+poem	inform	播放一首杜甫描写春天的诗	author=杜甫,tag=春天	18.25	model	195.16ms
+poem	inform	我想听李白描写月亮的诗	author=李白,tag=月亮	2.40	regex	193.03ms
+poem	inform	我想听李白的诗	author=李白	2.40	regex	106.74ms
+poem	inform	想听杜甫的诗	author=杜甫	2.40	regex	78.76ms
+poem	inform	背首杜甫的诗	author=杜甫	2.40	regex	66.11ms
+poem	inform	来一首白居易的诗	author=白居易	2.40	regex	113.78ms
+story	inform	给我们讲个故事吧	1.80	regex	120.22ms
+story	inform	我想听三只小猪的故事	title=三只小猪	1.89	regex	170.82ms
+story	inform	听听乌鸦喝水的故事	title=乌鸦喝水	1.89	regex	130.87ms
+story	inform	我想听卖火柴的小女孩	title=卖火柴的小女孩	1.89	regex	165.58ms
+story	inform	讲小红帽的故事	title=小红帽	1.89	regex	86.99ms
+story	inform	狼来了的故事	title=狼来了	19.26	model	70.34ms
+story	inform	我想听白雪公主的故事	title=白雪公主	1.89	regex	175.50ms
+story	inform	讲一下白雪公主的故事吧	title=白雪公主	1.89	regex	165.78ms
+story	inform	讲个白雪公主的故事	title=白雪公主	1.89	regex	124.65ms
+story	inform	我想听睡美人	title=睡美人	1.89	regex	88.48ms
+story	inform	我想听龟兔赛跑的故事	title=龟兔赛跑	1.89	regex	165.13ms
+story	inform	龟兔赛跑	title=龟兔赛跑	1.99	regex	42.76ms
+story	inform	我要听小蝌蚪找妈妈的故事	title=小蝌蚪找妈妈	1.89	regex	214.56ms
+story	inform	讲个大闹天宫的故事吧	title=大闹天宫	1.89	regex	135.43ms
+other	other	我好无聊啊	1.00	model	58.65ms
+other	other	我很开心	2.00	regex	46.45ms
+other	other	我很难过	2.00	regex	43.23ms
+other	other	你叫什么名字啊	1.00	model	88.29ms
+other	other	你今年几岁啦	1.00	model	67.31ms
+other	other	你今年几岁了	1.00	model	68.16ms
+other	other	你有妈妈吗	2.00	regex	70.63ms
+other	other	你叫什么呀	1.00	model	56.51ms
+other	other	你最喜欢吃什么呀	1.00	model	100.92ms
+other	other	你喜欢吃什么	2.00	regex	68.57ms
+other	other	你是哪个公司的	1.00	model	83.25ms
+other	other	你爸爸是谁	1.00	model	56.97ms
+other	other	你妈妈是谁	1.00	model	55.54ms
+other	other	一年有多少天	1.00	model	76.75ms
+other	other	广东省省会是哪个城市	loc_province=广东省	1.00	model	138.75ms
+other	other	中国第一个奥运会冠军是谁	loc_country=中国	1.00	model	178.74ms
+other	other	喜马拉雅山有多高	loc_poi=喜马拉雅山	1.00	model	99.67ms
+other	other	世界上最高的山	1.00	model	78.68ms
+weather	inform	深圳明天要带伞吗	loc_city=深圳,time=明天,focus=伞	1.00	model	110.07ms
+other	other	牛奶的英文说法	1.00	model	87.93ms
+other	other	宠物的英文说法	1.00	model	89.63ms
+other	other	机器人的英文说法	1.00	model	102.78ms
+other	other	你知道沙发用英文怎么说吗	2.00	regex	211.54ms
+phone	inform	35乘9	number=9	1.00	model	57.80ms
+other	other	35乘九	1.00	model	48.87ms
+other	other	三十五乘九	1.00	model	63.37ms
+other	other	三十五乘9	1.00	model	65.57ms
+other	other	三十五乘以九	1.00	model	74.95ms
+other	other	35乘以9	loc_poi=以	1.00	model	60.38ms
+other	other	35乘以九	1.00	model	57.64ms
+other	other	三十五乘以9	loc_poi=以	1.00	model	77.35ms
+other	other	108÷3	1.00	model	68.78ms
+other	other	一百零八除三	1.00	model	72.07ms
+other	other	一百零八除以三	1.00	model	82.48ms
+other	other	108除以三	1.00	model	72.59ms
+other	other	108除以3	1.00	model	77.75ms
+other	other	中国有几个省份	loc_country=中国	1.00	model	87.58ms
+other	other	现在几点	1.00	model	41.46ms
+other	other	帮我设置明天早上五点闹钟	1.00	model	201.45ms
+other	other	苹果的英文是什么	1.00	model	94.92ms
+other	other	二加六等于多少	1.00	model	83.17ms
+other	other	2+6等于多少	1.00	model	84.81ms
+other	other	2加6等于多少	1.00	model	81.80ms
+nav	inform	我要导航去南京站	des_poi=南京站	1.00	model	111.00ms
+nav	inform	去南京站的路线	des_poi=南京站	1.00	model	82.40ms
+nav	inform	去南京站避免拥堵	des_poi=南京站,rou_pre=避免拥堵	1.00	model	94.63ms
+nav	inform	从这里出发去南京站	dep_poi=这里,des_poi=南京站	1.00	model	119.23ms
+nav	inform	从公司导航去南京站	dep_poi=公司,des_poi=南京站	1.00	model	112.34ms
+nav	inform	从南京大学导航去南京站	dep_poi=南京大学,des_poi=南京站	1.00	model	146.80ms
+nav	inform	导航从南京大学出发去往苏州大学途经苏州火车站不走高速	dep_poi=南京大学,des_poi=苏州大学,via_poi=苏州火车站,rou_pre=不走高速	1.00	model	124.40ms
+control	app	打开高德	name=高德,opr=open	5.60	regex	40.61ms
+vehicle_control	inform	帮我把空调打开	obj_1=空调,opr_1=open	5.00	regex	52.66ms
+vehicle_control	inform	关掉空调	obj_1=空调,opr_1=close	5.00	regex	34.79ms
+vehicle_control	inform	空调吹头	wd_dir_val_1=吹头,obj_1=空调	5.00	regex	32.47ms
+vehicle_control	inform	风量调到最低	obj_1=空调,wd_pwr_val_1=min	5.00	regex	44.20ms
+vehicle_control	inform	把风量调到一档	wd_pwr_abs_val_1=一,obj_1=空调	5.00	regex	46.59ms
+vehicle_control	inform	风量调至一档	wd_pwr_abs_val_1=一,obj_1=空调	5.00	regex	42.54ms
+vehicle_control	inform	空调温度调高些	obj_1=空调,temp_step_val_1=step	5.00	regex	46.37ms
+vehicle_control	inform	空调调低一度	temp_rel_sign_1=低,temp_rel_val_1=一,obj_1=空调	5.00	regex	43.30ms
+vehicle_control	inform	打开内循环	cycle_val_1=内循环,obj_1=循环系统	5.00	regex	35.11ms
+vehicle_control	inform	把车窗都打开	obj_1=窗,opr_1=open	5.00	regex	39.12ms
+vehicle_control	inform	帮我把车窗全部关掉	obj_1=窗,opr_1=close	5.00	regex	62.13ms
+vehicle_control	inform	关闭全部车窗	obj_1=全部车窗,opr_1=close	5.00	regex	43.25ms
+phone	inform	我想跟张文涛通电话	contact=张文涛	1.00	model	128.20ms
+phone	inform	给张文涛打个电话	contact=张文涛	1.00	model	96.90ms
+phone	inform	呼叫张文涛	contact=张文涛	1.00	model	50.23ms
+phone	inform	打电话给张文涛	contact=张文涛	1.00	model	88.63ms
+phone	inform	给10086打电话	number=10086	1.00	model	131.90ms
+phone	inform	给一零零八六打电话	number=一零零八六	1.00	model	124.49ms

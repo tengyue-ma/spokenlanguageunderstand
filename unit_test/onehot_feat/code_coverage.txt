@@ -1,0 +1,473 @@
+File '../../feat_extractor/onehot_feat/src/OneHotFeatExtractor.cpp'
+Lines executed:81.98% of 222
+Creating 'OneHotFeatExtractor.cpp.gcov'
+        -:    0:Source:../../feat_extractor/onehot_feat/src/OneHotFeatExtractor.cpp
+        -:    0:Graph:OneHotFeatExtractor.gcno
+        -:    0:Data:OneHotFeatExtractor.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: OneHotFeatExtractor.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: Thu 08 Nov 2018 01:45:32 PM CST
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <string>
+        -:   10:#include <vector>
+        -:   11:#include <stdlib.h>
+        -:   12:#include <fstream>
+        -:   13:#include "utils.h"
+        -:   14:#include "Feature.h"
+        -:   15:#include "OneHotFeatExtractor.h"
+        -:   16:#include "OneHotErrorCode.h"
+        -:   17:#include "ul_log.h"
+        -:   18:#include "Configure.h"
+        -:   19:#include "spreg.h"
+        -:   20:#include "SluLog.h"
+        -:   21:
+        -:   22:using namespace std;
+        -:   23:using namespace utils;
+        -:   24:using namespace feature;
+        -:   25:
+        -:   26:using namespace hobotlog;
+        -:   27:LogModule * loginstance;
+        -:   28:
+        -:   29:namespace feat_extractor{
+        -:   30:
+        2:   31:extern "C" FeatExtractor* create_feat_extr(const string confpath, 
+        -:   32:                                           PreProcessor* pre){
+        2:   33:    OneHotFeatExtractor* onehot_feat_extr = new OneHotFeatExtractor(confpath, pre);
+        2:   34:    return dynamic_cast<FeatExtractor *>(onehot_feat_extr);
+        -:   35:}
+        -:   36:
+        1:   37:extern "C" void delete_feat_extr(FeatExtractor* feat_extr){
+        1:   38:    OneHotFeatExtractor* onehot_feat_extr = dynamic_cast<OneHotFeatExtractor *>(feat_extr);
+        -:   39:    //< delete_feat_extr
+        1:   40:    onehot_feat_extr = NULL;
+        1:   41:}
+        -:   42:
+        -:   43://< 构造函数
+       35:   44:OneHotFeatExtractor::OneHotFeatExtractor(const string confpath, 
+       35:   45:                                         PreProcessor* pre){
+       35:   46:    int ret = 0;
+       35:   47:    ret = init_conf(confpath, pre);
+       35:   48:    if (ret < 0){
+        -:   49:        //< error.
+    #####:   50:        cout << "failed to load onehot conf config file in " << confpath << endl;
+    #####:   51:        exit(-1);
+        -:   52:    }
+        -:   53:
+       35:   54:    loginstance->info("[SLU]: construct OneHotFeatExtractor success !" + confpath);
+       35:   55:}
+        -:   56:
+        -:   57://< 析构函数
+        2:   58:OneHotFeatExtractor::~OneHotFeatExtractor(){
+        -:   59:    //< nothing;
+        2:   60:}
+        -:   61:
+        -:   62://< ltp初始化
+       35:   63:int OneHotFeatExtractor::init_ltp(PreProcessor* pre){
+       35:   64:    this->pre = pre;
+       35:   65:    if (pre == NULL){
+    #####:   66:        loginstance->error("[SLU]: Ltp pre is NULL");
+    #####:   67:        return ERR_ONEHOT_LTP_PRE_NULL;
+        -:   68:    }
+        -:   69:
+       35:   70:    return 0;
+        -:   71:}
+        -:   72:
+        -:   73://< string2bool
+      105:   74:bool transform2bool(string str){
+      105:   75:    if (str == "TRUE"){
+       54:   76:        return true;
+        -:   77:    }
+        -:   78:    else {
+       51:   79:        return false;
+        -:   80:    }
+        -:   81:}
+        -:   82:
+        -:   83://< string2int
+       35:   84:int transform2int(string str){
+       35:   85:    int res = string2int(str);
+       35:   86:    if (res < 0){
+    #####:   87:        return 0;
+        -:   88:    }
+       35:   89:    return res;
+        -:   90:}
+        -:   91:
+        -:   92://< conf初始化
+       35:   93:int OneHotFeatExtractor::init_conf(const string confpath, 
+        -:   94:                                   PreProcessor* pre){
+       35:   95:    int ret = 0;
+        -:   96:
+       35:   97:    comcfg::Configure config;
+       35:   98:    ret = config.load("./", confpath.c_str());
+       35:   99:    if (ret < 0){
+    #####:  100:        cout << "failed to load onehot feat config file in" << confpath << endl;
+    #####:  101:        return ERR_ONEHOT_FEAT_LOAD_CONFIG;
+        -:  102:    }
+        -:  103:
+        -:  104:    //< init Log
+        -:  105:    try {
+       35:  106:        string log_file = config["ONEHOT_FEAT_LOG_CONF"].to_cstr();
+       35:  107:        if (NULL == loginstance){
+        1:  108:            loginstance = new hobotlog::LogModule(log_file);
+        1:  109:			loginstance->info("[SLU]: load onehot feat log conf, and init loginstance success!");
+       35:  110:        }
+    =====:  111:    }catch(...){
+    =====:  112:        cout << "do not set log file in onehot feat conf: " << confpath << endl;
+    =====:  113:        return ERR_ONEHOT_FEAT_NOT_SET_LOG_FILE;   
+        -:  114:    }
+        -:  115:    
+       35:  116:    ret = init_ltp(pre);
+       35:  117:    if (ret < 0){
+    #####:  118:        loginstance->error("[SLU]: failed to load LTP in me feat function init_conf()");
+    #####:  119:        return ret; 
+        -:  120:    }
+        -:  121:
+        -:  122:    //< load
+        -:  123:    try {
+       35:  124:        int init_size = static_cast<int>(config["FEAT_EXTRACTOR"].size());
+       35:  125:        if (init_size != 1){
+    #####:  126:            loginstance->error("[SLU]: failed to load onehot feat config file: " + confpath + ", the FEAT_EXTRACTOR number is wrong");
+    #####:  127:            return ERR_ONEHOT_FEAT_CONFIG_FEAT_NUM;
+        -:  128:        }
+        -:  129:
+       35:  130:        this->use_q2feat = transform2bool(config["FEAT_EXTRACTOR"][0]["QUERY_FEAT"].to_cstr());
+       35:  131:        this->use_p2feat = transform2bool(config["FEAT_EXTRACTOR"][0]["PATTERN_FEAT"].to_cstr());
+       35:  132:        this->use_wsg = transform2bool(config["FEAT_EXTRACTOR"][0]["WSG_FEAT"].to_cstr());
+       35:  133:        this->seq_size = transform2int(config["FEAT_EXTRACTOR"][0]["SEQUENCE_SIZE"].to_cstr());
+       35:  134:        this->default_pad = config["FEAT_EXTRACTOR"][0]["DEFAULT_PAD"].to_cstr();
+       35:  135:        this->default_unk = config["FEAT_EXTRACTOR"][0]["DEFAULT_UNK"].to_cstr();
+        -:  136:        //< word map
+       35:  137:        string dict_path = config["FEAT_EXTRACTOR"][0]["DICT_PATH"].to_cstr();
+       35:  138:        int ret = load_dict(this->word_map, dict_path);
+       35:  139:        if (ret < 0){
+    #####:  140:            loginstance->error("[SLU]: failed to load onehot feat config file: " + dict_path);
+    #####:  141:            return ERR_ONEHOT_FEAT_LOAD_DICT;
+        -:  142:        }
+       35:  143:        this->tensor_type = config["FEAT_EXTRACTOR"][0]["TENSOR_TYPE"].to_cstr();
+    =====:  144:    } catch(...){
+    =====:  145:        loginstance->error("[SLU]: failed to load onehot feat config file: " + confpath + ", conf content is wrong");
+    =====:  146:        return ERR_ONEHOT_FEAT_CONFIG_CONTENT;
+        -:  147:    }
+        -:  148:
+       70:  149:    loginstance->info("[SLU]: load onehot config file success!");
+        -:  150:
+       35:  151:    return 0;
+        -:  152:}
+        -:  153:
+        -:  154://< load dict
+       35:  155:int OneHotFeatExtractor::load_dict(map<string, int>& word_map, 
+        -:  156:                                   const string dict_path){
+       35:  157:    ifstream dict;
+        -:  158:    //< 打开文件
+       35:  159:    dict.open(dict_path);
+        -:  160:
+       35:  161:    if (!dict){
+    #####:  162:        loginstance->error("[SLU]:failed to open dict file : " + dict_path);
+    #####:  163:        return ERR_ONEHOT_FEAT_DICT_OPEN;
+        -:  164:    }
+        -:  165:
+       70:  166:    string line;
+       35:  167:    int i = 1;
+      875:  168:    while(getline(dict, line)){
+      805:  169:        this->word_map[line] = i;
+      805:  170:        i++;
+        -:  171:    }
+       35:  172:    this->map_size = i-1;
+        -:  173:
+        -:  174:    //< 关闭文件
+       35:  175:    dict.close();
+        -:  176:
+       35:  177:    loginstance->info("[SLU]: load dict success! dict name: " + dict_path);
+        -:  178:
+       70:  179:    return 0;
+        -:  180:}
+        -:  181:
+        -:  182://< 特征提取
+        6:  183:int OneHotFeatExtractor::get_feat(feature::Feature& feats, 
+        -:  184:                                  const string query){
+        6:  185:    int ret = 0;
+        -:  186:    //< feature;
+        6:  187:    vector<string> feature_vec;
+        -:  188:    //< query 切分结果
+       12:  189:    vector<string> q2ws_vec;
+        -:  190:    //< pattern 切分结果
+       12:  191:    vector<string> p2ws_vec;
+        -:  192:
+        -:  193:    //< 如果使用QUERY_FEAT
+        6:  194:    if (use_q2feat){
+        -:  195:        //< 如果分词作为基本单元
+        3:  196:        if (use_wsg){
+        -:  197:            //< 获取query&分词结果
+        2:  198:            ret = get_wsg(get_query(query), q2ws_vec);
+        2:  199:            if (ret < 0){
+    #####:  200:                loginstance->error("[SLU]: failed to get wsg when get onehot feat use query feat! query: " + query);
+    #####:  201:                return ret;
+        -:  202:            }
+        -:  203:        }
+        -:  204:        //< 单字切分作为基本单元
+        -:  205:        else {
+        -:  206:            //< 获取query&分词结果
+        1:  207:            ret = get_sip(get_query(query), q2ws_vec);
+        1:  208:            if (ret < 0){
+    #####:  209:                loginstance->error("[SLU]: failed to get sip when get onehot feat use query feat!query: " + query);
+    #####:  210:                return ret;
+        -:  211:            }
+        -:  212:        }
+        -:  213:    }
+        -:  214:
+        -:  215:    //< 如果使用PATTERN_FEAT
+        6:  216:    if (use_p2feat){
+        3:  217:        vector<string> pattern_vec = get_pattern(query);
+        -:  218:        //< 如果分词作为基本单元
+        -:  219:        //< 获取pattern&分词结果
+       10:  220:        for (int i = 0; i < pattern_vec.size(); i++){
+        -:  221:            //< 如果是 [artist]
+        7:  222:            if (pattern_vec[i][0] == '[' && pattern_vec[i][pattern_vec[i].length()-1] == ']'){
+        -:  223:                //< 直接push
+        4:  224:                p2ws_vec.push_back(pattern_vec[i]);
+        -:  225:            }
+        -:  226:            else {
+        -:  227:                //< 同query to feat
+        3:  228:                vector<string> ws_vec;
+        -:  229:                //< 如果分词作为基本单元
+        3:  230:                if (use_wsg){
+        1:  231:                    ret = get_wsg(pattern_vec[i], ws_vec);
+        1:  232:                    if (ret < 0){
+    #####:  233:                        loginstance->error("[SLU]: failed to get wsg when get onehot feat use pattern feat! query : " + query);
+    #####:  234:                        return ret;
+        -:  235:                    }
+        -:  236:                }
+        -:  237:                else {
+        2:  238:                    ret = get_sip(pattern_vec[i], ws_vec);
+        2:  239:                    if (ret < 0){
+    #####:  240:                        loginstance->error("[SLU]: failed to get sip when get onehot feat use pattern feat! query: " + query);
+    #####:  241:                        return ret;
+        -:  242:                    }
+        -:  243:                }
+        -:  244:                //< 追加到p2ws_vec中
+        3:  245:                p2ws_vec.insert(p2ws_vec.end(), ws_vec.begin(), ws_vec.end());
+        -:  246:            }
+        3:  247:        } //< for
+        -:  248:    }
+        -:  249:
+        -:  250:    //< word feat vec
+       12:  251:    vector<string> word_features = q2ws_vec;
+        6:  252:    word_features.insert(word_features.end(), p2ws_vec.begin(), p2ws_vec.end());
+        -:  253:
+        -:  254:    //< get pad_seq
+       12:  255:    vector<string> pad_seq_vec;
+        6:  256:    ret = pad_seq(pad_seq_vec, word_features);
+        6:  257:    if (ret < 0 || pad_seq_vec.size() != this->seq_size){
+    #####:  258:        loginstance->error("[SLU]: failed to get pad_seq when get onehot feat use pattern feat! query: " + query);
+        -:  259:    }
+        -:  260:
+      210:  261:    for (int i = 0; i < pad_seq_vec.size(); i++){
+      204:  262:        string onehot_feature = onehot_mapping(pad_seq_vec[i]);
+      204:  263:        feature_vec.push_back(onehot_feature);
+      204:  264:    }
+        -:  265:
+        6:  266:    ret = feats.add_feature(feature_vec);
+        6:  267:    if (ret < 0){
+    #####:  268:        loginstance->error("[SLU]: failed to add onehot feature! query : " + query);
+    #####:  269:        return ERR_ADD_ONEHOT_FEATURE;
+        -:  270:    }
+        -:  271:
+        6:  272:    loginstance->info("[SLU]: get onehot feature and add feature success！query: " + query);
+        -:  273:
+       12:  274:    return 0;
+        -:  275:}
+        -:  276:
+        -:  277://< 分词
+        -:  278://< @param query : 待分词句子
+        -:  279://< @param ws_vec : 分词结果
+        3:  280:int OneHotFeatExtractor::get_wsg(string query, 
+        -:  281:                         vector<string>& ws_vec){
+        3:  282:    int ret = 0;
+        3:  283:    if (pre == NULL){
+        -:  284:        //< PreProcessor not init;
+    #####:  285:        loginstance->error("[SLU]: PreProcessor is null!");
+    #####:  286:        return ERR_PREPROCESSOR_NULL;
+        -:  287:    }
+        3:  288:    ret = pre->wordseg(query, ws_vec);
+        3:  289:    if (ret < 0){
+        -:  290:        //< wordseg error;
+    #####:  291:        loginstance->error("[SLU]: failed to wordseg!");
+    #####:  292:        return ERR_WORD_SEGMENTATION;
+        -:  293:    }
+        -:  294:
+        3:  295:    return 0;
+        -:  296:}
+        -:  297:
+        -:  298://< 单字切分
+        -:  299://< @param query : 待切分句子
+        -:  300://< @param ws_vec : 切分结果
+        9:  301:int OneHotFeatExtractor::get_sip(string query, 
+        -:  302:                         vector<string>& sip_vec){
+        9:  303:    if (!strSplit2simple(query, sip_vec)){
+        -:  304:        //< split str error;
+    #####:  305:        loginstance->error("[SLU]: failed to split query!");
+    #####:  306:        return ERR_SPLIT_TO_SIMPLE_WOED;
+        -:  307:    }
+        -:  308:
+        9:  309:    return 0;
+        -:  310:}
+        -:  311:
+        -:  312://< get query
+        -:  313://< @param query : input
+        -:  314://< case: [刘德华:artist]的歌放一下 => 刘德华的歌放一下
+        3:  315:string OneHotFeatExtractor::get_query(string query){
+        3:  316:    string res_query;
+        -:  317:
+        -:  318:    //< 先单字切分防止出现汉字某些字节与字符冲突导致错误
+        6:  319:    vector<string> ws_vec;
+        3:  320:    int ret = get_sip(query, ws_vec);
+        3:  321:    if (ret < 0){
+    #####:  322:        return "";
+        -:  323:    }
+        -:  324:
+        -:  325:    //< get raw_query
+        3:  326:    bool flag = false;
+       26:  327:    for (size_t i = 0; i < ws_vec.size(); i++){
+       23:  328:        if (ws_vec[i] == "["){
+        2:  329:            flag = true;
+        -:  330:        }
+       21:  331:        else if (ws_vec[i] == ":" && flag){
+        2:  332:            size_t j = i;
+       17:  333:            while (j < ws_vec.size() && ws_vec[j] != "]"){
+       13:  334:                j++;
+        -:  335:            }
+        2:  336:            if (j != ws_vec.size()){
+        2:  337:                i = j;
+        -:  338:            }
+        -:  339:        }
+        -:  340:        else {
+       19:  341:            res_query += ws_vec[i];
+        -:  342:        }
+        -:  343:    }
+        -:  344:
+        6:  345:    return res_query;
+        -:  346:}
+        -:  347:
+        -:  348://< get pattern
+        -:  349://< @param query : input
+        -:  350://< vector<string> : output
+        3:  351:vector<string> OneHotFeatExtractor::get_pattern(string query){
+        3:  352:    vector<string> res_vec;
+        6:  353:    string chr;
+        -:  354:
+        -:  355:    //< 先单字切分防止出现汉字某些字节与字符冲突导致错误
+        6:  356:    vector<string> ws_vec;
+        3:  357:    int ret = get_sip(query, ws_vec);
+        3:  358:    if (ret < 0){
+    #####:  359:        return res_vec;
+        -:  360:    }
+        -:  361:
+        -:  362:    //bool flag = false;
+       15:  363:    for (size_t i = 0; i < ws_vec.size(); i++){
+       12:  364:        if (ws_vec[i] == "["){
+        -:  365:            //< 上一个短句追加到res_vec;
+        4:  366:            if (chr != ""){
+        1:  367:                res_vec.push_back(chr);
+        1:  368:                chr = "";
+        -:  369:            }
+        -:  370:
+        -:  371:            //flag = true;
+        4:  372:            chr += ws_vec[i];
+        4:  373:            size_t j = i+1;
+       20:  374:            while(j < ws_vec.size() && ws_vec[j] != ":"){
+       12:  375:                j++;
+        -:  376:            }
+        4:  377:            if (j != ws_vec.size()){
+        4:  378:                i = j+1;
+        -:  379:            }
+       25:  380:            for ( ; i < ws_vec.size() && ws_vec[i] != "]"; i++){
+       21:  381:                chr += ws_vec[i];
+        -:  382:            }
+        4:  383:            chr += ws_vec[i];
+        -:  384:            
+        -:  385:            //< 当前label信息追加到res_vec
+        4:  386:            res_vec.push_back(chr);
+        4:  387:            chr = "";
+        -:  388:        }
+        -:  389:        else {
+        8:  390:            chr += ws_vec[i]; 
+        -:  391:        }
+        -:  392:    }
+        3:  393:    if (chr != ""){
+        2:  394:        res_vec.push_back(chr);
+        -:  395:    }
+        -:  396:
+        3:  397:    return res_vec;
+        -:  398:}
+        -:  399:
+        -:  400:/*
+        -:  401: * @brief pad_seq
+        -:  402: * @input :
+        -:  403: *      周 杰 伦 的 青 花 瓷
+        -:  404: * @output :
+        -:  405: *      <PAD> <PAD> <PAD> 周 杰 伦 的 青 花 瓷
+        -:  406: */
+        6:  407:int OneHotFeatExtractor::pad_seq(vector<string>& res, 
+        -:  408:                                 vector<string> ws_vec){
+        6:  409:    vector<string> pad_vec;
+        -:  410:
+        -:  411:    //< 计算长度差
+        6:  412:    int pad_count = this->seq_size - ws_vec.size();
+        -:  413:
+        -:  414:    //< 如果输入长度小于等于定义长度
+        -:  415:    //< 补pad
+        6:  416:    if (pad_count >= 0){
+      185:  417:        for (int i = 0; i < pad_count; i++){
+      180:  418:            pad_vec.push_back(default_pad);
+        -:  419:        }
+        5:  420:        pad_vec.insert(pad_vec.end(), ws_vec.begin(), ws_vec.end());
+        -:  421:    }
+        -:  422:    //< 如果输入长度大于定义长度 截断
+        -:  423:    else {
+        -:  424:        //< 可优化
+        3:  425:        for (int i = 0; i < this->seq_size; i++){
+        2:  426:            pad_vec.push_back(ws_vec[i]);
+        -:  427:        }
+        -:  428:    }
+        -:  429:
+        6:  430:    res = pad_vec;
+        -:  431:
+        6:  432:    return 0;
+        -:  433:}
+        -:  434:
+        -:  435://< onehot 映射
+      204:  436:string OneHotFeatExtractor::onehot_mapping(string word){
+      204:  437:    string onehot;
+        -:  438:    //< 获取词表长度
+      204:  439:    int length = this->map_size;
+        -:  440:    //< 获取某个词对应的下标
+        -:  441:    //< word_map从1开始 返回0表示不存在
+      204:  442:    int idx = word_map[word]-1;
+        -:  443:    //< 如果词不存在 那么当unk处理
+      204:  444:    if (idx == -1){
+        2:  445:        idx = word_map[default_unk]-1;
+        -:  446:    }
+      204:  447:    if (this->tensor_type == "INDEX"){
+      200:  448:        onehot = to_string(idx);
+        -:  449:    }
+        4:  450:    else if (this->tensor_type == "VECTOR"){
+       96:  451:        for (int i = 0; i < length; i++){
+       92:  452:            if (idx == i){
+        4:  453:                onehot += "1 ";
+        -:  454:            }
+        -:  455:            else {
+       88:  456:                onehot += "0 ";
+        -:  457:            }
+        -:  458:        }
+        -:  459:    }
+        -:  460:
+      204:  461:    return onehot;
+        -:  462:}
+        -:  463:
+        3:  464:} //< namespace feat_extractor;
+        -:  465:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

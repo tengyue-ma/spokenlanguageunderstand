@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/query_redis.dir/src/query_redis.cc.o  -o ../query_redis  -L/home/users/speechteam/users/leilei.zhou/spokenlanguageunderstand/import_redis_data/../regex_v1.3/third/hiredis -rdynamic -lhiredis -Wl,-rpath,/home/users/speechteam/users/leilei.zhou/spokenlanguageunderstand/import_redis_data/../regex_v1.3/third/hiredis 

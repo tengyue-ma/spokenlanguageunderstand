@@ -1,0 +1,1143 @@
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SLU性能评估
+时间戳: 2019-01-23 19:39:42
+测试集lab文件: ../test_set/all.lab
+
+
+>>>>> 领域分类错误 (domain clf badcase)
+行号, 正确结果 <=> SLU解析结果
+poem	deny	停止朗诵唐诗	tag=唐诗 <==> other	other	停止朗诵唐诗	tag=唐诗	2.70	regex
+poem	deny	别放这首诗了 <==> other	other	别放这首诗了	2.70	regex
+poem	deny	不要再朗诵唐诗了	tag=唐诗 <==> other	other	不要再朗诵唐诗了	tag=唐诗	2.70	regex
+poem	deny	停止播放密州出猎	title=密州出猎 <==> other	other	停止播放密州出猎	title=密州出猎	2.70	regex
+poem	deny	我不想听你朗诵唐诗了	tag=唐诗 <==> other	other	我不想听你朗诵唐诗了	tag=唐诗	2.70	regex
+poem	deny	李白的诗不要放	author=李白 <==> other	other	李白的诗不要放	author=李白	2.70	regex
+poem	deny	我不要听苏幕遮了	title=苏幕遮 <==> other	other	我不要听苏幕遮了	title=苏幕遮	2.70	regex
+poem	deny	我不想听你背李白的诗	author=李白 <==> other	other	我不想听你背李白的诗	author=李白	2.70	regex
+poem	deny	可不可以别放苏幕遮这首诗了	title=苏幕遮 <==> other	other	可不可以别放苏幕遮这首诗了	title=苏幕遮	2.70	regex
+poem	request	白雪歌送武判官归京这首诗是谁写的	title=白雪歌送武判官归京 <==> other	other	白雪歌送武判官归京这首诗是谁写的	title=白雪歌送武判官归京	2.50	regex
+story	deny	停止播放格林童话	album=格林童话 <==> other	other	停止播放格林童话	album=格林童话	1.90	regex
+story	deny	我不要听田螺姑娘	title=田螺姑娘 <==> other	other	我不要听田螺姑娘	title=田螺姑娘	1.90	regex
+story	deny	我不想听花神造花了	title=花神造花 <==> other	other	我不想听花神造花了	title=花神造花	1.90	regex
+story	deny	我不要听这个故事 <==> other	other	我不要听这个故事	1.91	regex
+story	deny	别给我放大脚丫游巴黎了	title=大脚丫游巴黎 <==> other	other	别给我放大脚丫游巴黎了	title=大脚丫游巴黎	1.90	regex
+story	deny	不想听大灰狼的故事	character=大灰狼 <==> other	other	不想听大灰狼的故事	character=大灰狼	1.90	regex
+story	deny	可不可以不要讲这个故事 <==> other	other	可不可以不要讲这个故事	1.91	regex
+story	reqalts	换一个故事吧 <==> other	other	换一个故事吧	1.90	regex
+story	reqalts	这个故事不好听 <==> other	other	这个故事不好听	1.87	regex
+story	reqalts	还有没有别的故事 <==> other	other	还有没有别的故事	1.90	regex
+submusic	deny	你不会只有这一首歌吧	title=unchanged <==> music	confirm	你不会只有这一首歌吧	8.67	model
+submusic	deny	有没有除了七里香以外的歌	title=七里香 <==> music	confirm	有没有除了七里香以外的歌	8.43	model
+story	deny	可不可以别放面包狼和糊涂先生这个故事了	title=面包狼和糊涂先生 <==> other	other	可不可以别放面包狼和糊涂先生这个故事了	title=面包狼和糊涂先生	1.90	regex
+submusic	deny	怎么一下午都是这首歌不想听了	title=unchanged <==> other	other	怎么一下午都是这首歌不想听了	1.00	model
+submusic	deny	还是欣赏不来凤凰传奇这个组合	artist=凤凰传奇 <==> other	other	还是欣赏不来凤凰传奇这个组合	loc_area=凤凰	1.00	model
+submusic	deny	这种歌听得脑袋疼不喜欢	tag=unchanged <==> other	other	这种歌听得脑袋疼不喜欢	1.00	model
+submusic	deny	这首歌的歌词太傻了听不下去了	title=unchanged <==> music	inform	这首歌的歌词太傻了听不下去了	17.62	model
+submusic	deny	换吧换吧不听这首歌了	title=unchanged <==> music	inform	换吧换吧不听这首歌了	8.93	model
+submusic	deny	这歌手简直是奇葩，唱的歌太难听了，别放他的歌了	artist=unchanged <==> music	inform	这歌手简直是奇葩，唱的歌太难听了，别放他的歌了	21.32	model
+submusic	inform	更想听粤语版的换成粤语版的吧	language=粤语,title=unchanged <==> music	inform	更想听粤语版的换成粤语版的吧	language=粤语,language=粤语	9.93	model
+submusic	inform	还是粤语版的更好听换成粤语版的吧	language=粤语,title=unchanged <==> music	inform	还是粤语版的更好听换成粤语版的吧	language=粤语,language=粤语	10.72	model
+submusic	inform	换成普通话版本的吧粤语的听不懂	tag=普通话,title=unchanged <==> music	inform	换成普通话版本的吧粤语的听不懂	language=普通话,language=粤语	3.33	model
+submusic	inform	怎么不是周杰伦唱的换成周杰伦唱的	artist=周杰伦 <==> other	other	怎么不是周杰伦唱的换成周杰伦唱的	person=周杰伦,person=周杰伦	1.00	model
+submusic	inform	好像这首歌有日语版的我想听日语版的	language=日语,title=unchanged <==> music	inform	好像这首歌有日语版的我想听日语版的	language=日语,language=日语	14.11	model
+submusic	inform	还是原来泰语版的好听换成泰语版的可不可以	language=泰语,title=unchanged <==> music	confirm	还是原来泰语版的好听换成泰语版的可不可以	language=泰语,language=泰语	8.03	model
+submusic	inform	放一首她的justlikefire	title=justlikefire,artist=unchanged <==> music	inform	放一首她的justlikefire	title=她的justlikefire	4.52	model
+submusic	inform	再来一首他们唱的哪里是你的拥抱	title=哪里是你的拥抱,artist=unchanged <==> music	inform	再来一首他们唱的哪里是你的拥抱	title=哪里是你的拥抱	9.69	model
+submusic	inform	我要听他的我去2000年这张专辑中的歌	album=我去2000年,artist=unchanged <==> music	inform	我要听他的我去2000年这张专辑中的歌	album=我去2000年	15.17	model
+submusic	inform	放他们唱的Donotbreakmyheart	title=Donotbreakmyheart,artist=unchanged <==> other	other	放他们唱的Donotbreakmyheart	1.00	model
+submusic	inform	听他的叶惠美	album=叶惠美,artist=unchanged <==> other	other	听他的叶惠美	r_person=他,person=叶惠美	1.00	model
+submusic	inform	轻音乐的	tag=轻音乐 <==> music	inform	轻音乐的	tag=轻音乐	0.90	regex
+submusic	request	这首歌是编号89757里的歌曲吗	request_slot=album,title=unchanged <==> music	confirm	这首歌是编号89757里的歌曲吗	album=编号89757	23.15	model
+submusic	request	这首歌是叶惠美里面的吗	request_slot=album,title=unchanged <==> other	other	这首歌是叶惠美里面的吗	person=叶惠美	1.00	model
+submusic	request	这首歌叫callmemaybe吗	request_slot=title,title=unchanged <==> other	other	这首歌叫callmemaybe吗	1.00	model
+subweather	inform	江宁区的方山呢	loc_area=江宁区,loc_poi=方山 <==> other	other	江宁区的方山呢	loc_area=江宁区,loc_area=方山	1.00	model
+subweather	inform	那需要带外套长袖之类的吗 <==> other	other	那需要带外套长袖之类的吗	1.00	model
+subweather	inform	风好大啊风力有多少啊	focus=风 <==> other	other	风好大啊风力有多少啊	1.00	model
+music	confirm	葫芦丝版的葫芦娃有吗	tag=葫芦丝,title=葫芦娃 <==> story	inform	葫芦丝版的葫芦娃有吗	title=葫芦娃	1.89	regex
+music	confirm	美人鱼有吗	title=美人鱼 <==> story	inform	美人鱼有吗	title=美人鱼	1.89	regex
+music	confirm	你到底会不会唱areyouok	title=areyouok <==> other	other	你到底会不会唱areyouok	1.00	model
+music	inform	播放音乐排行榜本周单曲排行第一的歌 <==> other	other	播放音乐排行榜本周单曲排行第一的歌	1.00	model
+music	inform	卢春如的温度	artist=卢春如,title=温度 <==> weather	inform	卢春如的温度	focus=温度	1.00	model
+music	inform	我家豆豆刚睡醒来点轻音乐没烦恼	tag=睡醒,tag=轻音乐,title=没烦恼 <==> other	other	我家豆豆刚睡醒来点轻音乐没烦恼	1.00	model
+music	inform	我想听白雪公主这首歌	title=白雪公主 <==> story	inform	我想听白雪公主这首歌	title=白雪公主	6.12	model
+music	inform	我想听蓝精灵	title=蓝精灵 <==> story	inform	我想听蓝精灵	album=蓝精灵	1.89	regex
+music	inform	我要听黑猫警长	title=黑猫警长 <==> story	inform	我要听黑猫警长	album=黑猫警长	1.89	regex
+music	inform	找个叶圣涛音乐作品幸福家家有	artist=叶圣涛,title=幸福家家有 <==> other	other	找个叶圣涛音乐作品幸福家家有	person=叶圣涛	1.00	model
+poem	inform	欢度新年的诗是什么	tag=欢度新年 <==> other	other	欢度新年的诗是什么	1.00	model
+poem	inform	流传的比较广的现代诗有什么	tag=现代诗 <==> other	other	流传的比较广的现代诗有什么	1.00	model
+poem	inform	赞美母亲的诗是什么	tag=赞美母亲 <==> other	other	赞美母亲的诗是什么	1.00	model
+poem	inform	能听一下竹枝词吗	title=竹枝词 <==> music	confirm	能听一下竹枝词吗	title=竹枝词	0.80	regex
+poem	inform	播放一首相思	title=相思 <==> music	inform	播放一首相思	title=相思	0.90	regex
+poem	inform	望月怀远唐张九龄	title=望月怀远,tag=唐,author=张九龄 <==> other	other	望月怀远唐张九龄	1.00	model
+poem	inform	有送兄不	title=送兄 <==> other	other	有送兄不	1.00	model
+story	inform	狼来了是什么样的故事	title=狼来了 <==> other	other	狼来了是什么样的故事	1.00	model
+story	inform	盲人摸象是怎么回事来着	title=盲人摸象 <==> other	other	盲人摸象是怎么回事来着	1.00	model
+story	inform	我想听英文版小红帽	tag=英文,title=小红帽 <==> music	inform	我想听英文版小红帽	language=英文,title=小红帽	4.01	model
+story	inform	晚安前可以听什么伊索寓言呢	album=伊索寓言 <==> other	other	晚安前可以听什么伊索寓言呢	person=伊索	1.00	model
+story	inform	你收录的格林童话有哪些	album=格林童话 <==> other	other	你收录的格林童话有哪些	person=格林	1.00	model
+story	inform	有没有什么韩国的小故事	tag=韩国 <==> music	confirm	有没有什么韩国的小故事	region=韩国,title=小故事	8.96	model
+story	inform	有中国的四大名著吗	tag=中国,album=四大名著 <==> other	other	有中国的四大名著吗	loc_country=中国	1.00	model
+story	inform	请播放白雪公主与七个小矮人	title=白雪公主与七个小矮人 <==> music	inform	请播放白雪公主与七个小矮人	title=白雪公主与七个小矮人	0.90	regex
+story	inform	推荐下宫崎骏的哪些作品适合四岁宝宝	author=宫崎骏,tag=四岁宝宝 <==> other	other	推荐下宫崎骏的哪些作品适合四岁宝宝	person=宫崎骏	1.00	model
+story	inform	在一千零一夜里面找一个故事要四岁小孩听的	album=一千零一夜,tag=四岁小孩 <==> other	other	在一千零一夜里面找一个故事要四岁小孩听的	1.00	model
+weather	inform	海边风大不大	focus=风,loc_poi=海边 <==> other	other	海边风大不大	1.00	model
+weather	inform	魔都明天风向是什么可以放风筝吗	loc_city=魔都,time=明天,focus=风向 <==> other	other	魔都明天风向是什么可以放风筝吗	loc_poi=魔都	1.00	model
+weather	inform	黄山最近能有日出吗	loc_city=黄山,time=最近,focus=日出 <==> other	other	黄山最近能有日出吗	loc_area=黄山	1.00	model
+weather	inform	郑州的气候怎么样	loc_city=郑州 <==> other	other	郑州的气候怎么样	loc_city=郑州	1.00	model
+weather	inform	新疆的气候怎么样	loc_province=新疆 <==> other	other	新疆的气候怎么样	loc_poi=新疆	1.00	model
+weather	inform	现在这里的风有多大	time=现在,focus=风 <==> other	other	现在这里的风有多大	1.00	model
+weather	inform	请问一下今天嘉兴的天气穿什么衣服合适	time=今天,loc_city=嘉兴 <==> other	other	请问一下今天嘉兴的天气穿什么衣服合适	loc_city=嘉兴	1.00	model
+weather	inform	今天有多少度	time=今天,focus=度 <==> other	other	今天有多少度	1.00	model
+weather	inform	下周成都最高多少度	time=下周,loc_city=成都,focus=度 <==> other	other	下周成都最高多少度	loc_city=成都	1.00	model
+weather	inform	因强热带风暴到来台湾海峡会刮大风多少级	focus=风,loc_province=台湾,loc_poi=海峡,focus=风 <==> other	other	因强热带风暴到来台湾海峡会刮大风多少级	loc_province=台湾	1.00	model
+weather	inform	上海今天什么天	loc_city=上海,time=今天 <==> other	other	上海今天什么天	loc_city=上海	1.00	model
+weather	inform	西安多少度高温	loc_city=西安,focus=度,focus=高温 <==> other	other	西安多少度高温	loc_area=西安	1.00	model
+weather	inform	内蒙古今天是不是多云	loc_province=内蒙古,time=今天,focus=多云 <==> other	other	内蒙古今天是不是多云	loc_province=内蒙古	1.00	model
+weather	inform	未来一周降水情况如何	time=未来一周,focus=水 <==> other	other	未来一周降水情况如何	1.00	model
+weather	inform	西藏自治区前天空气咋样	loc_province=西藏自治区,time=前天,focus=空气 <==> other	other	西藏自治区前天空气咋样	loc_province=西藏,loc_poi=自治区	1.00	model
+weather	inform	中秋节天怎么样	time=中秋节 <==> other	other	中秋节天怎么样	1.00	model
+weather	inform	现在中国几度了	time=现在,loc_country=中国,focus=度 <==> other	other	现在中国几度了	loc_country=中国	1.00	model
+weather	inform	我想问你中国是多少度	focus=度,loc_country=中国 <==> other	other	我想问你中国是多少度	loc_country=中国	1.00	model
+weather	inform	中国天气咋样	loc_country=中国 <==> other	other	中国天气咋样	loc_country=中国	1.00	model
+weather	inform	中国是阴天吗	loc_country=中国,focus=阴 <==> other	other	中国是阴天吗	loc_country=中国	1.00	model
+weather	inform	中国多云吗	loc_country=中国,focus=多云 <==> other	other	中国多云吗	loc_country=中国	1.00	model
+weather	inform	中国有没有出太阳	loc_country=中国,focus=太阳 <==> other	other	中国有没有出太阳	loc_country=中国	1.00	model
+weather	inform	中国有雷电吗	loc_country=中国,focus=雷电 <==> other	other	中国有雷电吗	loc_country=中国	1.00	model
+weather	inform	中国是不是阴转多云	loc_country=中国,focus=阴转多云 <==> other	other	中国是不是阴转多云	loc_country=中国	1.00	model
+weather	inform	内蒙古圣诞节空气如何	loc_province=内蒙古,time=圣诞节,focus=空气 <==> other	other	内蒙古圣诞节空气如何	loc_province=内蒙古	1.00	model
+weather	inform	魔都今年春节是阴天吗	loc_city=魔都,time=今年春节,focus=阴 <==> other	other	魔都今年春节是阴天吗	loc_poi=魔都	1.00	model
+weather	inform	香港这个星期一风大不大	loc_city=香港,time=这个星期一,focus=风 <==> other	other	香港这个星期一风大不大	loc_poi=香港	1.00	model
+weather	inform	甘孜藏族自治州午间冷不冷	loc_city=甘孜藏族自治州,time=午间,focus=冷,focus=冷 <==> other	other	甘孜藏族自治州午间冷不冷	loc_area=甘孜,loc_poi=藏族,loc_poi=自治州	1.00	model
+weather	inform	望都午间空气指数是多少	loc_area=望都,time=午间,focus=空气 <==> other	other	望都午间空气指数是多少	1.00	model
+weather	inform	湖北黄鹤楼今年春节天气	loc_province=湖北,loc_poi=黄鹤楼,time=今年春节 <==> other	other	湖北黄鹤楼今年春节天气	loc_province=湖北	1.00	model
+weather	inform	大厂回族自治县这个礼拜六天气	loc_area=大厂回族自治县,time=这个礼拜六 <==> other	other	大厂回族自治县这个礼拜六天气	loc_area=大厂,loc_poi=回族,loc_poi=自治县	1.00	model
+weather	inform	小精灵请给我播放天气预报 <==> music	inform	小精灵请给我播放天气预报	title=小精灵,title=天气预报	2.40	model
+weather	inform	小精灵今天空气怎么样	time=今天,focus=空气 <==> other	other	小精灵今天空气怎么样	1.00	model
+weather	inform	小精灵哪天下雪呀	focus=雪 <==> other	other	小精灵哪天下雪呀	1.00	model
+weather	inform	保定市2018年8月22日可以穿短袖吗	loc_city=保定市,time=2018年8月22日,focus=穿衣 <==> other	other	保定市2018年8月22日可以穿短袖吗	loc_city=保定市	1.00	model
+phone	inform	帮忙拨一下一零零八六	number=一零零八六 <==> other	other	帮忙拨一下一零零八六	1.00	model
+phone	inform	贵州旅游热线可以帮忙拨下吗	contact=贵州旅游热线 <==> other	other	贵州旅游热线可以帮忙拨下吗	loc_province=贵州	1.00	model
+nav	inform	钜豪在哪怎么去	des_poi=钜豪 <==> other	other	钜豪在哪怎么去	person=钜豪	1.00	model
+nav	inform	不走堵车到GEROLAMO新世界百货去	rou_pre=不走堵车,des_poi=GEROLAMO新世界百货 <==> other	other	不走堵车到GEROLAMO新世界百货去	1.00	model
+nav	inform	出发先去贵人鸟体育好又多购物中心东北再去中国心理卫生杂志社	via_poi=贵人鸟体育好又多购物中心东北,des_poi=中国心理卫生杂志社 <==> other	other	出发先去贵人鸟体育好又多购物中心东北再去中国心理卫生杂志社	loc_country=中国	1.00	model
+nav	inform	出发回抚汉堂书法培训中心南平分院	des_poi=抚汉堂书法培训中心南平分院 <==> other	other	出发回抚汉堂书法培训中心南平分院	loc_city=南平	1.00	model
+nav	inform	直接导航 <==> other	other	直接导航	1.00	model
+nav	inform	语音导航 <==> other	other	语音导航	1.00	model
+nav	inform	鸡鸣寺怎么去	des_poi=鸡鸣寺 <==> other	other	鸡鸣寺怎么去	loc_poi=鸡鸣寺	1.00	model
+nav	inform	出发前往兴智科技园	des_poi=兴智科技园 <==> other	other	出发前往兴智科技园	1.00	model
+other	other	明天会不会堵车 <==> weather	inform	明天会不会堵车	time=明天	1.00	model
+other	other	植物也喜欢听动听的话吗 <==> music	inform	植物也喜欢听动听的话吗	2.07	model
+other	other	你喜欢听我讲故事嘛 <==> story	inform	你喜欢听我讲故事嘛	11.75	model
+other	other	今天的故事讲的很棒给你一朵小红花 <==> story	inform	今天的故事讲的很棒给你一朵小红花	title=小红花	12.97	model
+other	other	我忘了上一句是什么了 <==> poem	inform	我忘了上一句是什么了	range=上一句	10.55	model
+other	other	皇上小时候也得背诗么 <==> poem	inform	皇上小时候也得背诗么	1.26	model
+other	other	每次一听你背诗我就想睡觉 <==> poem	inform	每次一听你背诗我就想睡觉	1.99	model
+other	other	我刚刚写了一首诗你听听看我写的好不好 <==> poem	inform	我刚刚写了一首诗你听听看我写的好不好	8.85	model
+other	other	这首诗歌让我想到了大海 <==> poem	inform	这首诗歌让我想到了大海	title=大海	9.45	model
+other	other	这首诗太长了我肯定背不下来 <==> poem	inform	这首诗太长了我肯定背不下来	7.85	model
+other	other	丢手绢给我亲爱的宝贝 <==> music	inform	丢手绢给我亲爱的宝贝	title=丢手绢	9.21	model
+other	other	修复墨迹天气 <==> weather	inform	修复墨迹天气	1.00	model
+other	other	我喜欢孙悟空 <==> music	inform	我喜欢孙悟空	title=孙悟空	0.90	regex
+other	other	鹅即是儿歌也是诗 <==> music	inform	鹅即是儿歌也是诗	tag=儿歌	6.77	model
+other	other	我们来玩歌词接龙的游戏吧 <==> music	inform	我们来玩歌词接龙的游戏吧	tag=游戏	2.12	model
+other	other	有个爱讲卫生的好好孩子 <==> music	inform	有个爱讲卫生的好好孩子	title=爱讲卫生的好好孩子	1.60	model
+other	other	中秋节是下周的周日吗 <==> weather	inform	中秋节是下周的周日吗	time=中秋节,time=下周,time=周日	1.00	model
+other	other	上海明天是星期几 <==> weather	inform	上海明天是星期几	loc_city=上海,time=明天	1.00	model
+other	other	我不喜欢生日那天下雨 <==> weather	inform	我不喜欢生日那天下雨	focus=雨	1.00	model
+other	other	避免请问 <==> nav	inform	避免请问	rou_pre=避免请问	1.00	model
+
+
+>>>>> 领域分类错误 or 意图分类错误 (domain or intent clf badcase)
+行号, 正确结果 <=> SLU解析结果
+poem	deny	停止朗诵唐诗	tag=唐诗 <==> other	other	停止朗诵唐诗	tag=唐诗	2.70	regex
+poem	deny	别放这首诗了 <==> other	other	别放这首诗了	2.70	regex
+poem	deny	不要再朗诵唐诗了	tag=唐诗 <==> other	other	不要再朗诵唐诗了	tag=唐诗	2.70	regex
+poem	deny	停止播放密州出猎	title=密州出猎 <==> other	other	停止播放密州出猎	title=密州出猎	2.70	regex
+poem	deny	我不想听你朗诵唐诗了	tag=唐诗 <==> other	other	我不想听你朗诵唐诗了	tag=唐诗	2.70	regex
+poem	deny	李白的诗不要放	author=李白 <==> other	other	李白的诗不要放	author=李白	2.70	regex
+poem	deny	我不要听苏幕遮了	title=苏幕遮 <==> other	other	我不要听苏幕遮了	title=苏幕遮	2.70	regex
+poem	deny	我不想听你背李白的诗	author=李白 <==> other	other	我不想听你背李白的诗	author=李白	2.70	regex
+poem	deny	我不想听这种伤感的诗词	tag=伤感 <==> poem	inform	我不想听这种伤感的诗词	8.82	model
+poem	deny	可不可以别放苏幕遮这首诗了	title=苏幕遮 <==> other	other	可不可以别放苏幕遮这首诗了	title=苏幕遮	2.70	regex
+poem	request	白雪歌送武判官归京这首诗是谁写的	title=白雪歌送武判官归京 <==> other	other	白雪歌送武判官归京这首诗是谁写的	title=白雪歌送武判官归京	2.50	regex
+story	deny	停止播放格林童话	album=格林童话 <==> other	other	停止播放格林童话	album=格林童话	1.90	regex
+story	deny	我不要听田螺姑娘	title=田螺姑娘 <==> other	other	我不要听田螺姑娘	title=田螺姑娘	1.90	regex
+story	deny	我不想听花神造花了	title=花神造花 <==> other	other	我不想听花神造花了	title=花神造花	1.90	regex
+story	deny	我不要听这个故事 <==> other	other	我不要听这个故事	1.91	regex
+story	deny	别给我放大脚丫游巴黎了	title=大脚丫游巴黎 <==> other	other	别给我放大脚丫游巴黎了	title=大脚丫游巴黎	1.90	regex
+story	deny	不想听大灰狼的故事	character=大灰狼 <==> other	other	不想听大灰狼的故事	character=大灰狼	1.90	regex
+story	deny	可不可以不要讲这个故事 <==> other	other	可不可以不要讲这个故事	1.91	regex
+story	reqalts	换一个故事吧 <==> other	other	换一个故事吧	1.90	regex
+story	reqalts	这个故事不好听 <==> other	other	这个故事不好听	1.87	regex
+story	reqalts	还有没有别的故事 <==> other	other	还有没有别的故事	1.90	regex
+submusic	deny	你不会只有这一首歌吧	title=unchanged <==> music	confirm	你不会只有这一首歌吧	8.67	model
+submusic	deny	有没有除了七里香以外的歌	title=七里香 <==> music	confirm	有没有除了七里香以外的歌	8.43	model
+story	deny	可不可以别放面包狼和糊涂先生这个故事了	title=面包狼和糊涂先生 <==> other	other	可不可以别放面包狼和糊涂先生这个故事了	title=面包狼和糊涂先生	1.90	regex
+submusic	deny	怎么一下午都是这首歌不想听了	title=unchanged <==> other	other	怎么一下午都是这首歌不想听了	1.00	model
+submusic	deny	还是欣赏不来凤凰传奇这个组合	artist=凤凰传奇 <==> other	other	还是欣赏不来凤凰传奇这个组合	loc_area=凤凰	1.00	model
+submusic	deny	这种歌听得脑袋疼不喜欢	tag=unchanged <==> other	other	这种歌听得脑袋疼不喜欢	1.00	model
+submusic	deny	这首歌的歌词太傻了听不下去了	title=unchanged <==> music	inform	这首歌的歌词太傻了听不下去了	17.62	model
+submusic	deny	换吧换吧不听这首歌了	title=unchanged <==> music	inform	换吧换吧不听这首歌了	8.93	model
+submusic	deny	这歌手简直是奇葩，唱的歌太难听了，别放他的歌了	artist=unchanged <==> music	inform	这歌手简直是奇葩，唱的歌太难听了，别放他的歌了	21.32	model
+submusic	inform	更想听粤语版的换成粤语版的吧	language=粤语,title=unchanged <==> music	inform	更想听粤语版的换成粤语版的吧	language=粤语,language=粤语	9.93	model
+submusic	inform	还是粤语版的更好听换成粤语版的吧	language=粤语,title=unchanged <==> music	inform	还是粤语版的更好听换成粤语版的吧	language=粤语,language=粤语	10.72	model
+submusic	inform	换成普通话版本的吧粤语的听不懂	tag=普通话,title=unchanged <==> music	inform	换成普通话版本的吧粤语的听不懂	language=普通话,language=粤语	3.33	model
+submusic	inform	怎么不是周杰伦唱的换成周杰伦唱的	artist=周杰伦 <==> other	other	怎么不是周杰伦唱的换成周杰伦唱的	person=周杰伦,person=周杰伦	1.00	model
+submusic	inform	好像这首歌有日语版的我想听日语版的	language=日语,title=unchanged <==> music	inform	好像这首歌有日语版的我想听日语版的	language=日语,language=日语	14.11	model
+submusic	inform	还是原来泰语版的好听换成泰语版的可不可以	language=泰语,title=unchanged <==> music	confirm	还是原来泰语版的好听换成泰语版的可不可以	language=泰语,language=泰语	8.03	model
+submusic	inform	放一首她的justlikefire	title=justlikefire,artist=unchanged <==> music	inform	放一首她的justlikefire	title=她的justlikefire	4.52	model
+submusic	inform	再来一首他们唱的哪里是你的拥抱	title=哪里是你的拥抱,artist=unchanged <==> music	inform	再来一首他们唱的哪里是你的拥抱	title=哪里是你的拥抱	9.69	model
+submusic	inform	我要听他的我去2000年这张专辑中的歌	album=我去2000年,artist=unchanged <==> music	inform	我要听他的我去2000年这张专辑中的歌	album=我去2000年	15.17	model
+submusic	inform	放他们唱的Donotbreakmyheart	title=Donotbreakmyheart,artist=unchanged <==> other	other	放他们唱的Donotbreakmyheart	1.00	model
+submusic	inform	听他的叶惠美	album=叶惠美,artist=unchanged <==> other	other	听他的叶惠美	r_person=他,person=叶惠美	1.00	model
+submusic	inform	骚当的鸭嗓真棒！再来一首他唱的歌	artist=unchanged <==> submusic	reqalts	骚当的鸭嗓真棒！再来一首他唱的歌	artist=unchanged,reqalts_slot=title	1.00	regex
+submusic	inform	轻音乐的	tag=轻音乐 <==> music	inform	轻音乐的	tag=轻音乐	0.90	regex
+submusic	request	这首歌是编号89757里的歌曲吗	request_slot=album,title=unchanged <==> music	confirm	这首歌是编号89757里的歌曲吗	album=编号89757	23.15	model
+submusic	request	这首歌是叶惠美里面的吗	request_slot=album,title=unchanged <==> other	other	这首歌是叶惠美里面的吗	person=叶惠美	1.00	model
+submusic	request	这首歌叫callmemaybe吗	request_slot=title,title=unchanged <==> other	other	这首歌叫callmemaybe吗	1.00	model
+subweather	inform	江宁区的方山呢	loc_area=江宁区,loc_poi=方山 <==> other	other	江宁区的方山呢	loc_area=江宁区,loc_area=方山	1.00	model
+subweather	inform	那需要带外套长袖之类的吗 <==> other	other	那需要带外套长袖之类的吗	1.00	model
+subweather	inform	风好大啊风力有多少啊	focus=风 <==> other	other	风好大啊风力有多少啊	1.00	model
+music	confirm	葫芦丝版的葫芦娃有吗	tag=葫芦丝,title=葫芦娃 <==> story	inform	葫芦丝版的葫芦娃有吗	title=葫芦娃	1.89	regex
+music	confirm	美人鱼有吗	title=美人鱼 <==> story	inform	美人鱼有吗	title=美人鱼	1.89	regex
+music	confirm	你到底会不会唱areyouok	title=areyouok <==> other	other	你到底会不会唱areyouok	1.00	model
+music	inform	播放音乐排行榜本周单曲排行第一的歌 <==> other	other	播放音乐排行榜本周单曲排行第一的歌	1.00	model
+music	inform	卢春如的温度	artist=卢春如,title=温度 <==> weather	inform	卢春如的温度	focus=温度	1.00	model
+music	inform	我家豆豆刚睡醒来点轻音乐没烦恼	tag=睡醒,tag=轻音乐,title=没烦恼 <==> other	other	我家豆豆刚睡醒来点轻音乐没烦恼	1.00	model
+music	inform	我想听白雪公主这首歌	title=白雪公主 <==> story	inform	我想听白雪公主这首歌	title=白雪公主	6.12	model
+music	inform	我想听蓝精灵	title=蓝精灵 <==> story	inform	我想听蓝精灵	album=蓝精灵	1.89	regex
+music	inform	我要听黑猫警长	title=黑猫警长 <==> story	inform	我要听黑猫警长	album=黑猫警长	1.89	regex
+music	inform	找个叶圣涛音乐作品幸福家家有	artist=叶圣涛,title=幸福家家有 <==> other	other	找个叶圣涛音乐作品幸福家家有	person=叶圣涛	1.00	model
+music	inform	林依婷的歌有哪些唱一首听听	artist=林依婷 <==> music	confirm	林依婷的歌有哪些唱一首听听	artist=林依婷	0.80	regex
+poem	inform	欢度新年的诗是什么	tag=欢度新年 <==> other	other	欢度新年的诗是什么	1.00	model
+poem	inform	流传的比较广的现代诗有什么	tag=现代诗 <==> other	other	流传的比较广的现代诗有什么	1.00	model
+poem	inform	赞美母亲的诗是什么	tag=赞美母亲 <==> other	other	赞美母亲的诗是什么	1.00	model
+poem	inform	能听一下竹枝词吗	title=竹枝词 <==> music	confirm	能听一下竹枝词吗	title=竹枝词	0.80	regex
+poem	inform	播放一首相思	title=相思 <==> music	inform	播放一首相思	title=相思	0.90	regex
+poem	inform	望月怀远唐张九龄	title=望月怀远,tag=唐,author=张九龄 <==> other	other	望月怀远唐张九龄	1.00	model
+poem	inform	有送兄不	title=送兄 <==> other	other	有送兄不	1.00	model
+story	inform	狼来了是什么样的故事	title=狼来了 <==> other	other	狼来了是什么样的故事	1.00	model
+story	inform	盲人摸象是怎么回事来着	title=盲人摸象 <==> other	other	盲人摸象是怎么回事来着	1.00	model
+story	inform	我想听英文版小红帽	tag=英文,title=小红帽 <==> music	inform	我想听英文版小红帽	language=英文,title=小红帽	4.01	model
+story	inform	晚安前可以听什么伊索寓言呢	album=伊索寓言 <==> other	other	晚安前可以听什么伊索寓言呢	person=伊索	1.00	model
+story	inform	你收录的格林童话有哪些	album=格林童话 <==> other	other	你收录的格林童话有哪些	person=格林	1.00	model
+story	inform	有没有什么韩国的小故事	tag=韩国 <==> music	confirm	有没有什么韩国的小故事	region=韩国,title=小故事	8.96	model
+story	inform	有中国的四大名著吗	tag=中国,album=四大名著 <==> other	other	有中国的四大名著吗	loc_country=中国	1.00	model
+story	inform	请播放白雪公主与七个小矮人	title=白雪公主与七个小矮人 <==> music	inform	请播放白雪公主与七个小矮人	title=白雪公主与七个小矮人	0.90	regex
+story	inform	推荐下宫崎骏的哪些作品适合四岁宝宝	author=宫崎骏,tag=四岁宝宝 <==> other	other	推荐下宫崎骏的哪些作品适合四岁宝宝	person=宫崎骏	1.00	model
+story	inform	在一千零一夜里面找一个故事要四岁小孩听的	album=一千零一夜,tag=四岁小孩 <==> other	other	在一千零一夜里面找一个故事要四岁小孩听的	1.00	model
+weather	inform	海边风大不大	focus=风,loc_poi=海边 <==> other	other	海边风大不大	1.00	model
+weather	inform	魔都明天风向是什么可以放风筝吗	loc_city=魔都,time=明天,focus=风向 <==> other	other	魔都明天风向是什么可以放风筝吗	loc_poi=魔都	1.00	model
+weather	inform	黄山最近能有日出吗	loc_city=黄山,time=最近,focus=日出 <==> other	other	黄山最近能有日出吗	loc_area=黄山	1.00	model
+weather	inform	郑州的气候怎么样	loc_city=郑州 <==> other	other	郑州的气候怎么样	loc_city=郑州	1.00	model
+weather	inform	新疆的气候怎么样	loc_province=新疆 <==> other	other	新疆的气候怎么样	loc_poi=新疆	1.00	model
+weather	inform	现在这里的风有多大	time=现在,focus=风 <==> other	other	现在这里的风有多大	1.00	model
+weather	inform	请问一下今天嘉兴的天气穿什么衣服合适	time=今天,loc_city=嘉兴 <==> other	other	请问一下今天嘉兴的天气穿什么衣服合适	loc_city=嘉兴	1.00	model
+weather	inform	今天有多少度	time=今天,focus=度 <==> other	other	今天有多少度	1.00	model
+weather	inform	下周成都最高多少度	time=下周,loc_city=成都,focus=度 <==> other	other	下周成都最高多少度	loc_city=成都	1.00	model
+weather	inform	因强热带风暴到来台湾海峡会刮大风多少级	focus=风,loc_province=台湾,loc_poi=海峡,focus=风 <==> other	other	因强热带风暴到来台湾海峡会刮大风多少级	loc_province=台湾	1.00	model
+weather	inform	上海今天什么天	loc_city=上海,time=今天 <==> other	other	上海今天什么天	loc_city=上海	1.00	model
+weather	inform	西安多少度高温	loc_city=西安,focus=度,focus=高温 <==> other	other	西安多少度高温	loc_area=西安	1.00	model
+weather	inform	内蒙古今天是不是多云	loc_province=内蒙古,time=今天,focus=多云 <==> other	other	内蒙古今天是不是多云	loc_province=内蒙古	1.00	model
+weather	inform	未来一周降水情况如何	time=未来一周,focus=水 <==> other	other	未来一周降水情况如何	1.00	model
+weather	inform	西藏自治区前天空气咋样	loc_province=西藏自治区,time=前天,focus=空气 <==> other	other	西藏自治区前天空气咋样	loc_province=西藏,loc_poi=自治区	1.00	model
+weather	inform	中秋节天怎么样	time=中秋节 <==> other	other	中秋节天怎么样	1.00	model
+weather	inform	现在中国几度了	time=现在,loc_country=中国,focus=度 <==> other	other	现在中国几度了	loc_country=中国	1.00	model
+weather	inform	我想问你中国是多少度	focus=度,loc_country=中国 <==> other	other	我想问你中国是多少度	loc_country=中国	1.00	model
+weather	inform	中国天气咋样	loc_country=中国 <==> other	other	中国天气咋样	loc_country=中国	1.00	model
+weather	inform	中国是阴天吗	loc_country=中国,focus=阴 <==> other	other	中国是阴天吗	loc_country=中国	1.00	model
+weather	inform	中国多云吗	loc_country=中国,focus=多云 <==> other	other	中国多云吗	loc_country=中国	1.00	model
+weather	inform	中国有没有出太阳	loc_country=中国,focus=太阳 <==> other	other	中国有没有出太阳	loc_country=中国	1.00	model
+weather	inform	中国有雷电吗	loc_country=中国,focus=雷电 <==> other	other	中国有雷电吗	loc_country=中国	1.00	model
+weather	inform	中国是不是阴转多云	loc_country=中国,focus=阴转多云 <==> other	other	中国是不是阴转多云	loc_country=中国	1.00	model
+weather	inform	内蒙古圣诞节空气如何	loc_province=内蒙古,time=圣诞节,focus=空气 <==> other	other	内蒙古圣诞节空气如何	loc_province=内蒙古	1.00	model
+weather	inform	魔都今年春节是阴天吗	loc_city=魔都,time=今年春节,focus=阴 <==> other	other	魔都今年春节是阴天吗	loc_poi=魔都	1.00	model
+weather	inform	香港这个星期一风大不大	loc_city=香港,time=这个星期一,focus=风 <==> other	other	香港这个星期一风大不大	loc_poi=香港	1.00	model
+weather	inform	甘孜藏族自治州午间冷不冷	loc_city=甘孜藏族自治州,time=午间,focus=冷,focus=冷 <==> other	other	甘孜藏族自治州午间冷不冷	loc_area=甘孜,loc_poi=藏族,loc_poi=自治州	1.00	model
+weather	inform	望都午间空气指数是多少	loc_area=望都,time=午间,focus=空气 <==> other	other	望都午间空气指数是多少	1.00	model
+weather	inform	湖北黄鹤楼今年春节天气	loc_province=湖北,loc_poi=黄鹤楼,time=今年春节 <==> other	other	湖北黄鹤楼今年春节天气	loc_province=湖北	1.00	model
+weather	inform	大厂回族自治县这个礼拜六天气	loc_area=大厂回族自治县,time=这个礼拜六 <==> other	other	大厂回族自治县这个礼拜六天气	loc_area=大厂,loc_poi=回族,loc_poi=自治县	1.00	model
+weather	inform	小精灵请给我播放天气预报 <==> music	inform	小精灵请给我播放天气预报	title=小精灵,title=天气预报	2.40	model
+weather	inform	小精灵今天空气怎么样	time=今天,focus=空气 <==> other	other	小精灵今天空气怎么样	1.00	model
+weather	inform	小精灵哪天下雪呀	focus=雪 <==> other	other	小精灵哪天下雪呀	1.00	model
+weather	inform	保定市2018年8月22日可以穿短袖吗	loc_city=保定市,time=2018年8月22日,focus=穿衣 <==> other	other	保定市2018年8月22日可以穿短袖吗	loc_city=保定市	1.00	model
+phone	inform	帮忙拨一下一零零八六	number=一零零八六 <==> other	other	帮忙拨一下一零零八六	1.00	model
+phone	inform	贵州旅游热线可以帮忙拨下吗	contact=贵州旅游热线 <==> other	other	贵州旅游热线可以帮忙拨下吗	loc_province=贵州	1.00	model
+nav	inform	钜豪在哪怎么去	des_poi=钜豪 <==> other	other	钜豪在哪怎么去	person=钜豪	1.00	model
+nav	inform	不走堵车到GEROLAMO新世界百货去	rou_pre=不走堵车,des_poi=GEROLAMO新世界百货 <==> other	other	不走堵车到GEROLAMO新世界百货去	1.00	model
+nav	inform	出发先去贵人鸟体育好又多购物中心东北再去中国心理卫生杂志社	via_poi=贵人鸟体育好又多购物中心东北,des_poi=中国心理卫生杂志社 <==> other	other	出发先去贵人鸟体育好又多购物中心东北再去中国心理卫生杂志社	loc_country=中国	1.00	model
+nav	inform	出发回抚汉堂书法培训中心南平分院	des_poi=抚汉堂书法培训中心南平分院 <==> other	other	出发回抚汉堂书法培训中心南平分院	loc_city=南平	1.00	model
+nav	inform	直接导航 <==> other	other	直接导航	1.00	model
+nav	inform	语音导航 <==> other	other	语音导航	1.00	model
+nav	inform	鸡鸣寺怎么去	des_poi=鸡鸣寺 <==> other	other	鸡鸣寺怎么去	loc_poi=鸡鸣寺	1.00	model
+nav	inform	出发前往兴智科技园	des_poi=兴智科技园 <==> other	other	出发前往兴智科技园	1.00	model
+other	other	明天会不会堵车 <==> weather	inform	明天会不会堵车	time=明天	1.00	model
+other	other	植物也喜欢听动听的话吗 <==> music	inform	植物也喜欢听动听的话吗	2.07	model
+other	other	你喜欢听我讲故事嘛 <==> story	inform	你喜欢听我讲故事嘛	11.75	model
+other	other	今天的故事讲的很棒给你一朵小红花 <==> story	inform	今天的故事讲的很棒给你一朵小红花	title=小红花	12.97	model
+other	other	我忘了上一句是什么了 <==> poem	inform	我忘了上一句是什么了	range=上一句	10.55	model
+other	other	皇上小时候也得背诗么 <==> poem	inform	皇上小时候也得背诗么	1.26	model
+other	other	每次一听你背诗我就想睡觉 <==> poem	inform	每次一听你背诗我就想睡觉	1.99	model
+other	other	我刚刚写了一首诗你听听看我写的好不好 <==> poem	inform	我刚刚写了一首诗你听听看我写的好不好	8.85	model
+other	other	这首诗歌让我想到了大海 <==> poem	inform	这首诗歌让我想到了大海	title=大海	9.45	model
+other	other	这首诗太长了我肯定背不下来 <==> poem	inform	这首诗太长了我肯定背不下来	7.85	model
+other	other	丢手绢给我亲爱的宝贝 <==> music	inform	丢手绢给我亲爱的宝贝	title=丢手绢	9.21	model
+other	other	修复墨迹天气 <==> weather	inform	修复墨迹天气	1.00	model
+other	other	我喜欢孙悟空 <==> music	inform	我喜欢孙悟空	title=孙悟空	0.90	regex
+other	other	鹅即是儿歌也是诗 <==> music	inform	鹅即是儿歌也是诗	tag=儿歌	6.77	model
+other	other	我们来玩歌词接龙的游戏吧 <==> music	inform	我们来玩歌词接龙的游戏吧	tag=游戏	2.12	model
+other	other	有个爱讲卫生的好好孩子 <==> music	inform	有个爱讲卫生的好好孩子	title=爱讲卫生的好好孩子	1.60	model
+other	other	中秋节是下周的周日吗 <==> weather	inform	中秋节是下周的周日吗	time=中秋节,time=下周,time=周日	1.00	model
+other	other	上海明天是星期几 <==> weather	inform	上海明天是星期几	loc_city=上海,time=明天	1.00	model
+other	other	我不喜欢生日那天下雨 <==> weather	inform	我不喜欢生日那天下雨	focus=雨	1.00	model
+other	other	避免请问 <==> nav	inform	避免请问	rou_pre=避免请问	1.00	model
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+分类评价指标(clf)
+【slu系统级领域分类 accuracy && micro-F1】: 98.61%  
+【slu系统级领域分类 macro-F1】: 98.65%  
+【slu系统级领域及意图分类 accuracy】: 98.58%  (when domain and intent is correct)
+【slu系统级领域及意图分类、语义项抽取 accuracy】	: 95.66%  (when domain/intent/slots are all correct)
+
+模型解析 vs. 规则解析
+【model match】: 60.70%
+【regex match】: 39.30%
+
+测试集不合法行条数
+【测试结果文件格式不合法行数】: 0
+【未找到正确标记的测试query数】: 0
+
+-*-domain confusion matrix-*-
+
+matrix	['control', 'music', 'nav', 'other', 'phone', 'poem', 'sound', 'story', 'submusic', 'subweather', 'vehicle_control', 'weather']	
+
+control	[438, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+music	[0, 1318, 0, 4, 0, 0, 0, 5, 0, 0, 0, 1]
+nav	[0, 0, 2312, 8, 0, 0, 0, 0, 0, 0, 0, 0]
+other	[0, 6, 1, 855, 0, 6, 0, 2, 0, 0, 0, 5]
+phone	[0, 0, 0, 2, 661, 0, 0, 0, 0, 0, 0, 0]
+poem	[0, 2, 0, 15, 0, 670, 0, 0, 0, 0, 0, 0]
+sound	[0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0]
+story	[0, 3, 0, 18, 0, 0, 0, 681, 0, 0, 0, 0]
+submusic	[0, 15, 0, 8, 0, 0, 0, 0, 518, 0, 0, 0]
+subweather	[0, 0, 0, 3, 0, 0, 0, 0, 0, 160, 0, 0]
+vehicle_control	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 878, 0]
+weather	[0, 1, 0, 34, 0, 0, 0, 0, 0, 0, 0, 1319]
+
+-*-intent confusion matrix-*-
+
+matrix	['answer', 'app', 'cancel', 'confirm', 'deny', 'hangup', 'inform', 'mplayer', 'other', 'playmode', 'playstate', 'repeat', 'reqalts', 'request', 'serial', 'sound', 'switch']	
+
+answer	[18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+app	[0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+cancel	[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+confirm	[0, 0, 0, 465, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+deny	[0, 0, 0, 0, 112, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+hangup	[0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+inform	[0, 0, 0, 1, 0, 0, 7644, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+mplayer	[0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+other	[0, 0, 0, 0, 0, 0, 1, 0, 854, 0, 0, 0, 0, 0, 0, 0, 0]
+playmode	[0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0]
+playstate	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 137, 0, 0, 0, 0, 0, 0]
+repeat	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0]
+reqalts	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 0, 0, 0]
+request	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 125, 0, 0, 0]
+serial	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0]
+sound	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0]
+switch	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 212]
+
+-*-domain result-*-
+
+Evaluate	Accuracy	Precision	Recall	F1
+
+control:	100.00%	100.00%	100.00%	100.00%
+music:	99.60%	98.00%	99.20%	98.60%
+nav:	99.90%	100.00%	99.70%	99.80%
+other:	98.90%	90.30%	97.70%	93.90%
+phone:	100.00%	100.00%	99.70%	99.80%
+poem:	99.80%	99.10%	97.50%	98.30%
+sound:	100.00%	100.00%	100.00%	100.00%
+story:	99.70%	99.00%	97.00%	98.00%
+submusic:	99.80%	100.00%	95.70%	97.80%
+subweather:	100.00%	100.00%	98.20%	99.10%
+vehicle_control:	100.00%	100.00%	100.00%	100.00%
+weather:	99.60%	99.50%	97.40%	98.50%
+
+-*-intent result-*-
+
+Evaluate	Accuracy	Precision	Recall	F1
+
+answer:	100.00%	100.00%	100.00%	100.00%
+app:	100.00%	100.00%	100.00%	100.00%
+cancel:	100.00%	100.00%	100.00%	100.00%
+confirm:	100.00%	99.80%	100.00%	99.90%
+deny:	100.00%	100.00%	99.10%	99.60%
+hangup:	100.00%	100.00%	100.00%	100.00%
+inform:	100.00%	100.00%	100.00%	100.00%
+mplayer:	100.00%	100.00%	100.00%	100.00%
+other:	100.00%	100.00%	99.90%	99.90%
+playmode:	100.00%	100.00%	100.00%	100.00%
+playstate:	100.00%	100.00%	100.00%	100.00%
+repeat:	100.00%	100.00%	100.00%	100.00%
+reqalts:	100.00%	99.20%	100.00%	99.60%
+request:	100.00%	100.00%	100.00%	100.00%
+serial:	100.00%	100.00%	100.00%	100.00%
+sound:	100.00%	100.00%	100.00%	100.00%
+switch:	100.00%	100.00%	100.00%	100.00%
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+语义项抽取评价指标(ner)
+
+
+领域: control
+该领域评估所用有效条数(分类正确): 438
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+count	1.0	1.0	1.0
+name	1.0	1.0	1.0
+opr	1.0	1.0	1.0
+source	1.0	1.0	1.0
+type	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: music
+该领域评估所用有效条数(分类正确): 1318
+precision: 0.978
+recall: 0.972
+f1: 0.975
+slotname	precision	recall	f1
+album	0.933	0.933	0.933
+artist	1.0	0.994	0.997
+gender	0.967	0.967	0.967
+language	1.0	1.0	1.0
+lyrics	1.0	1.0	1.0
+program	0.976	0.992	0.984
+rank	0.667	0.545	0.6
+region	1.0	1.0	1.0
+tag	0.978	0.964	0.971
+title	0.973	0.973	0.973
+行号, 正确结果 <=> SLU解析结果
+1, 巴赫的钢琴曲会不会啊	artist=巴赫,tag=钢琴曲	<=>	巴赫的钢琴曲会不会啊	artist=巴赫,tag=钢琴
+78, 美国的经典儿歌你会唱吗	region=美国,tag=经典,tag=儿歌	<=>	美国的经典儿歌你会唱吗	region=美国,tag=儿歌
+175, 你会不会陈奕迅的新歌我们	artist=陈奕迅,rank=新,title=我们	<=>	你会不会陈奕迅的新歌我们	artist=陈奕迅,rank=新
+179, 你会唱爱	title=爱	<=>	你会唱爱	title=唱爱
+239, 你能给这个熊孩子来一首有教育意义的歌曲吗	tag=教育意义	<=>	你能给这个熊孩子来一首有教育意义的歌曲吗	title=熊孩子,tag=教育意义
+245, 你有美人鱼这首歌么	title=美人鱼	<=>	你有美人鱼这首歌么	title=人鱼
+263, 你知道最近的热门歌曲吗	rank=最近,tag=热门	<=>	你知道最近的热门歌曲吗	rank=近,tag=热门
+283, 是不是有民族风音乐	tag=民族风	<=>	是不是有民族风音乐	tag=民族
+338, 有没有钢琴曲	tag=钢琴曲	<=>	有没有钢琴曲	tag=钢琴
+367, 有没有美女团体的歌	gender=美女,gender=团体	<=>	有没有美女团体的歌	gender=女,gender=团体
+412, 有没有抒情的摇滚乐	tag=抒情,tag=摇滚乐	<=>	有没有抒情的摇滚乐	tag=抒情,tag=摇滚
+441, 有没有最新的歌呢	rank=最新	<=>	有没有最新的歌呢	rank=新
+442, 有没有最近比较火的歌	rank=最近,tag=火	<=>	有没有最近比较火的歌	tag=火
+443, 有没有周杰伦和蔡依林合唱的歌	artist=周杰伦,artist=蔡依林,tag=合唱	<=>	有没有周杰伦和蔡依林合唱的歌	artist=周杰伦,artist=蔡依林
+444, 有没有周杰伦最新的专辑的歌曲	artist=周杰伦,rank=最新	<=>	有没有周杰伦最新的专辑的歌曲	artist=周杰伦,rank=新
+480, 宝贝要跳舞喽来一首舞曲吧	tag=跳舞,tag=舞曲	<=>	宝贝要跳舞喽来一首舞曲吧	tag=舞曲
+487, 播放八零年代歌曲	tag=八零年代	<=>	播放八零年代歌曲	title=八零年代
+489, 播放八十年代歌曲	tag=八十年代	<=>	播放八十年代歌曲	title=八十年代
+491, 宝宝最近喜欢听TFBOYS的专辑青春修炼手册	artist=TFBOYS,album=青春修炼手册	<=>	宝宝最近喜欢听TFBOYS的专辑青春修炼手册	artist=TFBOYS,title=青春修炼手册
+522, 播放九十年代歌曲	tag=九十年代	<=>	播放九十年代歌曲	title=九十年代
+527, 播放李宇春的流行	artist=李宇春,title=流行	<=>	播放李宇春的流行	artist=李宇春,album=流行
+610, 播放最近流行的音乐	rank=最近,tag=流行	<=>	播放最近流行的音乐	tag=流行
+670, 唱一下有妈的孩子像块宝幸福享不了	title=有妈的孩子像块宝幸福享不了	<=>	唱一下有妈的孩子像块宝幸福享不了	
+715, 给宝宝唱首歌	tag=宝宝	<=>	给宝宝唱首歌	
+733, 给我唱热门动画片主题曲吧	tag=热门,tag=动画片,tag=主题曲	<=>	给我唱热门动画片主题曲吧	tag=动画片,tag=主题曲
+736, 给我唱首生日快乐歌吧	title=生日快乐歌	<=>	给我唱首生日快乐歌吧	title=生日
+788, 葫芦娃的歌唱一个	title=葫芦娃	<=>	葫芦娃的歌唱一个	program=葫芦娃
+791, 黑猫警长这部动画片的主题曲听一下	program=黑猫警长,tag=动画片,tag=主题曲	<=>	黑猫警长这部动画片的主题曲听一下	title=黑猫警长,tag=动画片,tag=主题曲
+801, 经典少儿歌曲儿歌串烧	tag=经典,tag=少儿,tag=儿歌	<=>	经典少儿歌曲儿歌串烧	tag=经典,tag=少儿,tag=儿歌,tag=串烧
+803, 今天下雨让我们学首新歌雨吧	tag=下雨,rank=新,title=雨	<=>	今天下雨让我们学首新歌雨吧	tag=下雨,rank=新
+850, 来一首催眠曲	tag=催眠曲	<=>	来一首催眠曲	tag=催眠
+853, 来一首钢琴曲	tag=钢琴曲	<=>	来一首钢琴曲	tag=钢琴
+861, 来一首韩文歌运动一下	language=韩文,tag=运动	<=>	来一首韩文歌运动一下	language=韩文
+873, 来一首交响乐	tag=交响乐	<=>	来一首交响乐	tag=交响
+874, 来一首爵士乐	tag=爵士乐	<=>	来一首爵士乐	tag=爵士
+900, 来一首肖邦的交响乐	artist=肖邦,tag=交响乐	<=>	来一首肖邦的交响乐	artist=肖邦,tag=交响
+915, 两岁小孩听的摇篮曲有哪些	tag=两岁小孩,title=摇篮曲	<=>	两岁小孩听的摇篮曲有哪些	tag=摇篮曲
+919, 六十年代的英美摇滚乐	tag=六十年代,region=英美,tag=摇滚乐	<=>	六十年代的英美摇滚乐	tag=六十年代,tag=摇滚,region=英美
+929, 美国的小朋友都听什么儿歌	region=美国,tag=小朋友,tag=儿歌	<=>	美国的小朋友都听什么儿歌	region=美国,tag=儿歌
+961, 请给我唱小猪佩奇	title=小猪佩奇	<=>	请给我唱小猪佩奇	program=小猪佩奇
+1027, 随便来首钢琴曲	tag=钢琴曲	<=>	随便来首钢琴曲	tag=钢琴
+1033, 听生日快乐歌儿童唱的	title=生日快乐歌,tag=儿童	<=>	听生日快乐歌儿童唱的	title=儿童,program=生日快乐
+1095, 我想听哥特风格的歌	tag=哥特风格	<=>	我想听哥特风格的歌	tag=哥特
+1109, 我想听爵士乐了	tag=爵士乐	<=>	我想听爵士乐了	tag=爵士
+1111, 我想听韩语歌曲明天的天气	language=韩语,title=明天的天气	<=>	我想听韩语歌曲明天的天气	language=韩语
+1117, 我想听民族风音乐	tag=民族风	<=>	我想听民族风音乐	tag=民族
+1156, 我想听肖邦	artist=肖邦	<=>	我想听肖邦	title=肖邦
+1233, 我要听我的好妈妈哦	title=我的好妈妈	<=>	我要听我的好妈妈哦	title=好妈妈
+1295, 雨天必听乐曲	tag=雨天	<=>	雨天必听乐曲	title=雨天
+
+
+领域: nav
+该领域评估所用有效条数(分类正确): 2312
+precision: 0.986
+recall: 0.981
+f1: 0.983
+slotname	precision	recall	f1
+dep_poi	0.993	0.995	0.994
+des_poi	0.991	0.986	0.988
+rou_pre	0.98	0.981	0.98
+via_poi	0.935	0.877	0.905
+行号, 正确结果 <=> SLU解析结果
+38, 嘉乐驰汽车电瓶电路到非常手机时间最少的路线	dep_poi=嘉乐驰汽车电瓶电路,des_poi=非常手机,rou_pre=时间最少	<=>	嘉乐驰汽车电瓶电路到非常手机时间最少的路线	dep_poi=嘉乐驰汽车电瓶电路,via_poi=非常手机,rou_pre=时间最少
+169, 导航要走高速最近去裕华名居的路线	rou_pre=走高速,rou_pre=最近,des_poi=裕华名居	<=>	导航要走高速最近去裕华名居的路线	rou_pre=要走高速,rou_pre=最近,des_poi=裕华名居
+170, 导航先去南京汇枫专业维修再去南京宝鼎汽车销售服务有限公司再去兴贤佳园1期	via_poi=南京汇枫专业维修,via_poi=南京宝鼎汽车销售服务有限公司,des_poi=兴贤佳园1期	<=>	导航先去南京汇枫专业维修再去南京宝鼎汽车销售服务有限公司再去兴贤佳园1期	des_poi=南京汇枫专业维修再去南京宝鼎汽车销售服务有限公司再去兴贤佳园1期
+327, 要走高速到江东中路329号金奥国际购物中心3层怎么去	rou_pre=走高速,des_poi=江东中路329号金奥国际购物中心3层	<=>	要走高速到江东中路329号金奥国际购物中心3层怎么去	rou_pre=要走高速,des_poi=江东中路329号金奥国际购物中心3层
+348, 出发先去CoCo都可茶饮仙鹤门店再去宏景大道1号	via_poi=CoCo都可茶饮仙鹤门店,des_poi=宏景大道1号	<=>	出发先去CoCo都可茶饮仙鹤门店再去宏景大道1号	via_poi=CoCo都可茶饮仙鹤门店,via_poi=宏景大道1号
+351, 从这先去瑞幸咖啡店再去CoCo都可茶饮中山门店最后去滨江大道1号明发滨江新城外滩广场3楼永辉超市楼上最通畅	via_poi=瑞幸咖啡店,via_poi=CoCo都可茶饮中山门店,des_poi=滨江大道1号明发滨江新城外滩广场3楼永辉超市楼上,rou_pre=最通畅	<=>	从这先去瑞幸咖啡店再去CoCo都可茶饮中山门店最后去滨江大道1号明发滨江新城外滩广场3楼永辉超市楼上最通畅	via_poi=瑞幸咖啡店,via_poi=CoCo都可茶饮中山门店,via_poi=滨江大道1号明发滨江新城外滩广场3楼永辉超市楼上,rou_pre=最通畅
+372, 导航先去茶野铁心桥店再去懒骨茶再去黑墨营路98号阳光嘉园1幢	via_poi=茶野铁心桥店,via_poi=懒骨茶,des_poi=黑墨营路98号阳光嘉园1幢	<=>	导航先去茶野铁心桥店再去懒骨茶再去黑墨营路98号阳光嘉园1幢	des_poi=茶野铁心桥店再去懒骨茶再去黑墨营路98号阳光嘉园1幢
+440, 我想去奥秘之家密室逃脱中关村店怎样可以要走高速到达	des_poi=奥秘之家密室逃脱中关村店,rou_pre=走高速	<=>	我想去奥秘之家密室逃脱中关村店怎样可以要走高速到达	des_poi=奥秘之家密室逃脱中关村店,rou_pre=要走高速
+541, 从泰洁干洗兴浦路到北京三里屯CHAO避开高速的路线	dep_poi=泰洁干洗兴浦路,des_poi=北京三里屯CHAO,rou_pre=避开高速	<=>	从泰洁干洗兴浦路到北京三里屯CHAO避开高速的路线	dep_poi=泰洁干洗兴浦路,via_poi=北京三里屯CHAO,rou_pre=避开高速
+576, 导航先去利乐电脑再去苏果社区店麒麟门店再去意大利风情自助餐	via_poi=利乐电脑,via_poi=苏果社区店麒麟门店,des_poi=意大利风情自助餐	<=>	导航先去利乐电脑再去苏果社区店麒麟门店再去意大利风情自助餐	des_poi=利乐电脑再去苏果社区店麒麟门店再去意大利风情自助餐
+587, 导航去Barbie糖的DIY要走高速	des_poi=Barbie糖的DIY,rou_pre=走高速	<=>	导航去Barbie糖的DIY要走高速	des_poi=Barbie糖的DIY,rou_pre=要走高速
+637, 导航到顺丰优选最美路线	des_poi=顺丰优选	<=>	导航到顺丰优选最美路线	des_poi=顺丰优
+686, 南京康居裹自然医学门诊到任我在线连锁超市怎么走	dep_poi=南京康居裹自然医学门诊,des_poi=任我在线连锁超市	<=>	南京康居裹自然医学门诊到任我在线连锁超市怎么走	dep_poi=南京康居裹自然医学门诊,des_poi=线连锁超市
+748, 从南彩商务中心去MindBridge北京apm用时最少的路线	dep_poi=南彩商务中心,des_poi=MindBridge北京apm,rou_pre=用时最少	<=>	从南彩商务中心去MindBridge北京apm用时最少的路线	dep_poi=南彩商务中心,via_poi=MindBridge北京apm,rou_pre=用时最少
+783, 导航先去361度再去风味小吃街月安街再去中国烟草烟酒饮料朝阳烟草专供	via_poi=361度,via_poi=风味小吃街月安街,des_poi=中国烟草烟酒饮料朝阳烟草专供	<=>	导航先去361度再去风味小吃街月安街再去中国烟草烟酒饮料朝阳烟草专供	des_poi=361度再去风味小吃街月安街再去中国烟草烟酒饮料朝阳烟草专供
+866, 去伊莱雅洁健康洗衣西环路要走高速的路	des_poi=伊莱雅洁健康洗衣西环路,rou_pre=走高速	<=>	去伊莱雅洁健康洗衣西环路要走高速的路	des_poi=伊莱雅洁健康洗衣西环路,rou_pre=要走高速
+891, 从抽奖区南京国际博览中心到达富苑小区电动汽车充电站怎么走	dep_poi=抽奖区南京国际博览中心,des_poi=达富苑小区电动汽车充电站	<=>	从抽奖区南京国际博览中心到达富苑小区电动汽车充电站怎么走	dep_poi=抽奖区南京国际博览中心,des_poi=富苑小区电动汽车充电站
+982, 导航先去天天快递后宰门分部再去格格快递再去清华东路甲7号楼	via_poi=天天快递后宰门分部,via_poi=格格快递,des_poi=清华东路甲7号楼	<=>	导航先去天天快递后宰门分部再去格格快递再去清华东路甲7号楼	des_poi=天天快递后宰门分部再去格格快递再去清华东路甲7号楼
+995, 导航去万源东里63栋途经中国联通北京西路营业厅要走高速	des_poi=万源东里63栋,via_poi=中国联通北京西路营业厅,rou_pre=走高速	<=>	导航去万源东里63栋途经中国联通北京西路营业厅要走高速	des_poi=万源东里63栋,via_poi=中国联通北京西路营业厅,rou_pre=要走高速
+1141, 应急掩蔽场所华新路到仓头八区1号楼避开下班拥挤的路线	dep_poi=应急掩蔽场所华新路,des_poi=仓头八区1号楼,rou_pre=避开下班拥挤	<=>	应急掩蔽场所华新路到仓头八区1号楼避开下班拥挤的路线	dep_poi=应急掩蔽场所华新路,via_poi=仓头八区1号楼,rou_pre=避开下班拥挤
+1165, 从群力大道36号回宋庄镇白家坟兴榆路东200米要走高速的路线	dep_poi=群力大道36号,des_poi=宋庄镇白家坟兴榆路东200米,rou_pre=走高速	<=>	从群力大道36号回宋庄镇白家坟兴榆路东200米要走高速的路线	dep_poi=群力大道36号,des_poi=宋庄镇白家坟兴榆路东200米,rou_pre=要走高速
+1190, 导航先去好竿净鹏欣水游城再去我爱我家汉中门店再去泉河果品小区昆仑沐歌洗浴休闲中心东北	via_poi=好竿净鹏欣水游城,via_poi=我爱我家汉中门店,des_poi=泉河果品小区昆仑沐歌洗浴休闲中心东北	<=>	导航先去好竿净鹏欣水游城再去我爱我家汉中门店再去泉河果品小区昆仑沐歌洗浴休闲中心东北	des_poi=好竿净鹏欣水游城再去我爱我家汉中门店再去泉河果品小区昆仑沐歌洗浴休闲中心东北
+1210, 我想去阜成门万通新世界阜成门外大街南避免交通堵塞的路	des_poi=阜成门万通新世界阜成门外大街南,rou_pre=避免交通堵塞	<=>	我想去阜成门万通新世界阜成门外大街南避免交通堵塞的路	via_poi=阜成门万通新世界阜成门外大街南,rou_pre=避免交通堵塞
+1309, 从卡子门大街88号家乐家B1层到雁翅镇向阳口按要走高速的路线出发	dep_poi=卡子门大街88号家乐家B1层,des_poi=雁翅镇向阳口,rou_pre=走高速	<=>	从卡子门大街88号家乐家B1层到雁翅镇向阳口按要走高速的路线出发	dep_poi=卡子门大街88号家乐家B1层,des_poi=雁翅镇向阳口,rou_pre=要走高速
+1327, 导航去回南路北50米的路	des_poi=回南路北50米	<=>	导航去回南路北50米的路	des_poi=南路北50米
+1329, 导航去朝外大街乙6号朝外SOHOB座3层03069	des_poi=朝外大街乙6号朝外SOHOB座3层03069	<=>	导航去朝外大街乙6号朝外SOHOB座3层03069	via_poi=朝外大街乙6号朝外SOHOB座3层03069
+1401, 导航先去浦口区沿江街道社区卫生服务中心再去南京市栖霞区妇幼保健院再去双花园南里三区193	via_poi=浦口区沿江街道社区卫生服务中心,via_poi=南京市栖霞区妇幼保健院,des_poi=双花园南里三区193	<=>	导航先去浦口区沿江街道社区卫生服务中心再去南京市栖霞区妇幼保健院再去双花园南里三区193	des_poi=浦口区沿江街道社区卫生服务中心再去南京市栖霞区妇幼保健院再去双花园南里三区193
+1420, 我要去车公庄大街丙4号官园商品批发市场1F层1323走要走高速的路	des_poi=车公庄大街丙4号官园商品批发市场1F层1323,rou_pre=走高速	<=>	我要去车公庄大街丙4号官园商品批发市场1F层1323走要走高速的路	des_poi=车公庄大街丙4号官园商品批发市场1F层1323走,rou_pre=要走高速
+1561, 不要拥堵到城南街道办事处附近去	rou_pre=不要拥堵,des_poi=城南街道办事处附近	<=>	不要拥堵到城南街道办事处附近去	rou_pre=不要拥堵,des_poi=城南街道办事处
+1585, 到建国门外大街甲6号SK大厦18层要走高速的路线	des_poi=建国门外大街甲6号SK大厦18层,rou_pre=走高速	<=>	到建国门外大街甲6号SK大厦18层要走高速的路线	des_poi=建国门外大街甲6号SK大厦18层,rou_pre=要走高速
+1605, 导航先去星烁宾馆再去钟山风景区灵谷公园再去建国门外大街甲6号SK大厦2902室	via_poi=星烁宾馆,via_poi=钟山风景区灵谷公园,des_poi=建国门外大街甲6号SK大厦2902室	<=>	导航先去星烁宾馆再去钟山风景区灵谷公园再去建国门外大街甲6号SK大厦2902室	des_poi=星烁宾馆再去钟山风景区灵谷公园再去建国门外大街甲6号SK大厦2902室
+1664, 回龙观东大街201号附近怎么走	des_poi=回龙观东大街201号附近	<=>	回龙观东大街201号附近怎么走	des_poi=龙观东大街201号附近
+1725, 从黑龙江路264号导航去100%感觉	dep_poi=黑龙江路264号,des_poi=100%感觉	<=>	从黑龙江路264号导航去100%感觉	dep_poi=黑龙江路264号,des_poi=100感觉
+1760, 7号线;8号线在哪怎么去	des_poi=7号线;8号线	<=>	7号线;8号线在哪怎么去	des_poi=7号线8号线
+1783, 从这先去红山山庄再去托乐嘉街区最后去BENVPOLEOUTDOOR避免高速	via_poi=红山山庄,via_poi=托乐嘉街区,des_poi=BENVPOLEOUTDOOR,rou_pre=避免高速	<=>	从这先去红山山庄再去托乐嘉街区最后去BENVPOLEOUTDOOR避免高速	via_poi=红山山庄,via_poi=托乐嘉街区,via_poi=BENVPOLEOUTDOOR,rou_pre=避免高速
+1810, 导航先去南京市水利局再去南京国家司法考试办公室再去西北政法大学刑事辩护高级研究院	via_poi=南京市水利局,via_poi=南京国家司法考试办公室,des_poi=西北政法大学刑事辩护高级研究院	<=>	导航先去南京市水利局再去南京国家司法考试办公室再去西北政法大学刑事辩护高级研究院	des_poi=南京市水利局再去南京国家司法考试办公室再去西北政法大学刑事辩护高级研究院
+1836, 我要导航去胜利小区优先高速要走高速	des_poi=胜利小区,rou_pre=优先高速,rou_pre=走高速	<=>	我要导航去胜利小区优先高速要走高速	des_poi=胜利小区,rou_pre=优先高速,rou_pre=要走高速
+1850, 麻烦指出时间最短的路线去北辰西路八号院2号楼北辰世纪中心b座11层中地海外汉盛贸易有限责任公司采购物流部	rou_pre=时间最短,des_poi=北辰西路八号院2号楼北辰世纪中心b座11层中地海外汉盛贸易有限责任公司采购物流部	<=>	麻烦指出时间最短的路线去北辰西路八号院2号楼北辰世纪中心b座11层中地海外汉盛贸易有限责任公司采购物流部	rou_pre=时间最短,via_poi=北辰西路八号院2号楼北辰世纪中心b座11层中地海外汉盛贸易有限责任公司采购物流部
+2063, 导航先去国贸再去国贸地铁站再去国贸地铁站	via_poi=国贸,via_poi=国贸地铁站,des_poi=国贸地铁站	<=>	导航先去国贸再去国贸地铁站再去国贸地铁站	des_poi=国贸再去国贸地铁站再去国贸地铁站
+2081, 南京站导航	des_poi=南京站	<=>	南京站导航	dep_poi=南京站
+2101, 从家出发去公司	dep_poi=家,des_poi=公司	<=>	从家出发去公司	des_poi=家,des_poi=公司
+2165, 导航经过南京大学和羊山公园去南京南站	via_poi=南京大学,via_poi=羊山公园,des_poi=南京南站	<=>	导航经过南京大学和羊山公园去南京南站	via_poi=南京大学和羊山公园,des_poi=南京南站
+2166, 从南京财经大学到南京大学距离最短路线	dep_poi=南京财经大学,des_poi=南京大学	<=>	从南京财经大学到南京大学距离最短路线	dep_poi=南京财经大学,des_poi=南京大学,rou_pre=距离最短
+2169, 去长途东站最快的路线	des_poi=长途东站,rou_pre=最快的	<=>	去长途东站最快的路线	des_poi=长途东站,rou_pre=最快
+2176, 我想去总统府红绿灯少点的路	des_poi=总统府,rou_pre=红绿灯少点	<=>	我想去总统府红绿灯少点的路	des_poi=总统府红绿灯少点
+2177, 从这里去新街口导航	des_poi=新街口	<=>	从这里去新街口导航	dep_poi=这里去新街口
+2178, 我要去南京火车站走红绿灯少点的路线	des_poi=南京火车站,rou_pre=红绿灯少点	<=>	我要去南京火车站走红绿灯少点的路线	des_poi=南京火车站,rou_pre=红绿灯少
+2191, 走红灯少的路线到南京邮电大学	rou_pre=红灯少,des_poi=南京邮电大学	<=>	走红灯少的路线到南京邮电大学	rou_pre=走红灯少,des_poi=南京邮电大学
+2197, 导航从南京市政府返回南京师范大学	dep_poi=南京市政府,des_poi=南京师范大学	<=>	导航从南京市政府返回南京师范大学	dep_poi=南京市政府返,des_poi=南京师范大学
+2205, 导航去北京走国道不走高速	des_poi=北京,rou_pre=不走高速	<=>	导航去北京走国道不走高速	des_poi=北京,rou_pre=走国道,rou_pre=不走高速
+
+
+领域: other
+该领域评估所用有效条数(分类正确): 855
+precision: 0.063
+recall: 0.324
+f1: 0.106
+slotname	precision	recall	f1
+author	Nan	0.0	0.0
+character	Nan	0.0	0.0
+city	Nan	0.0	0.0
+country	Nan	0.0	0.0
+focus	Nan	0.0	0.0
+loc_area	0.111	1.0	0.2
+loc_city	0.026	1.0	0.05
+loc_country	0.043	1.0	0.083
+loc_poi	0.0	Nan	0.0
+loc_province	0.0	Nan	0.0
+person	0.0	Nan	0.0
+r_person	0.727	1.0	0.842
+request_slot	Nan	0.0	0.0
+sentence	Nan	0.0	0.0
+tag	Nan	0.0	0.0
+time	Nan	0.0	0.0
+title	Nan	0.0	0.0
+行号, 正确结果 <=> SLU解析结果
+3, 小学课本里都有什么诗词	tag=小学课本	<=>	小学课本里都有什么诗词	
+4, 只是朱颜改作者	sentence=只是朱颜改	<=>	只是朱颜改作者	
+5, 春雨的作者是谁	title=春雨	<=>	春雨的作者是谁	
+6, 丑小鸭的作者是谁	title=丑小鸭	<=>	丑小鸭的作者是谁	
+7, 清明时节雨纷纷的作者是谁	sentence=清明时节雨纷纷	<=>	清明时节雨纷纷的作者是谁	
+8, 面朝大海春暖花开是谁写的	sentence=面朝大海春暖花开	<=>	面朝大海春暖花开是谁写的	
+10, “”^""许		<=>	“”^""许	person=许
+11, 神笔马良的作者是谁	title=神笔马良	<=>	神笔马良的作者是谁	person=马良
+13, 青蛙王子是哪个作者写的	title=青蛙王子	<=>	青蛙王子是哪个作者写的	
+14, 周杰伦。，、‘【】l[]{}|\很可爱&……%￥#@*（）		<=>	周杰伦。，、‘【】l[]{}|\很可爱&……%￥#@*（）	person=周杰伦
+16, 吴中区明天适合去烧烤吗	loc_area=吴中区,time=明天	<=>	吴中区明天适合去烧烤吗	loc_area=吴中区
+18, 日本七月十四号发生过地震吗	loc_country=日本,time=七月十四号,focus=地震	<=>	日本七月十四号发生过地震吗	loc_country=日本
+19, 台风能不能刮到威海呢	focus=台风,loc_city=威海	<=>	台风能不能刮到威海呢	loc_city=威海
+20, 北京欢迎你是谁唱的啊	city=北京	<=>	北京欢迎你是谁唱的啊	
+26, 能告诉我这首歌出自哪部电视剧吗	request_slot=program,title=unchanged	<=>	能告诉我这首歌出自哪部电视剧吗	
+30, 他是中国人吗	r_person=他,country=中国	<=>	他是中国人吗	r_person=他,loc_country=中国
+36, 她是美国人么	r_person=她,country=美国	<=>	她是美国人么	r_person=她,loc_country=美国
+38, 周杰伦还有哪些专辑		<=>	周杰伦还有哪些专辑	person=周杰伦
+39, 北京欢迎你有几个人唱	city=北京	<=>	北京欢迎你有几个人唱	loc_city=北京
+45, 这首歌是不是周杰伦作的曲		<=>	这首歌是不是周杰伦作的曲	person=周杰伦
+51, 嘻嘻!@$%^&*()_+-=1234567890-=[]{}\|;':",./<>?，。、《》？；’：“哈哈周杰伦：”【】、{}|=-0987654321+——）（*&……%￥#@！		<=>	嘻嘻!@$%^&*()_+-=1234567890-=[]{}\|;':",./<>?，。、《》？；’：“哈哈周杰伦：”【】、{}|=-0987654321+——）（*&……%￥#@！	person=周杰伦
+59, 中国有几个省份		<=>	中国有几个省份	loc_country=中国
+60, 中国有多少人口		<=>	中国有多少人口	loc_country=中国
+61, 中国和美国关系好吗		<=>	中国和美国关系好吗	loc_country=中国,loc_country=美国
+62, 中华人民共和国十大元帅是谁		<=>	中华人民共和国十大元帅是谁	loc_poi=中华人民共和国
+63, 中国第一个奥运会冠军是谁		<=>	中国第一个奥运会冠军是谁	loc_country=中国
+80, 今天去南京要穿棉袄吗		<=>	今天去南京要穿棉袄吗	loc_city=南京
+157, 喜马拉雅山有多高		<=>	喜马拉雅山有多高	loc_poi=喜马拉雅山
+169, 姚明		<=>	姚明	person=姚明
+173, 姚明是谁		<=>	姚明是谁	person=姚明
+186, 广东省省会是哪个城市		<=>	广东省省会是哪个城市	loc_province=广东省
+194, 成语接龙开始		<=>	成语接龙开始	person=接龙
+214, 我国三大平原是哪些		<=>	我国三大平原是哪些	loc_area=平原
+244, 李白		<=>	李白	person=李白
+246, 李太白是谁		<=>	李太白是谁	person=李太白
+249, 李白是谁		<=>	李白是谁	person=李白
+256, 李白最喜欢的诗是什么		<=>	李白最喜欢的诗是什么	person=李白
+272, 现在的北京时间		<=>	现在的北京时间	loc_city=北京
+274, 现在的美国总统是谁		<=>	现在的美国总统是谁	loc_country=美国
+285, 红楼梦的作者曹雪芹是一位女作家吗		<=>	红楼梦的作者曹雪芹是一位女作家吗	person=曹雪芹
+308, 这个世界上真的有奥特曼吗		<=>	这个世界上真的有奥特曼吗	person=奥特曼
+321, 他是谁		<=>	他是谁	r_person=他
+326, 周杰伦是谁		<=>	周杰伦是谁	person=周杰伦
+329, 刘德华是谁		<=>	刘德华是谁	person=刘德华
+330, 刘德华的歌声很美		<=>	刘德华的歌声很美	person=刘德华
+351, 这首歌是葫芦娃的主题曲吗	request_slot=program,title=unchanged	<=>	这首歌是葫芦娃的主题曲吗	
+353, 周杰伦的青花瓷很赞		<=>	周杰伦的青花瓷很赞	person=周杰伦
+354, 猪八戒吃西瓜		<=>	猪八戒吃西瓜	person=猪八戒
+359, 你知道齐天大圣是谁吗		<=>	你知道齐天大圣是谁吗	person=齐天大圣
+360, 白雪公主的苹果是谁给的		<=>	白雪公主的苹果是谁给的	person=白雪
+361, 奥特曼有多少种类型知道吗		<=>	奥特曼有多少种类型知道吗	person=奥特曼
+363, 为什么匹诺曹的鼻子会变长		<=>	为什么匹诺曹的鼻子会变长	person=匹诺曹
+364, 白雪公主最后吃掉苹果了吗		<=>	白雪公主最后吃掉苹果了吗	person=白雪
+370, 我也想有一个阿拉伯神灯		<=>	我也想有一个阿拉伯神灯	loc_poi=阿拉伯
+371, 豌豆公主遇上什么事了		<=>	豌豆公主遇上什么事了	person=豌豆
+378, 小猪佩奇怎么样了		<=>	小猪佩奇怎么样了	person=小猪佩奇
+382, 日照香炉生紫烟		<=>	日照香炉生紫烟	loc_city=日照
+383, 知道杜甫是谁吗		<=>	知道杜甫是谁吗	person=杜甫
+384, 我想知道阿笨猫今天做什么了		<=>	我想知道阿笨猫今天做什么了	person=阿笨猫
+385, 李太白又是谁		<=>	李太白又是谁	person=李太白
+388, 用小鸡能编出来什么故事呢	character=小鸡	<=>	用小鸡能编出来什么故事呢	
+390, 李白是哪朝人		<=>	李白是哪朝人	person=李白
+391, 李白一共写过多少诗		<=>	李白一共写过多少诗	person=李白
+393, 李白是男的还是女的		<=>	李白是男的还是女的	person=李白
+394, 杜甫写过多少诗呢		<=>	杜甫写过多少诗呢	person=杜甫
+395, 杜甫是中国人吗		<=>	杜甫是中国人吗	person=杜甫,loc_country=中国
+396, 杜甫和李白谁更厉害		<=>	杜甫和李白谁更厉害	person=杜甫,person=李白
+406, 北京好玩么		<=>	北京好玩么	loc_city=北京
+408, 北京在哪		<=>	北京在哪	loc_city=北京
+409, 南京南京		<=>	南京南京	loc_city=南京
+410, 北京北京		<=>	北京北京	loc_city=北京
+411, 明天去北京		<=>	明天去北京	loc_city=北京
+412, 北京跟南京哪里好		<=>	北京跟南京哪里好	loc_city=北京,loc_city=南京
+414, 北京南京		<=>	北京南京	loc_city=北京,loc_city=南京
+415, 去北京		<=>	去北京	loc_city=北京
+416, 北京不错空		<=>	北京不错空	loc_city=北京
+417, 打算明天去北京玩		<=>	打算明天去北京玩	loc_city=北京
+419, 我爸去北京了		<=>	我爸去北京了	loc_city=北京
+420, 北京真好玩		<=>	北京真好玩	loc_city=北京
+421, 北京到南京		<=>	北京到南京	loc_city=北京,loc_city=南京
+423, 一会去北京吧		<=>	一会去北京吧	loc_city=北京
+424, 北京去杭州有多远		<=>	北京去杭州有多远	loc_city=北京,loc_city=杭州
+425, 北京欢迎你		<=>	北京欢迎你	loc_city=北京
+426, 北京是什么地方		<=>	北京是什么地方	loc_city=北京
+427, 南京北京		<=>	南京北京	loc_city=南京,loc_city=北京
+428, 南京的总统府在哪里		<=>	南京的总统府在哪里	loc_city=南京
+429, 三亚在中国的哪里呢		<=>	三亚在中国的哪里呢	loc_city=三亚,loc_country=中国
+430, 北京不错哎		<=>	北京不错哎	loc_city=北京
+432, 北京和上海哪里更好玩		<=>	北京和上海哪里更好玩	loc_city=北京,loc_city=上海
+435, 李清照是哪个朝代的诗人	author=李清照	<=>	李清照是哪个朝代的诗人	person=李清照
+437, 洗手歌		<=>	洗手歌	person=洗手歌
+439, 九月九日忆山东兄弟讲的是什么	title=九月九日忆山东兄弟	<=>	九月九日忆山东兄弟讲的是什么	loc_province=山东
+445, 现在西班牙的日期是多少		<=>	现在西班牙的日期是多少	loc_country=西班牙
+451, 每当看到小草总能想起白居易能将草坚韧不拔的意志描写的淋漓尽致		<=>	每当看到小草总能想起白居易能将草坚韧不拔的意志描写的淋漓尽致	person=白居易
+456, 加拿大的北京时间现在几点		<=>	加拿大的北京时间现在几点	loc_country=加拿大,loc_city=北京
+461, 从司马光砸缸中能看讲司马光是怎么样的人		<=>	从司马光砸缸中能看讲司马光是怎么样的人	person=司马光,person=马光
+478, 悠然见南山		<=>	悠然见南山	loc_area=南山
+497, 杜甫的茅屋为秋风所破歌写的是作者忧天下民众的高尚情怀		<=>	杜甫的茅屋为秋风所破歌写的是作者忧天下民众的高尚情怀	person=杜甫
+506, 为什么把有些植物叫胎生植物		<=>	为什么把有些植物叫胎生植物	person=胎生
+510, 白居易是那个朝代的诗人		<=>	白居易是那个朝代的诗人	person=白居易
+511, 北京今天几号		<=>	北京今天几号	loc_city=北京
+520, 长沙有什么好玩的		<=>	长沙有什么好玩的	loc_area=长沙
+527, 南京还有哪些旅游景点		<=>	南京还有哪些旅游景点	loc_city=南京
+534, 白雪公主在哪里		<=>	白雪公主在哪里	person=白雪
+537, 小矮人和白雪公主生活的很愉快		<=>	小矮人和白雪公主生活的很愉快	person=白雪
+546, 北朝民歌的木兰辞让人们更加认识到巾帼不让须眉的那种豪迈		<=>	北朝民歌的木兰辞让人们更加认识到巾帼不让须眉的那种豪迈	loc_area=木兰
+568, 丹麦作家安徒生		<=>	丹麦作家安徒生	loc_country=丹麦,person=安徒生
+580, 白居易是哪个朝代的诗人		<=>	白居易是哪个朝代的诗人	person=白居易
+581, 广州市通融汽车维修有限公司在哪个位置		<=>	广州市通融汽车维修有限公司在哪个位置	loc_poi=广州市通融汽车维修有限公司
+584, 四川地震纪念日是什么时候		<=>	四川地震纪念日是什么时候	loc_province=四川
+586, 铁臂阿童木		<=>	铁臂阿童木	person=阿童木
+589, 丹东锦江山公园		<=>	丹东锦江山公园	loc_city=丹东,loc_poi=锦江山,loc_poi=公园
+605, 美国现在几点钟了		<=>	美国现在几点钟了	loc_country=美国
+606, 年代唐作者王维		<=>	年代唐作者王维	person=王维
+607, 芭比公主		<=>	芭比公主	person=芭比
+611, 孔子被称为什么		<=>	孔子被称为什么	person=孔子
+622, 小楚楚		<=>	小楚楚	person=小楚楚
+628, 灯塔模式		<=>	灯塔模式	loc_area=灯塔
+631, 君与家君期日中日中不至则是无信翻译这句古文		<=>	君与家君期日中日中不至则是无信翻译这句古文	loc_poi=中,loc_poi=日,loc_poi=中
+635, 现在英国的时间是多少		<=>	现在英国的时间是多少	loc_country=英国
+646, 朝辞白帝彩云间		<=>	朝辞白帝彩云间	loc_poi=白帝
+648, 我觉得巴巴爸爸好听		<=>	我觉得巴巴爸爸好听	loc_poi=巴巴
+649, 杜甫是那个朝代的诗人		<=>	杜甫是那个朝代的诗人	person=杜甫
+652, 孤帆远影碧空尽唯见长江天际流		<=>	孤帆远影碧空尽唯见长江天际流	loc_poi=长江
+653, 为什么张大千被誉为当代第一大国家		<=>	为什么张大千被誉为当代第一大国家	person=张大千
+656, 中国的“鳄鱼湖”在哪里		<=>	中国的“鳄鱼湖”在哪里	loc_country=中国
+660, 城市里一切都那么新鲜小兔子见到了很多以前从来没有见过的东西但这些以前没见过的东西却总让她想起老朋友		<=>	城市里一切都那么新鲜小兔子见到了很多以前从来没有见过的东西但这些以前没见过的东西却总让她想起老朋友	r_person=她
+662, 黄河远上白云间一片孤城万仞山		<=>	黄河远上白云间一片孤城万仞山	loc_poi=黄河,loc_area=白云
+665, 都昌有什么特产		<=>	都昌有什么特产	loc_area=都昌
+674, 黄家驹用的吉他不错		<=>	黄家驹用的吉他不错	person=黄家驹
+675, 晏殊是哪个朝代的		<=>	晏殊是哪个朝代的	person=晏殊
+688, 为什么华彦钧的一首二胡曲叫二泉映月		<=>	为什么华彦钧的一首二胡曲叫二泉映月	person=华彦钧
+691, 广东农工商职业技术学院北校区到广州的北站要搭什么公车		<=>	广东农工商职业技术学院北校区到广州的北站要搭什么公车	loc_poi=广东农工商职业技术学院,loc_poi=北校区,loc_city=广州
+717, 王安石的春曰写的是过春节的场景		<=>	王安石的春曰写的是过春节的场景	person=王安石
+721, 我的中国心		<=>	我的中国心	loc_country=中国
+729, 作者张九龄		<=>	作者张九龄	person=张九龄
+736, 现在美国时间是早上吗		<=>	现在美国时间是早上吗	loc_country=美国
+737, 北京有什么景点		<=>	北京有什么景点	loc_city=北京
+754, 奥巴马的老婆是谁		<=>	奥巴马的老婆是谁	person=奥巴马
+757, 作者祖咏		<=>	作者祖咏	person=祖咏
+758, 鹅鹅鹅曲项向天歌白毛浮绿水红掌拨清波		<=>	鹅鹅鹅曲项向天歌白毛浮绿水红掌拨清波	person=拨清波
+773, 澎湖湾啊澎湖湾啊外婆的澎湖湾啊		<=>	澎湖湾啊澎湖湾啊外婆的澎湖湾啊	loc_poi=澎湖湾,loc_poi=澎湖湾
+776, 日本现在是几点		<=>	日本现在是几点	loc_country=日本
+777, 现在英国是几号		<=>	现在英国是几号	loc_country=英国
+778, 洛杉矶现在是什么日期		<=>	洛杉矶现在是什么日期	loc_poi=洛杉矶
+782, 日本情人节和美国情人节是同一天吗?		<=>	日本情人节和美国情人节是同一天吗?	loc_country=日本,loc_country=美国
+783, 杜甫草堂是杜甫的故居吗		<=>	杜甫草堂是杜甫的故居吗	person=杜甫,person=杜甫
+785, 四岁的宝宝啦像个闹腾的小哪吒真是家里的小英雄哪吒		<=>	四岁的宝宝啦像个闹腾的小哪吒真是家里的小英雄哪吒	person=哪吒,person=哪吒
+787, 人民主村		<=>	人民主村	loc_poi=人民主村
+792, 诸城人民		<=>	诸城人民	loc_area=诸城
+820, 请问巴拉巴拉		<=>	请问巴拉巴拉	person=巴拉巴拉
+845, 他会不会破产		<=>	他会不会破产	r_person=他
+849, 你知道毛不易吗		<=>	你知道毛不易吗	person=毛不易
+
+
+领域: phone
+该领域评估所用有效条数(分类正确): 661
+precision: 0.998
+recall: 0.997
+f1: 0.997
+slotname	precision	recall	f1
+contact	0.998	0.996	0.997
+number	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+188, 拨打刁富贵的联通电话	contact=刁富贵	<=>	拨打刁富贵的联通电话	
+283, 帮我接刁富贵的电话	contact=刁富贵	<=>	帮我接刁富贵的电话	contact=富贵
+
+
+领域: poem
+该领域评估所用有效条数(分类正确): 670
+precision: 0.983
+recall: 0.968
+f1: 0.976
+slotname	precision	recall	f1
+album	1.0	0.933	0.966
+author	1.0	0.953	0.976
+range	1.0	0.994	0.997
+sentence	0.94	0.981	0.96
+tag	0.977	0.945	0.961
+title	0.988	0.976	0.982
+行号, 正确结果 <=> SLU解析结果
+1, 我不想听这种伤感的诗词	tag=伤感	<=>	我不想听这种伤感的诗词	
+3, 你会背唐宋八大家的文章吗	author=唐宋八大家	<=>	你会背唐宋八大家的文章吗	tag=唐宋八大家
+30, 曹操的哲理诗有哪些	author=曹操,tag=哲理	<=>	曹操的哲理诗有哪些	author=曹操
+46, 朗诵个适合小孩子学习的诗词		<=>	朗诵个适合小孩子学习的诗词	tag=小孩
+47, 来一个唐朝的经典诗歌	tag=唐朝,tag=经典	<=>	来一个唐朝的经典诗歌	tag=唐朝
+61, 来一首小学必背古诗词	tag=小学	<=>	来一首小学必背古诗词	
+82, 观刈麦是李白的诗吗	title=观刈麦,author=李白	<=>	观刈麦是李白的诗吗	sentence=观刈麦,author=李白
+134, 可以读一读柳宗元的溪居吗	author=柳宗元,title=溪居	<=>	可以读一读柳宗元的溪居吗	title=柳宗元,title=溪居
+176, 唐诗三百首里的李白诗有哪些	album=唐诗三百首,author=李白	<=>	唐诗三百首里的李白诗有哪些	album=唐诗三百首
+179, 你会鹅鹅鹅吗	title=鹅鹅鹅	<=>	你会鹅鹅鹅吗	sentence=鹅鹅鹅
+181, 我想听鹅鹅鹅	title=鹅鹅鹅	<=>	我想听鹅鹅鹅	sentence=鹅鹅鹅
+190, 接洛阳亲友如相问的下一句	sentence=洛阳亲友如相问,range=下一句	<=>	接洛阳亲友如相问的下一句	sentence=接洛阳亲友如相问,range=下一句
+219, 描写战争年代国破家亡的诗句来一首	tag=战争年代,tag=国破家亡	<=>	描写战争年代国破家亡的诗句来一首	tag=战争年代国破家亡
+267, 陆游去世时写的一首诗	author=陆游	<=>	陆游去世时写的一首诗	sentence=陆游去世时写
+325, 爆竹声中一岁除下一句是什么	sentence=爆竹声中一岁除,range=下一句	<=>	爆竹声中一岁除下一句是什么	title=爆竹声中一岁除,range=下一句
+342, 阅读唐诗三百首李白幼儿	album=唐诗三百首,author=李白,tag=幼儿	<=>	阅读唐诗三百首李白幼儿	album=唐诗三百首
+343, 苏东坡比较豪放的诗挑一首读读	author=苏东坡,tag=豪放	<=>	苏东坡比较豪放的诗挑一首读读	sentence=苏东坡比较豪放
+384, 柳宗元的诗句一个	author=柳宗元	<=>	柳宗元的诗句一个	title=柳宗元
+402, 哪些古诗里出现红字了背两首吧	tag=红	<=>	哪些古诗里出现红字了背两首吧	
+417, 我只想你背鹅鹅鹅下面的整首诗	sentence=鹅鹅鹅,range=整首	<=>	我只想你背鹅鹅鹅下面的整首诗	sentence=鹅鹅鹅
+465, 林升描写杭州的诗	author=林升,tag=杭州	<=>	林升描写杭州的诗	tag=杭州
+470, 韩愈晚春的内容是什么	author=韩愈,title=晚春	<=>	韩愈晚春的内容是什么	sentence=韩愈晚春
+494, 我要听元稹的离思五首其中的一首	author=元稹,album=离思五首	<=>	我要听元稹的离思五首其中的一首	author=元稹,sentence=离思五首其中
+515, 春眠不觉晓处处闻啼鸟出自哪首诗	sentence=春眠不觉晓处处闻啼鸟	<=>	春眠不觉晓处处闻啼鸟出自哪首诗	sentence=春眠不觉晓处处闻啼鸟出
+531, 陆游和唐婉的钗头凤	author=陆游,author=唐婉,title=钗头凤	<=>	陆游和唐婉的钗头凤	tag=唐婉,title=钗头凤
+547, 给宝宝唱首苏轼的水调歌头	tag=宝宝,author=苏轼,title=水调歌头	<=>	给宝宝唱首苏轼的水调歌头	author=苏轼,title=水调歌头
+614, 接着静夜思李白往下背	title=静夜思,author=李白	<=>	接着静夜思李白往下背	sentence=接着静夜思李白
+661, 草具体的诗句内容是什么	title=草	<=>	草具体的诗句内容是什么	
+
+
+领域: sound
+该领域评估所用有效条数(分类正确): 65
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+sounder	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: story
+该领域评估所用有效条数(分类正确): 681
+precision: 0.904
+recall: 0.842
+f1: 0.872
+slotname	precision	recall	f1
+album	0.959	0.824	0.886
+author	1.0	0.886	0.94
+character	0.95	0.306	0.463
+operation	0.0	Nan	0.0
+tag	0.924	0.846	0.883
+title	0.858	0.951	0.902
+行号, 正确结果 <=> SLU解析结果
+21, 我们想听经典国学故事	album=国学故事	<=>	我们想听经典国学故事	tag=国学
+27, 我想听恐龙故事	character=恐龙	<=>	我想听恐龙故事	
+29, 我想听晚安妈妈讲故事	author=晚安妈妈	<=>	我想听晚安妈妈讲故事	
+33, 我想听王子与公主的故事	character=王子,character=公主	<=>	我想听王子与公主的故事	title=王子与公主
+52, 晚安妈妈讲故事给我来一个	author=晚安妈妈	<=>	晚安妈妈讲故事给我来一个	album=妈妈讲故事
+70, 艾利的故事	character=艾利	<=>	艾利的故事	
+90, 讲一个葫芦娃和爷爷的故事	character=葫芦娃,character=爷爷	<=>	讲一个葫芦娃和爷爷的故事	title=一个葫芦娃和爷爷
+94, 讲个故事开心下	tag=开心	<=>	讲个故事开心下	
+108, 说一个5岁孩子睡前听的故事	tag=5岁孩子,tag=睡前	<=>	说一个5岁孩子睡前听的故事	tag=5岁孩子睡前
+115, 黑猫警长的故事	album=黑猫警长	<=>	黑猫警长的故事	title=黑猫警长
+117, 青蛙弗洛格成长系列故事	title=青蛙弗洛格	<=>	青蛙弗洛格成长系列故事	title=青蛙弗洛格成长系
+119, 有没有王子救公主的故事	character=王子,character=公主	<=>	有没有王子救公主的故事	tag=王子救公主
+128, 英国的小孩子都爱听的故事	tag=英国,tag=小孩子	<=>	英国的小孩子都爱听的故事	tag=英国
+130, 用英语讲个故事吧	tag=英语	<=>	用英语讲个故事吧	
+131, 说一个只有小朋友才爱听的冒险故事	tag=小朋友,tag=冒险	<=>	说一个只有小朋友才爱听的冒险故事	tag=冒险
+132, 讲一个儿童听的中国古典神话	tag=儿童,tag=中国,tag=古典,tag=神话	<=>	讲一个儿童听的中国古典神话	tag=儿童,tag=中国,tag=神话
+133, 有没有晚安前适合听的神话故事	tag=晚安,tag=神话	<=>	有没有晚安前适合听的神话故事	tag=安前,tag=神话
+136, 随便来一个喜马拉雅的故事	tag=喜马拉雅	<=>	随便来一个喜马拉雅的故事	title=喜马拉雅
+138, 阿里巴巴的故事有吗	character=阿里巴巴	<=>	阿里巴巴的故事有吗	title=阿里巴巴
+152, 讲一下小鲤鱼的晚安故事呗	character=小鲤鱼,tag=晚安	<=>	讲一下小鲤鱼的晚安故事呗	title=小鲤鱼的晚安
+160, 熊出没的故事听过吗	album=熊出没	<=>	熊出没的故事听过吗	
+166, 我想听一个关于埃及公主的故事	tag=埃及,character=公主	<=>	我想听一个关于埃及公主的故事	title=埃及公主
+173, 找几个适合学龄前儿童听的故事	tag=学龄前儿童	<=>	找几个适合学龄前儿童听的故事	tag=儿童
+176, 我想听熊出没	title=熊出没	<=>	我想听熊出没	album=熊出没
+180, 我最喜欢听小白兔的故事了	character=小白兔	<=>	我最喜欢听小白兔的故事了	title=小白兔
+191, 机器人宝宝放一下白雪公主呗	title=白雪公主	<=>	机器人宝宝放一下白雪公主呗	title=白雪公主呗
+202, 请播放海的女儿第一节	title=海的女儿,tag=第一节	<=>	请播放海的女儿第一节	title=海的女儿第一节
+205, 能用英语讲小蝌蚪找妈妈的故事吗	tag=英语,title=小蝌蚪找妈妈	<=>	能用英语讲小蝌蚪找妈妈的故事吗	title=小蝌蚪找妈妈
+210, 我想听伊索寓言的狮子的妙计	album=伊索寓言,title=狮子的妙计	<=>	我想听伊索寓言的狮子的妙计	title=伊索寓言的狮子的妙计
+224, 一千零一夜中适合四岁宝宝听的故事选一讲	album=一千零一夜,tag=四岁宝宝	<=>	一千零一夜中适合四岁宝宝听的故事选一讲	tag=四岁宝宝
+225, 我想听王子与公主的故事	character=王子,character=公主	<=>	我想听王子与公主的故事	title=王子与公主
+226, 请查一下适合四岁的孩子听的童话故事	tag=四岁的孩子,tag=童话	<=>	请查一下适合四岁的孩子听的童话故事	tag=四岁,tag=童话
+235, 讲述一个引导四岁宝宝积极向上的故事	tag=积极向上	<=>	讲述一个引导四岁宝宝积极向上的故事	tag=引导四岁宝宝积极向上
+247, 我想听安徒生的飞箱	author=安徒生,title=飞箱	<=>	我想听安徒生的飞箱	title=安徒生的飞箱
+249, 来一个三四岁小孩喜欢听的故事	tag=三四岁小孩	<=>	来一个三四岁小孩喜欢听的故事	tag=四岁
+253, 格林童话故事里有冒险故事吗来一个	album=格林童话,tag=冒险	<=>	格林童话故事里有冒险故事吗来一个	tag=童话,tag=冒险
+263, 换个有海厄辛思王子的王子童话故事来听	character=海厄辛思王子,character=王子,tag=童话	<=>	换个有海厄辛思王子的王子童话故事来听	title=海厄辛思王子的王子,tag=童话
+270, 能把昨天没讲完的卖火柴的小女孩接着讲一下吗	title=卖火柴的小女孩	<=>	能把昨天没讲完的卖火柴的小女孩接着讲一下吗	title=卖火柴的小女孩接
+275, 我想让你给小朋友讲个有趣的故事	tag=小朋友	<=>	我想让你给小朋友讲个有趣的故事	
+276, 能给我讲一个王子和公主的故事吗	character=王子,character=公主	<=>	能给我讲一个王子和公主的故事吗	title=王子和公主
+280, 听宝宝的小故事之爱丽丝梦游仙境	tag=宝宝,album=爱丽丝梦游仙境	<=>	听宝宝的小故事之爱丽丝梦游仙境	title=爱丽丝梦游仙境
+282, 我要在听听爱迪生童话	character=爱迪生,tag=童话	<=>	我要在听听爱迪生童话	title=爱迪生童话
+284, 找一个安徒生童话故事听听	album=安徒生童话	<=>	找一个安徒生童话故事听听	tag=安徒,tag=童话
+287, 我想听阿凡提的智慧故事	character=阿凡提	<=>	我想听阿凡提的智慧故事	title=阿凡提的智慧
+288, 搜索一个关于王子和公主的故事	character=王子,character=公主	<=>	搜索一个关于王子和公主的故事	operation=搜索,title=王子和公主
+296, 八十年代最火的童话故事	tag=八十年代,tag=童话	<=>	八十年代最火的童话故事	title=八十年代,tag=童话
+309, 讲两个适合四岁宝宝和八岁孩子听的故事吧	tag=四岁宝宝,tag=八岁孩子	<=>	讲两个适合四岁宝宝和八岁孩子听的故事吧	tag=四岁宝宝和八岁孩子
+312, 3岁小孩都喜欢什么故事呀	tag=3岁小孩	<=>	3岁小孩都喜欢什么故事呀	tag=3岁小孩都
+325, 啊我要听王子故事	character=王子	<=>	啊我要听王子故事	
+335, 我想让四岁的女儿听国语的鲁西西传	tag=国语,album=鲁西西传	<=>	我想让四岁的女儿听国语的鲁西西传	tag=四岁,tag=国语,title=鲁西西传
+345, 想听鲁迅的少年闰土	author=鲁迅,title=少年闰土	<=>	想听鲁迅的少年闰土	title=鲁迅的少年闰土
+349, 我想听公主与王子的故事白雪公主	character=公主,character=王子,title=白雪公主	<=>	我想听公主与王子的故事白雪公主	title=公主与王子,title=白雪公主
+350, 你肚子里有足够宝宝长到学龄的故事么	tag=学龄	<=>	你肚子里有足够宝宝长到学龄的故事么	tag=足够宝宝长到学龄
+356, 给我用日语讲白雪公主	tag=日语,title=白雪公主	<=>	给我用日语讲白雪公主	title=白雪公主
+369, 给我讲一个关于安全过马路的故事	tag=安全过马路	<=>	给我讲一个关于安全过马路的故事	title=安全过马路
+372, 用英语给我讲一个童话故事	tag=英语,tag=童话	<=>	用英语给我讲一个童话故事	tag=童话
+375, 白雪公主和小矮人的故事你有吗	title=白雪公主和小矮人	<=>	白雪公主和小矮人的故事你有吗	character=小矮人
+376, 有小熊维尼和跳跳虎的故事吗	album=小熊维尼和跳跳虎	<=>	有小熊维尼和跳跳虎的故事吗	title=小熊维尼和跳跳虎
+386, 让宝宝安静的故事	tag=宝宝,tag=安静	<=>	让宝宝安静的故事	tag=让宝宝安静
+387, 你可以用英语讲一个安徒生的童话故事吗	tag=英语,author=安徒生,tag=童话	<=>	你可以用英语讲一个安徒生的童话故事吗	author=安徒生,tag=童话
+394, 来讲一个长发公主的故事帮助我的宝宝睡着	title=长发公主,tag=睡着	<=>	来讲一个长发公主的故事帮助我的宝宝睡着	title=长发公主
+407, 学龄前宝宝睡前可以听童话故事	tag=学龄前宝宝,tag=睡前,tag=童话	<=>	学龄前宝宝睡前可以听童话故事	tag=童话
+412, 你能讲个适合幼儿园小朋友听的故事吗	tag=幼儿园小朋友	<=>	你能讲个适合幼儿园小朋友听的故事吗	tag=小朋友
+415, BABY要听故事睡觉觉了	tag=睡觉觉	<=>	BABY要听故事睡觉觉了	
+422, 小朋友应该听什么样的儿童故事呢	tag=小朋友,tag=儿童	<=>	小朋友应该听什么样的儿童故事呢	tag=儿童
+427, 来个丹麦的公主和王子的故事	tag=丹麦,character=公主,character=王子	<=>	来个丹麦的公主和王子的故事	title=丹麦的公主和王子
+433, 给我讲个王子和公主的故事	character=王子,character=公主	<=>	给我讲个王子和公主的故事	title=王子和公主
+441, 宝宝想听安徒生的卖火柴的小女孩啦	author=安徒生,title=卖火柴的小女孩	<=>	宝宝想听安徒生的卖火柴的小女孩啦	author=安徒生,title=卖火柴的小女孩啦
+450, 给我讲一个发生在英国的王子与公主的故事	tag=英国,character=王子,character=公主	<=>	给我讲一个发生在英国的王子与公主的故事	tag=英国,title=王子与公主
+459, 给我讲个小花猫的故事	tag=小花猫	<=>	给我讲个小花猫的故事	title=小花猫
+460, 你能给我讲讲拇指姑娘是怎么生活的吗	character=拇指姑娘	<=>	你能给我讲讲拇指姑娘是怎么生活的吗	title=拇指姑娘
+463, 我想听有关海绵宝宝的故事	album=海绵宝宝	<=>	我想听有关海绵宝宝的故事	tag=海绵宝宝
+470, 想听童话故事你讲一下睡美人吧	tag=童话,title=睡美人	<=>	想听童话故事你讲一下睡美人吧	title=睡美人
+476, 你有施耐庵的水浒传吗	author=施耐庵,album=水浒传	<=>	你有施耐庵的水浒传吗	author=施耐庵,title=水浒传
+485, 宝宝想听法语的丑小鸭	tag=法语,title=丑小鸭	<=>	宝宝想听法语的丑小鸭	title=法语的丑小鸭
+490, 阿凡提的故事适合小小男子汉听	title=阿凡提,tag=小小男子汉	<=>	阿凡提的故事适合小小男子汉听	title=阿凡提
+502, 你有适合幼儿园宝宝听的故事吗	tag=幼儿园宝宝	<=>	你有适合幼儿园宝宝听的故事吗	tag=宝宝
+505, 用粤语播放安徒生童话的白雪公主	tag=粤语,album=安徒生童话,title=白雪公主	<=>	用粤语播放安徒生童话的白雪公主	album=安徒生童话,title=白雪公主
+507, 你可以讲国语的绿野仙踪吗	tag=国语,title=绿野仙踪	<=>	你可以讲国语的绿野仙踪吗	tag=国语,album=绿野仙踪
+509, 没穿衣服的皇帝后来怎么样了讲给我听吧	character=没穿衣服的皇帝	<=>	没穿衣服的皇帝后来怎么样了讲给我听吧	title=没穿衣服的皇帝后来
+519, 让四岁听听女娲补天的国语版故事吧	tag=四岁,title=女娲补天,tag=国语	<=>	让四岁听听女娲补天的国语版故事吧	title=女娲补天,tag=国语
+521, 给我们讲一个三分钟的故事		<=>	给我们讲一个三分钟的故事	title=三分钟
+525, 讲一个里面有匹诺曹的故事给小朋友	character=匹诺曹,tag=小朋友	<=>	讲一个里面有匹诺曹的故事给小朋友	title=匹诺曹
+530, 我想选一个粤语版的灰太狼与喜羊羊故事听	tag=粤语,album=灰太狼与喜羊羊	<=>	我想选一个粤语版的灰太狼与喜羊羊故事听	album=灰太狼与喜羊羊
+547, 给我讲个小乌鸦	character=小乌鸦	<=>	给我讲个小乌鸦	title=小乌鸦
+549, 讲一个关于牛奶的故事为什么睡觉前要喝牛奶呢	tag=牛奶	<=>	讲一个关于牛奶的故事为什么睡觉前要喝牛奶呢	tag=牛奶,tag=睡觉
+555, 能不能用英语给宝宝讲个故事	tag=英语	<=>	能不能用英语给宝宝讲个故事	
+557, 有适合三至四岁年龄阶段的宝宝听的睡前故事吗	tag=三至四岁年龄阶段的宝宝,tag=睡前	<=>	有适合三至四岁年龄阶段的宝宝听的睡前故事吗	tag=三至,tag=四岁年龄阶段,tag=睡前
+558, 格林童话故事中我想听狗和麻雀	album=格林童话,title=狗和麻雀	<=>	格林童话故事中我想听狗和麻雀	tag=童话,title=狗和麻雀
+568, 适合宝宝入睡的故事	tag=宝宝,tag=入睡	<=>	适合宝宝入睡的故事	tag=宝宝入睡
+575, 孩子应该多听一些成语故事来一个适合四岁左右的宝贝听的吧	tag=成语,tag=四岁左右的宝贝	<=>	孩子应该多听一些成语故事来一个适合四岁左右的宝贝听的吧	tag=成语,tag=四岁左右,tag=宝贝
+579, 给我讲个英国的小飞侠彼得潘吧	tag=英国,album=小飞侠彼得潘	<=>	给我讲个英国的小飞侠彼得潘吧	title=英国的小飞侠彼得潘
+599, 听睡前故事睡觉	tag=睡前,tag=睡觉	<=>	听睡前故事睡觉	tag=睡前
+609, 我想听与王子和公主有关的故事	character=王子,character=公主	<=>	我想听与王子和公主有关的故事	title=与王子和公主
+610, 你能讲一个故事里有鹞子的故事吗	character=鹞子	<=>	你能讲一个故事里有鹞子的故事吗	
+624, 找到王子与公主的故事	character=王子,character=公主	<=>	找到王子与公主的故事	title=找到王子与公主
+632, 听听宝宝的小故事	tag=宝宝	<=>	听听宝宝的小故事	
+638, 我想听郑渊洁的皮皮鲁的故事	author=郑渊洁,character=皮皮鲁	<=>	我想听郑渊洁的皮皮鲁的故事	author=郑渊洁,title=皮皮鲁
+646, 安徒生海的女儿原生文读来听下啦	author=安徒生,title=海的女儿	<=>	安徒生海的女儿原生文读来听下啦	title=安徒生海的女儿
+650, 我还没听过野天鹅呢	title=野天鹅	<=>	我还没听过野天鹅呢	
+660, 讲个一千零一夜可以不	album=一千零一夜	<=>	讲个一千零一夜可以不	
+661, 给我家宝贝儿放一个儿童话故事	tag=我家宝贝儿,tag=童话	<=>	给我家宝贝儿放一个儿童话故事	tag=童话
+672, 以后宝宝的睡前故事拜托你了	tag=宝宝,tag=睡前	<=>	以后宝宝的睡前故事拜托你了	tag=睡前
+673, 来一个王子和公主的故事	character=王子,character=公主	<=>	来一个王子和公主的故事	title=王子和公主
+
+
+领域: submusic
+该领域评估所用有效条数(分类正确): 518
+precision: 0.999
+recall: 1.0
+f1: 0.999
+slotname	precision	recall	f1
+album	1.0	1.0	1.0
+artist	1.0	1.0	1.0
+gender	1.0	1.0	1.0
+language	1.0	1.0	1.0
+program	1.0	1.0	1.0
+rank	1.0	1.0	1.0
+region	1.0	1.0	1.0
+reqalts_slot	0.992	1.0	0.996
+request_range	1.0	1.0	1.0
+request_slot	1.0	1.0	1.0
+tag	1.0	1.0	1.0
+title	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+214, 骚当的鸭嗓真棒！再来一首他唱的歌	artist=unchanged	<=>	骚当的鸭嗓真棒！再来一首他唱的歌	artist=unchanged,reqalts_slot=title
+
+
+领域: subweather
+该领域评估所用有效条数(分类正确): 160
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+focus	1.0	1.0	1.0
+loc	1.0	1.0	1.0
+loc_area	1.0	1.0	1.0
+loc_city	1.0	1.0	1.0
+loc_country	1.0	1.0	1.0
+loc_poi	1.0	1.0	1.0
+loc_province	1.0	1.0	1.0
+time	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: vehicle_control
+该领域评估所用有效条数(分类正确): 878
+precision: 0.987
+recall: 0.986
+f1: 0.987
+slotname	precision	recall	f1
+cycle_val_1	1.0	1.0	1.0
+cycle_val_2	1.0	1.0	1.0
+mode_val_1	1.0	1.0	1.0
+mode_val_2	1.0	1.0	1.0
+mode_val_3	1.0	1.0	1.0
+obj_1	0.975	0.975	0.975
+obj_2	0.968	0.964	0.966
+obj_3	1.0	1.0	1.0
+obj_4	1.0	1.0	1.0
+opr_1	1.0	0.997	0.999
+opr_2	1.0	1.0	1.0
+opr_3	1.0	1.0	1.0
+temp_abs_val_1	0.982	1.0	0.991
+temp_abs_val_2	1.0	0.875	0.933
+temp_abs_val_3	1.0	1.0	1.0
+temp_abs_val_4	1.0	1.0	1.0
+temp_rel_sign_1	1.0	1.0	1.0
+temp_rel_sign_2	1.0	1.0	1.0
+temp_rel_val_1	1.0	1.0	1.0
+temp_rel_val_2	1.0	1.0	1.0
+temp_step_val_1	1.0	1.0	1.0
+temp_step_val_2	1.0	1.0	1.0
+temp_val_1	1.0	1.0	1.0
+temp_val_2	1.0	1.0	1.0
+wd_dir_val_1	1.0	1.0	1.0
+wd_dir_val_2	1.0	1.0	1.0
+wd_dir_val_3	1.0	1.0	1.0
+wd_pwr_abs_val_1	1.0	1.0	1.0
+wd_pwr_abs_val_2	1.0	1.0	1.0
+wd_pwr_abs_val_3	1.0	1.0	1.0
+wd_pwr_rel_sign_1	1.0	1.0	1.0
+wd_pwr_rel_sign_2	1.0	1.0	1.0
+wd_pwr_rel_val_1	1.0	1.0	1.0
+wd_pwr_rel_val_2	1.0	1.0	1.0
+wd_pwr_step_val_1	1.0	1.0	1.0
+wd_pwr_step_val_2	1.0	1.0	1.0
+wd_pwr_val_1	1.0	1.0	1.0
+wd_pwr_val_2	1.0	1.0	1.0
+wd_pwr_val_3	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+64, 把车窗全部关闭空调打开	obj_1=车窗,opr_1=close,obj_2=空调,opr_2=open	<=>	把车窗全部关闭空调打开	obj_1=窗,opr_1=close,obj_2=空调,opr_2=open
+66, 关闭车窗切换到制冷模式	obj_1=车窗,opr_1=close,mode_val_2=制冷,obj_2=空调	<=>	关闭车窗切换到制冷模式	obj_1=窗,opr_1=close,mode_val_2=制冷,obj_2=空调
+68, 把车窗全部关闭空调风力调到最大	obj_1=车窗,opr_1=close,obj_2=空调,wd_pwr_val_2=max	<=>	把车窗全部关闭空调风力调到最大	obj_1=窗,opr_1=close,obj_2=空调,wd_pwr_val_2=max
+74, 把车窗全部关闭切换到除霜模式	obj_1=车窗,opr_1=close,wd_dir_val_2=除霜,obj_2=空调	<=>	把车窗全部关闭切换到除霜模式	obj_1=窗,opr_1=close,wd_dir_val_2=除霜,obj_2=空调
+80, 车窗全部升起	obj_1=车窗,opr_1=close	<=>	车窗全部升起	obj_1=窗,opr_1=close
+89, 把车窗全部关闭调到制热模式温度调至25度	obj_1=车窗,opr_1=close,mode_val_2=制热,obj_2=空调,temp_abs_val_3=25,obj_3=空调	<=>	把车窗全部关闭调到制热模式温度调至25度	obj_1=窗,opr_1=close,mode_val_2=制热,obj_2=空调,temp_abs_val_3=25,obj_3=空调
+108, 关闭制热模式打开车窗	mode_val_1=制热,obj_1=空调,opr_1=close,obj_2=车窗,opr_2=open	<=>	关闭制热模式打开车窗	mode_val_1=制热,obj_1=空调,opr_1=close,obj_2=窗,opr_2=open
+118, 关闭车窗切换到出风模式	obj_1=车窗,opr_1=close,mode_val_2=出风,obj_2=空调	<=>	关闭车窗切换到出风模式	obj_1=窗,opr_1=close,mode_val_2=出风,obj_2=空调
+126, 请把车窗关一下然后打开空调	obj_1=车窗,opr_1=close,obj_2=空调,opr_2=open	<=>	请把车窗关一下然后打开空调	obj_1=窗,opr_1=close,obj_2=空调,opr_2=open
+135, 关闭车窗风力调最大	obj_1=车窗,opr_1=close,obj_2=空调,wd_pwr_val_2=max	<=>	关闭车窗风力调最大	obj_1=窗,opr_1=close,obj_2=空调,wd_pwr_val_2=max
+137, 打开车窗风力调最小	obj_1=车窗,opr_1=open,obj_2=空调,wd_pwr_val_2=min	<=>	打开车窗风力调最小	obj_1=窗,opr_1=open,obj_2=空调,wd_pwr_val_2=min
+140, 打开空调关闭车窗	obj_1=空调,opr_1=open,obj_2=车窗,opr_2=close	<=>	打开空调关闭车窗	obj_1=空调,opr_1=open,obj_2=窗,opr_2=close
+146, 开开车窗关关车窗	obj_1=车窗,opr_1=open,obj_2=车窗,opr_2=close	<=>	开开车窗关关车窗	obj_1=窗,opr_1=open,obj_2=窗,opr_2=close
+157, 麻烦你打开内循环模式再关闭车窗	cycle_val_1=内循环,obj_1=循环系统,obj_2=车窗,opr_2=close	<=>	麻烦你打开内循环模式再关闭车窗	cycle_val_1=内循环,obj_1=循环系统,obj_2=窗,opr_2=close
+199, 打开车窗和外循环	obj_1=车窗,cycle_val_2=外循环,obj_2=循环系统,opr_1=open	<=>	打开车窗和外循环	obj_1=窗,cycle_val_2=外循环,obj_2=循环系统,opr_1=open
+235, 关闭车窗打开主驾驶车窗	obj_1=车窗,opr_1=close,obj_2=主驾驶车窗,opr_2=open	<=>	关闭车窗打开主驾驶车窗	obj_1=窗,opr_1=close,obj_2=主驾驶车窗,opr_2=open
+275, 关闭车窗空调制热	obj_1=车窗,opr_1=close,mode_val_2=制热,obj_2=空调	<=>	关闭车窗空调制热	obj_1=窗,opr_1=close,mode_val_2=制热,obj_2=空调
+277, 空调出风关闭车窗	mode_val_1=出风,obj_1=空调,obj_2=车窗,opr_2=close	<=>	空调出风关闭车窗	mode_val_1=出风,obj_1=空调,obj_2=窗,opr_2=close
+279, 空调制冷关闭车窗	mode_val_1=制冷,obj_1=空调,obj_2=车窗,opr_2=close	<=>	空调制冷关闭车窗	mode_val_1=制冷,obj_1=空调,obj_2=窗,opr_2=close
+284, 关闭车窗制冷模式	obj_1=车窗,opr_1=close,mode_val_2=制冷,obj_2=空调	<=>	关闭车窗制冷模式	obj_1=窗,opr_1=close,mode_val_2=制冷,obj_2=空调
+364, 降一下车窗	obj_1=车窗,opr_1=open	<=>	降一下车窗	obj_1=窗,opr_1=open
+443, 打开内循环把车窗给关了	cycle_val_1=内循环,obj_1=循环系统,obj_2=车窗,opr_2=close	<=>	打开内循环把车窗给关了	cycle_val_1=内循环,obj_1=循环系统,obj_2=窗,opr_2=close
+448, 打开车窗	obj_1=车窗,opr_1=open	<=>	打开车窗	obj_1=窗,opr_1=open
+514, 外循环关掉车窗也都关掉	cycle_val_1=外循环,obj_1=循环系统,opr_1=close,obj_2=车窗,opr_2=close	<=>	外循环关掉车窗也都关掉	cycle_val_1=外循环,obj_1=循环系统,opr_1=close,obj_2=窗,opr_2=close
+528, 关闭车窗	obj_1=车窗,opr_1=close	<=>	关闭车窗	obj_1=窗,opr_1=close
+798, 把车窗都打开	obj_1=车窗,opr_1=open	<=>	把车窗都打开	obj_1=窗,opr_1=open
+800, 帮我把车窗全部打开	obj_1=车窗,opr_1=open	<=>	帮我把车窗全部打开	obj_1=窗,opr_1=open
+802, 把车窗都关上	obj_1=车窗,opr_1=close	<=>	把车窗都关上	obj_1=窗,opr_1=close
+805, 帮我把车窗全部关掉	obj_1=车窗,opr_1=close	<=>	帮我把车窗全部关掉	obj_1=窗,opr_1=close
+809, 打开空调22度	obj_1=空调,opr_1=open,temp_abs_val_2=22,obj_2=空调	<=>	打开空调22度	temp_abs_val_1=22,obj_1=空调
+
+
+领域: weather
+该领域评估所用有效条数(分类正确): 1319
+precision: 0.995
+recall: 0.989
+f1: 0.992
+slotname	precision	recall	f1
+focus	0.998	0.99	0.994
+loc_area	0.989	0.968	0.978
+loc_city	0.998	0.996	0.997
+loc_country	1.0	1.0	1.0
+loc_poi	0.921	0.875	0.897
+loc_province	1.0	0.994	0.997
+time	0.996	0.992	0.994
+行号, 正确结果 <=> SLU解析结果
+29, 晚上海淀热不热	time=晚上,loc_area=海淀,focus=热,focus=热	<=>	晚上海淀热不热	loc_city=上海,focus=热,focus=热
+40, 今天怎么挺凉快的昨天晚上下雨了吗	time=昨天晚上,focus=雨	<=>	今天怎么挺凉快的昨天晚上下雨了吗	time=今天,time=昨天晚上,focus=雨
+98, 今天的秦岭天气适合出游吗	time=今天,loc_poi=秦岭	<=>	今天的秦岭天气适合出游吗	time=今天
+219, 星期天清晨会起大雾吗	time=星期天清晨,focus=雾	<=>	星期天清晨会起大雾吗	time=星期天,focus=雾
+256, 明天南阳还是35度以上的大范围高温天气吗	time=明天,loc_city=南阳,focus=高温,focus=度	<=>	明天南阳还是35度以上的大范围高温天气吗	time=明天,loc_city=南阳,focus=高温
+338, 金门七月五日平均温度是多少	loc_poi=金门,time=七月五日,focus=温度	<=>	金门七月五日平均温度是多少	time=七月五日,focus=温度
+378, 深圳后天的早上会不会出太阳	loc_city=深圳,time=后天的早上,focus=太阳	<=>	深圳后天的早上会不会出太阳	loc_city=深圳,time=后天,time=早上,focus=太阳
+400, 厦门下周会有海啸吗	loc_city=厦门,time=下周,focus=海啸	<=>	厦门下周会有海啸吗	loc_city=厦门,time=下周
+409, 上海最近天气有没有转凉	loc_city=上海,time=最近,focus=凉	<=>	上海最近天气有没有转凉	loc_city=上海,time=最近
+480, 七月二十日长安路气温状况	time=七月二十日,loc_poi=长安路,focus=气温	<=>	七月二十日长安路气温状况	time=七月二十日,loc_area=长安,focus=气温
+484, 等会本地的气温如何	time=等会,focus=气温	<=>	等会本地的气温如何	focus=气温
+649, 桓台明天的天气是阴有小雨	loc_area=桓台,time=明天,focus=阴,focus=雨	<=>	桓台明天的天气是阴有小雨	loc_area=桓台,time=明天,focus=雨
+745, 受台风影响近日福建省会有大暴雨吗	focus=台风,time=近日,loc_province=福建省,focus=雨	<=>	受台风影响近日福建省会有大暴雨吗	focus=台风,loc_province=福建省,focus=雨
+750, 今天下午五点应县城内有雷阵雨吗	time=今天下午五点,loc_area=应县,focus=雨	<=>	今天下午五点应县城内有雷阵雨吗	time=今天下午五点,loc_poi=应县城内,focus=雨
+769, 萧山后天的天气怎么样	loc_area=萧山,time=后天	<=>	萧山后天的天气怎么样	loc_poi=萧山,time=后天
+863, 安徽铜陵在国庆时起风吗	loc_province=安徽,loc_city=铜陵,time=国庆,focus=风	<=>	安徽铜陵在国庆时起风吗	loc_province=安徽,loc_city=铜陵,focus=风
+869, 趵突泉在国庆时候会有大雾出现吗	loc_poi=趵突泉,time=国庆,focus=雾	<=>	趵突泉在国庆时候会有大雾出现吗	loc_poi=趵突泉,focus=雾
+870, 苏州园林在劳动节时有大风状况吗	loc_city=苏州,loc_poi=园林,time=劳动节,focus=风	<=>	苏州园林在劳动节时有大风状况吗	loc_city=苏州,time=劳动节,focus=风
+878, 大连开发区明天的天气怎么样	loc_city=大连,loc_poi=开发区,time=明天	<=>	大连开发区明天的天气怎么样	loc_city=大连,time=明天
+964, 我想知道后天南海的风力和风向	time=后天,loc_poi=南海,focus=风力,focus=风向	<=>	我想知道后天南海的风力和风向	time=后天,focus=风力,focus=风
+1104, 新疆今天温度能否超过三十五度	loc_province=新疆,time=今天,focus=温度,focus=度	<=>	新疆今天温度能否超过三十五度	loc_province=新疆,time=今天,focus=温度
+1105, 沈阳高速雾霾严重到封路了么	loc_city=沈阳,loc_poi=高速,focus=雾霾	<=>	沈阳高速雾霾严重到封路了么	loc_poi=沈阳高速,focus=雾霾
+1146, 在兵马俑早上有没有暴雨	loc_poi=兵马俑,time=早上,focus=雨	<=>	在兵马俑早上有没有暴雨	loc_poi=在兵马俑,time=早上,focus=雨
+1194, 这周五沈阳会结冰吗	time=这周五,loc_city=沈阳,focus=结冰	<=>	这周五沈阳会结冰吗	time=这周五,loc_city=沈阳
+1195, 这周五沈阳有霜吗	time=这周五,loc_city=沈阳,focus=霜	<=>	这周五沈阳有霜吗	time=这周五,loc_city=沈阳
+1236, 中国阴转晴吗	loc_country=中国,focus=阴转晴	<=>	中国阴转晴吗	loc_country=中国,focus=晴
+1281, 南京秦淮夫子庙明天天气	loc_city=南京,loc_poi=秦淮夫子庙,time=明天	<=>	南京秦淮夫子庙明天天气	loc_poi=南京秦淮夫子庙,time=明天
+1307, 我想问你今天出去冷不冷	focus=冷,focus=冷,time=今天	<=>	我想问你今天出去冷不冷	focus=冷,focus=冷
+1309, 吉林延边朝鲜前天天气如何	loc_province=吉林延边朝鲜,time=前天	<=>	吉林延边朝鲜前天天气如何	loc_city=吉林,time=前天
+1313, 广岛五天后是晴天吗	loc_city=广岛,time=五天后,focus=晴	<=>	广岛五天后是晴天吗	time=广岛五天后,focus=晴
+1314, 天门山礼拜四空气好吗	loc_poi=天门山,time=礼拜四,focus=空气	<=>	天门山礼拜四空气好吗	loc_poi=天门山礼拜四,focus=空气
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+语义项抽取评价指标(ner)
+【slu系统级序列标注模型评价指标】macro-F1 (over domains: music && poem && story && weather && phone && nav): 0.966
+【slu系统级语义项抽取评价指标】macro-F1 (over domains: control && music && nav && phone && poem && sound && story && submusic && subweather && vehicle_control && weather): 0.98
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+统计系统耗时(模型耗时指先走了规则又走了模型的总时间)
+【总平均耗时】: 228.051ms
+【模型匹配平均耗时】: 263.257ms
+【规则匹配平均耗时】: 173.684ms
+【最大耗时】: 愚公移山这个故事我希望你能讲给我孩子听 1835.87ms model
+【最小耗时】: 。，。；；……& 2.15ms model
+
+domain: control
+	该领域总平均耗时: 133.523ms
+	该领域模型匹配平均耗时: Nan
+	该领域规则匹配平均耗时: 133.523ms
+
+domain: music
+	该领域总平均耗时: 245.1ms
+	该领域模型匹配平均耗时: 339.863ms
+	该领域规则匹配平均耗时: 221.253ms
+
+domain: nav
+	该领域总平均耗时: 309.335ms
+	该领域模型匹配平均耗时: 308.531ms
+	该领域规则匹配平均耗时: 401.763ms
+
+domain: other
+	该领域总平均耗时: 171.198ms
+	该领域模型匹配平均耗时: 176.974ms
+	该领域规则匹配平均耗时: 135.205ms
+
+domain: phone
+	该领域总平均耗时: 224.526ms
+	该领域模型匹配平均耗时: 228.946ms
+	该领域规则匹配平均耗时: 180.904ms
+
+domain: poem
+	该领域总平均耗时: 244.023ms
+	该领域模型匹配平均耗时: 272.637ms
+	该领域规则匹配平均耗时: 177.21ms
+
+domain: sound
+	该领域总平均耗时: 154.228ms
+	该领域模型匹配平均耗时: Nan
+	该领域规则匹配平均耗时: 154.228ms
+
+domain: story
+	该领域总平均耗时: 280.595ms
+	该领域模型匹配平均耗时: 319.147ms
+	该领域规则匹配平均耗时: 243.126ms
+
+domain: submusic
+	该领域总平均耗时: 190.716ms
+	该领域模型匹配平均耗时: 422.165ms
+	该领域规则匹配平均耗时: 180.905ms
+
+domain: subweather
+	该领域总平均耗时: 99.992ms
+	该领域模型匹配平均耗时: 171.93ms
+	该领域规则匹配平均耗时: 98.644ms
+
+domain: vehicle_control
+	该领域总平均耗时: 119.683ms
+	该领域模型匹配平均耗时: Nan
+	该领域规则匹配平均耗时: 119.683ms
+
+domain: weather
+	该领域总平均耗时: 209.898ms
+	该领域模型匹配平均耗时: 212.649ms
+	该领域规则匹配平均耗时: 139.609ms
+
+
+

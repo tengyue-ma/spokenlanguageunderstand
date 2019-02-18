@@ -1,0 +1,403 @@
+File '../../regex_v1.3/src/spregex.cc'
+Lines executed:95.38% of 195
+Creating 'spregex.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/spregex.cc
+        -:    0:Graph:spregex.gcno
+        -:    0:Data:spregex.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <iostream>
+        -:    2:#include <cstring>
+        -:    3:#include <fstream>
+        -:    4:#include <stdexcept>
+        -:    5:#include <unordered_map>
+        -:    6:
+        -:    7:#include "spregex.h"
+        -:    8:#include "utils.h"
+        -:    9:#include "cJSON.h"
+        -:   10:#define MAXLEN 1024
+        -:   11:# include <vector>
+        -:   12:#include "thread_pool.h"
+        -:   13:using namespace progschj;
+        -:   14:
+        -:   15:using std::vector;
+        -:   16:using std::cout;
+        -:   17:using std::endl;
+        -:   18:using std::ifstream;
+        -:   19:using std::unordered_map;
+        -:   20:
+        -:   21:namespace SemanticRegex{
+        -:   22:
+        -:   23:/*
+        -:   24: * 从配置文件中读取所有的领域,及其规则文件所在目录;
+        -:   25: * 并为每个领域的每条正则表达式创建一个nfa
+        -:   26: */
+       20:   27:Regex::Regex(const string& cfg_file, hobotlog::LogModule *loginstance){
+       20:   28:	wrd_max_len = 0;
+        -:   29:	//< 设置log
+       20:   30:	this->loginstance = loginstance;
+        -:   31:
+        -:   32:	//< 读取配置文件
+       20:   33:	loginstance->debug("[SLU]: reading config file ...");
+       20:   34:	int ret = load_config(cfg_file);
+       20:   35:	if(ret != 0)
+    #####:   36:		throw std::runtime_error("Mistakes found in onfiguration file!");
+        -:   37:
+        -:   38:	//< 连接redis
+       20:   39:	loginstance->debug("[SLU]: connecting redis ...");
+       20:   40:	redisContext *con = redisConnect(redis_server.c_str(), redis_port);
+       20:   41:	if(con!=NULL && con->err){
+    #####:   42:		string msg = "redis connection error: " + con->err;
+    #####:   43:		throw std::runtime_error(msg.c_str());
+        -:   44:	}
+        -:   45:    redisReply *reply;
+       20:   46:    string cmd = "AUTH " + redis_pswd;
+       20:   47:    reply = (redisReply*)redisCommand(con, cmd.c_str());
+       20:   48:    if(reply == NULL){
+    #####:   49:        throw std::runtime_error("failed to authenticate redis, please check your password.");
+        -:   50:    }
+       20:   51:    freeReplyObject(reply);
+       20:   52:	redis_wrapper = new RedisWrapper(con);
+        -:   53:
+        -:   54:	//< 创建两个iconv_t用于编码转换
+       20:   55:	cd_g2u = iconv_open("UTF-8", "GBK");
+       20:   56:	if(cd_g2u == (iconv_t)-1){
+    #####:   57:		throw std::runtime_error("Cannot open iconv!");
+        -:   58:	}
+       20:   59:	cd_u2g = iconv_open("GBK", "UTF-8");
+       20:   60:	if(cd_u2g == (iconv_t)-1){
+    #####:   61:		throw std::runtime_error("Cannot open iconv!");
+       20:   62:	}
+       20:   63:}
+        -:   64:
+        6:   65:Regex::~Regex(){
+       60:   66:	for(map<string, DomainLex*>::iterator iter=domain_lex.begin();
+       40:   67:		iter!=domain_lex.end(); iter++){
+       17:   68:		delete iter->second;
+        -:   69:	}
+        3:   70:	iconv_close(cd_g2u);
+        3:   71:	iconv_close(cd_u2g);
+        -:   72:	//< 释放跟数据库的连接
+        3:   73:	delete redis_wrapper;
+        3:   74:}
+        -:   75:
+        -:   76:/*
+        -:   77: * 本函数完成两件事情:
+        -:   78: *	1. 读取redis ip以及端口port
+        -:   79: *	2. 读取多个领域的配置列表,各领域含:
+        -:   80: *		1). 领域名
+        -:   81: *		2). 领域规则所在目录
+        -:   82: */
+       20:   83:int Regex::load_config(const string& cfg_file){
+        -:   84:	//< 获取cfg_file的所在目录
+       20:   85:	string cfg_dir = "./";
+       20:   86:	size_t idx = cfg_file.rfind('/');
+       20:   87:	if(idx != string::npos){
+        2:   88:		cfg_dir = cfg_file.substr(0, idx+1);
+        -:   89:	}
+        -:   90:
+        -:   91:	//< 读取config文件
+       40:   92:	ifstream inf(cfg_file.c_str());
+       20:   93:	VERIFY(inf, "Failed to open config file!");
+       40:   94:	string json_str = "";
+       40:   95:	string line;
+      720:   96:	while(getline(inf, line)){
+      680:   97:		json_str += line;
+        -:   98:	}
+        -:   99:
+       20:  100:	cJSON* root = cJSON_Parse(json_str.c_str());
+       20:  101:	VERIFY(root, "config json format error!");
+        -:  102:
+        -:  103:	//< 提取redis的配置信息
+       20:  104:	cJSON *predis 	   = cJSON_GetObjectItem(root, "redis");
+       20:  105:	VERIFY(predis, "config json format error!");
+        -:  106:
+       20:  107:	cJSON *predis_ip   = cJSON_GetObjectItem(predis, "server");
+       20:  108:	VERIFY(predis_ip, "config json format error!");
+        -:  109:
+       20:  110:	cJSON *predis_port = cJSON_GetObjectItem(predis, "port");
+       20:  111:	VERIFY(predis_port, "config json format error!");
+        -:  112:
+       20:  113:	cJSON *predis_pswd = cJSON_GetObjectItem(predis, "password");
+       20:  114:	VERIFY(predis_pswd, "config json format error!");
+        -:  115:
+       20:  116:	redis_server = predis_ip->valuestring;
+       20:  117:	redis_port = predis_port->valueint;
+       20:  118:	redis_pswd = predis_pswd->valuestring;
+        -:  119:
+        -:  120:	//< 提取领域列表
+       20:  121:	cJSON *domains = cJSON_GetObjectItem(root, "domains");
+       20:  122:	VERIFY(domains, "config json format error!");
+       20:  123:	size_t n_domain = cJSON_GetArraySize(domains);
+        -:  124:
+        -:  125:    // 领域层级的多线程加载
+       40:  126:    ThreadPool pool(6);
+       40:  127:    vector< std::future<DomainLex*> > results;
+       40:  128:    vector<string> names;
+        -:  129:
+      140:  130:	for(size_t i=0; i<n_domain; i++){
+      120:  131:		cJSON *domain = cJSON_GetArrayItem(domains, i);
+      120:  132:		VERIFY(domain, "config json format error!");
+      120:  133:		cJSON *pname = cJSON_GetObjectItem(domain, "name");
+      120:  134:		cJSON *plex_dir = cJSON_GetObjectItem(domain, "lex_dir");
+      120:  135:		VERIFY(pname, "config json format error!");
+      120:  136:		VERIFY(plex_dir, "config json format error!");
+      120:  137:		string name = pname->valuestring;
+      240:  138:		string lex_dir = plex_dir->valuestring;
+      120:  139:		if(find(names.begin(), names.end(), name) != names.end()){
+        1:  140:			std::cerr << "Warning: domain " << name << " redeclared!" << endl;
+        1:  141:			delete domain_lex[name];
+        -:  142:		}
+      120:  143:        names.push_back(name);
+      120:  144:		loginstance->debug("[SLU]: reading lex for " + name + " ...");
+        -:  145:        results.emplace_back(
+      710:  146:            pool.enqueue([name, lex_dir] {
+      110:  147:                DomainLex* domain_lex = new DomainLex(name, lex_dir);
+      120:  148:                return domain_lex;
+        -:  149:            })
+        -:  150:    
+      120:  151:        );
+      120:  152:	}
+       20:  153:    pool.wait_until_empty();
+        -:  154:
+      140:  155:	for(size_t i=0; i<n_domain; i++){
+      120:  156:		string name = names[i];
+      120:  157:		domain_lex[name] = results[i].get();
+      120:  158:		if(wrd_max_len < domain_lex[name]->wrd_max_len)
+       40:  159:			wrd_max_len = domain_lex[name]->wrd_max_len;
+      120:  160:	}
+       40:  161:	return 0;
+        -:  162:}
+        -:  163:
+        -:  164:/*
+        -:  165: * 利用快速排序算法,对若干个语义结果按照权重从大到小排序
+        -:  166: *	sem_vec:	多个语义结果
+        -:  167: *	start:		快排算法的起始位置
+        -:  168: *	end:		快排算法的结束位置
+        -:  169: */
+       34:  170:void quick_sort(vector<Semantic*>& sem_vec, int start, int end){
+       34:  171:	if(start >= end)
+       53:  172:		return;
+       15:  173:	Semantic* tmp = sem_vec[start];
+       15:  174:	int i=start, j=end;
+       45:  175:	while(i<j){
+       15:  176:		while(i<j && sem_vec[j]->weight < tmp->weight) j--;
+       15:  177:		if(i<j){
+        6:  178:			sem_vec[i] = sem_vec[j];
+        6:  179:			i++;
+        -:  180:		}
+       15:  181:		while(i<j && sem_vec[i]->weight > tmp->weight) i++;
+       15:  182:		if(i<j){
+    #####:  183:			sem_vec[j] = sem_vec[i];
+    #####:  184:			j--;
+        -:  185:		}
+        -:  186:	}
+       15:  187:	sem_vec[i] = tmp;
+       15:  188:	quick_sort(sem_vec, start, i-1);
+       15:  189:	quick_sort(sem_vec, i+1, end);
+        -:  190:}
+        -:  191:
+        -:  192:/*
+        -:  193:注释原因: 没有调用的地方, 并且是私有函数, 单元测试测不到
+        -:  194:时间: 2018.12.18
+        -:  195:by leilei.zhou
+        -:  196:*/
+        -:  197:
+        -:  198://int Regex::gbk_sem(Semantic* sem){
+        -:  199://	int ret = 0;
+        -:  200://	string tmp_str;
+        -:  201://
+        -:  202://	ret = utf82gbk(sem->query, tmp_str);
+        -:  203://	if(ret<0) return ret;
+        -:  204://	sem->query  = tmp_str;
+        -:  205://
+        -:  206://	ret = utf82gbk(sem->domain, tmp_str);
+        -:  207://	if(ret<0) return ret;
+        -:  208://	sem->domain  = tmp_str;
+        -:  209://
+        -:  210://	ret = utf82gbk(sem->intent, tmp_str);
+        -:  211://	if(ret<0) return ret;
+        -:  212://	sem->intent  = tmp_str;
+        -:  213://
+        -:  214://	for(size_t i=0; i<sem->slots.size(); i++){
+        -:  215://		ret = utf82gbk(sem->slots[i]->name, tmp_str);
+        -:  216://		if(ret<0) continue;
+        -:  217://		sem->slots[i]->name = tmp_str;
+        -:  218://
+        -:  219://		ret = utf82gbk(sem->slots[i]->value, tmp_str);
+        -:  220://		if(ret<0) continue;
+        -:  221://		sem->slots[i]->value = tmp_str;
+        -:  222://	}
+        -:  223://
+        -:  224://	return 0;
+        -:  225://}
+        -:  226:
+        -:  227:/*
+        -:  228: * 按以下步骤进行:
+        -:  229: *	1. 抽取出所有可能的词,例如对于句子"我要听青花瓷",若wrd_max_len=2,其所有可能的词为
+        -:  230: *		["我", "我要", "要", "要听", ..., "花", "花瓷", "瓷"]
+        -:  231: *	2. 调用所有领域对应的DomainLex进行匹配
+        -:  232: *	3. 汇总所有领域的匹配结果,按照权重从大到小的原则进行排序,选择权重最大的前n条
+        -:  233: */
+        5:  234:vector<Semantic*> Regex::match(const string& gbk_sent,
+        -:  235:			const string& use_domain, int n_best, bool gbk){
+        5:  236:	vector<Semantic*> sem_vec;
+        -:  237:	//< 若为gbk格式,先转换为utf-8格式
+       10:  238:	string sentence;
+        5:  239:	if(gbk){
+        1:  240:		int ret = gbk2utf8(gbk_sent, sentence);
+        1:  241:		if(ret<0) return sem_vec;
+        -:  242:	}else{
+        4:  243:		sentence = gbk_sent;
+        -:  244:	}
+        -:  245:
+        -:  246:	//< 按utf-8字符切分成string并放到vector中
+       10:  247:	vector<string> chars;
+        5:  248:	Utils::utf8strs(sentence.c_str(), chars);
+        -:  249:
+        -:  250:	//< 抽取出所有可能的词
+       10:  251:	unordered_map< string, vector<size_t> > substr_idx_map;
+       40:  252:	for(size_t i=0; i<chars.size(); i++){
+      175:  253:		for(size_t j=1; j<=wrd_max_len; j++){
+      140:  254:			string tmp = Utils::join(chars, i, i+j);
+      140:  255:			if(substr_idx_map.find(tmp) == substr_idx_map.end())
+      110:  256:				substr_idx_map[tmp] = vector<size_t>();
+      140:  257:			substr_idx_map[tmp].push_back(i+j);
+      140:  258:		}
+        -:  259:	}
+        -:  260:
+       10:  261:    map<string, int> redis_key_val;
+       10:  262:    string matched_string = "";
+        -:  263:	//< 若未指定领域，则全部领域都匹配一遍
+        5:  264:	if(use_domain == "" || use_domain == "subnav"){
+        -:  265:		// loginstance->debug("match domain not specified, match in all domains.");
+       63:  266:		for(map<string, DomainLex*>::iterator iter=domain_lex.begin();
+       42:  267:			iter!=domain_lex.end(); iter++){
+       18:  268:			if(use_domain == "" && iter->first == "subnav") continue;
+        -:  269:			// loginstance->debug("matching in domain " + iter->first + ".");
+       18:  270:			vector<Semantic*> dom_sem_vec;
+       18:  271:			if(iter->first == "vehicle_control" && chars.size() <= 22)
+        6:  272:				dom_sem_vec = iter->second->split_match(sentence,
+        -:  273:												chars, &redis_key_val, matched_string,
+        3:  274:												redis_wrapper, substr_idx_map, loginstance);
+        -:  275:			else
+       30:  276:				dom_sem_vec = iter->second->match(sentence,
+        -:  277:												chars, &redis_key_val, matched_string,
+       15:  278:												redis_wrapper, substr_idx_map, loginstance);
+       39:  279:			for(size_t i=0; i<dom_sem_vec.size(); i++){
+        -:  280:				// loginstance->debug(dom_sem_vec[i]->dumps());
+       21:  281:				bool flag = true;
+       21:  282:				for(size_t j=0; j<i; j++){
+        -:  283:					//< 去除重复
+        3:  284:					if(NULL != dom_sem_vec[j] && *(dom_sem_vec[i]) == *(dom_sem_vec[j])){
+        3:  285:						flag = false;
+        3:  286:						break;
+        -:  287:					}
+        -:  288:				}
+       21:  289:				if(flag){
+       18:  290:			    	sem_vec.push_back(dom_sem_vec[i]);
+        -:  291:                }else{
+        3:  292:					delete dom_sem_vec[i];
+        3:  293:                    dom_sem_vec[i] = NULL;
+        -:  294:                }
+        -:  295:			}
+       18:  296:		}
+        -:  297:	//< 否则，只用指定领域下的规则进行匹配
+        -:  298:	}else{
+        -:  299:		// loginstance->debug("matching in specified domain [" + use_domain + "].");
+        2:  300:		if(domain_lex.find(use_domain) == domain_lex.end()){
+        -:  301:			// loginstance->error("domain [" + use_domain + "] not found in config file!");
+        1:  302:			return sem_vec;
+        -:  303:		}
+        1:  304:		vector<Semantic*> dom_sem_vec = domain_lex[use_domain]->match(
+        2:  305:		sentence, chars, &redis_key_val, matched_string, redis_wrapper, substr_idx_map, loginstance);
+        3:  306:		for(size_t i=0; i<dom_sem_vec.size(); i++){
+        -:  307:			// loginstance->debug(dom_sem_vec[i]->dumps());
+        2:  308:			bool flag = true;
+        2:  309:			for(size_t j=0; j<i; j++){
+        -:  310:				//< 去除重复
+        1:  311:		   		if(NULL != dom_sem_vec[j] && *(dom_sem_vec[i]) == *(dom_sem_vec[j])){
+        1:  312:		   			flag = false;
+        1:  313:					break;
+        -:  314:				}
+        -:  315:			}
+        2:  316:			if(flag){
+        1:  317:				sem_vec.push_back(dom_sem_vec[i]);
+        -:  318:            }else{
+        1:  319:				delete dom_sem_vec[i];
+        1:  320:                dom_sem_vec[i] = NULL;
+        -:  321:            }
+        1:  322:		}
+        -:  323:	}
+        8:  324:	vector<Semantic*> nbest_sem_vec;
+        4:  325:	int min =(n_best < sem_vec.size())? n_best:sem_vec.size();
+        4:  326:	if(n_best == -1)
+        1:  327:		min = sem_vec.size();
+        4:  328:	quick_sort(sem_vec, 0, sem_vec.size()-1);
+        -:  329:
+       14:  330:	for(int i=0; i<min; i++){
+       10:  331:		nbest_sem_vec.push_back(sem_vec[i]);
+        -:  332:	}
+        -:  333:
+        -:  334:	//< 删除n-best以后的结果,释放空间
+       13:  335:	for(int i=min; i<sem_vec.size(); i++)
+        9:  336:		delete sem_vec[i];
+        -:  337:
+        9:  338:	return nbest_sem_vec;
+        -:  339:}
+        -:  340:
+        1:  341:int Regex::gbk2utf8(const string& str_src, string& str_des){
+        -:  342:	char src[MAXLEN];
+        -:  343:	char des[MAXLEN];
+        1:  344:	size_t len = str_src.size();
+        1:  345:	memset(src, 0, MAXLEN);
+        1:  346:	strcpy(src, str_src.c_str());
+        1:  347:	memset(des, 0, MAXLEN);
+        1:  348:	char *in  = src;
+        1:  349:	char *out = des;
+        1:  350:	size_t inlen = len;
+        1:  351:	size_t oulen = MAXLEN;
+        1:  352:	if(iconv(cd_g2u, &in, &inlen, &out, &oulen) == -1)
+    #####:  353:		return -1;
+        1:  354:	str_des = des;
+        1:  355:	return 0;
+        -:  356:}
+        -:  357:
+        -:  358:/*
+        -:  359:注释原因: 没有调用的地方, 并且是私有函数, 单元测试测不到
+        -:  360:时间: 2018.12.18
+        -:  361:by leilei.zhou
+        -:  362:*/
+        -:  363://int Regex::utf82gbk(const string& str_src, string& str_des){
+        -:  364://	char src[MAXLEN];
+        -:  365://	char des[MAXLEN];
+        -:  366://	size_t len = str_src.size();
+        -:  367://	memset(src, 0, MAXLEN);
+        -:  368://	strcpy(src, str_src.c_str());
+        -:  369://	memset(des, 0, MAXLEN);
+        -:  370://	char *in  = src;
+        -:  371://	char *out = des;
+        -:  372://	size_t inlen = len;
+        -:  373://	size_t oulen = MAXLEN;
+        -:  374://	if(iconv(cd_u2g, &in, &inlen, &out, &oulen) == -1)
+        -:  375://		return -1;
+        -:  376://	str_des = des;
+        -:  377://	return 0;
+        -:  378://}
+        -:  379:
+        4:  380:vector<string> Regex::parse(const string& sentence,
+        -:  381:							const string& use_domain,
+        -:  382:							int n_best){
+        4:  383:	vector<string> results;
+        -:  384:
+        8:  385:	vector<Semantic*> sems = match(sentence, use_domain, n_best, false);
+       13:  386:	for(size_t i=0; i<sems.size(); i++){
+        9:  387:		results.push_back(sems[i]->dumps());
+        9:  388:		delete sems[i];
+        -:  389:	}
+        4:  390:	sems.clear();
+        8:  391:	return results;
+        -:  392:}
+        -:  393:
+        3:  394:}	// end of namespace SemanticRegex
+        -:  395:

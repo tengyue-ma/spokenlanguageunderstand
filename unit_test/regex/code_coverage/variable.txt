@@ -1,0 +1,25 @@
+File '../../regex_v1.3/src/variable.cc'
+Lines executed:100.00% of 8
+Creating 'variable.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/variable.cc
+        -:    0:Graph:variable.gcno
+        -:    0:Data:variable.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "variable.h"
+        -:    2:
+        -:    3:using std::string;
+        -:    4:
+        -:    5:namespace SemanticRegex{
+        -:    6:
+     1419:    7:Variable::Variable(const string& var_name, const string& var_value) {
+     1419:    8:    this->var_name_ = var_name;
+     1419:    9:    this->var_value_ = var_value;
+     1419:   10:    this->pnfa_ = NULL;
+     1419:   11:}
+        -:   12:
+      346:   13:Variable::~Variable() {
+      173:   14:    this->pnfa_->destruct();
+      173:   15:}
+        -:   16:
+        -:   17:}

@@ -1,0 +1,110 @@
+本目录包含测试集, 测试结果, 测试脚本
+
+1. test_set: 测试集
+    ├── test.txt     : 目前共3112条语句,与训练集分布一致.
+    ├── test.lab     : test.txt的标注结果
+    ├── product.txt  : 产品测试集,合并了regTest.txt和667.txt,667.txt最初由2017年11月王宏宇书写,regTest.txt最初由马腾岳构建.如果有新的badcase,也加到这个测试集.
+    ├── product.lab  : product.txt的标注结果
+    ├── create.txt   : 由团队内部自己写的测试语句,一般用于测试规则,合并了20180514.txt,sound.txt,control.txt和map.txt.
+    └── create.lab   : create.txt的标注结果
+
+    注: .lab的文件格式为:
+        domain  intent  query           slots
+        music	inform	播放周杰伦的稻香	artist=周杰伦,title=稻香
+
+        每列以tab键分割,有四列或三列(slots列可以没有),slots以英文逗号分割
+
+
+2. src: 测试脚本
+    ├── test.sh     : 一键测试工具
+    ├── get_err.py  : 比较标注结果和测试结果之间的差异,并在最后输出评测结果。
+
+    最终的测试结果见test_result目录下的.err文件,例如: regTest.err
+    其格式为:
+        行号, 标注结果 <=> SLU解析结果
+    例如:
+        29, music	inform	想听凤凰传奇的广场舞歌曲	artist=凤凰传奇,tag=广场舞 <=> music	inform	想听凤凰传奇的广场舞歌曲	artist=凤凰传奇,program=广场舞	0.800000	regex   91.88ms
+
+    左边是正确结果,右边是系统的测试结果
+
+    指标		1, Precision(domain, intent, slots,只要有一个错误,即算错,仅当3项完全正确时才算正确.)
+        	2, model/regex, match_mode比例
+        	3, 混淆矩阵及各项详细评测结果
+
+
+3. test_result: 测试结果
+    ├── test.out        : test.txt的测试结果
+    ├── test.err        : test.out中,错误的例子
+    ├── product.out     : product.txt的测试结果
+    ├── product.err     : product.out中,错误的例子
+    ├── create.out      : create.txt的测试结果
+    ├── create.err      : create.out中,错误的例子
+    └── all.err         : 以上所有的xxx.err,合并结果
+    注:
+        SLU测试结果的文件格式为:
+        domain  intent  query           slots                   score	match_mode  match_time
+        music	inform	播放周杰伦的稻香	artist=周杰伦,title=稻香	1.000	regex       65.04ms
+        poem	inform	来个李白的静夜思	author=李白,title=静夜思	1.000	model       78.25ms
+
+        每列以tab键分割,有七列或六列(slots列可以没有),slots以英文逗号分割
+
+
+	历史版本准确率：             slu1.0    |              slu2.0
+						        		 | 	all			model		regex
+			test.txt		:	96.71%   | 	95.38%		67.57%		32.43%
+			regTest.txt		:	94.10%   |	93.63%		44.49%		55.51%
+			667.txt			:	88.16%   |	89.66%		61.62%		38.38%
+			20180514.txt	:	NULL	 |	92.55%		11.00%		89.00%
+			sound.txt	    :	NULL	 |	100.0%		0.00%		100.0%
+			control.txt	    :	NULL     |	99.67%		0.33%		99.67%
+			map.txt  	    :	NULL	 |	99.76%		0.97%		99.03%
+
+
+
+	                               slu2.0测试集合并去重后                     |                     slu2.2                     |                     master
+						        all			model		regex     domain    |    all		model		regex      domain    |    all		model		regex      domain
+			test.txt		:	95.25%		65.65%		34.35%    97.21%    |	 95.76% 	77.44%		22.56%     97.78%    |	 95.76% 	77.38%		22.62%     97.78%
+			product.txt		:	90.88%		48.86%		51.14%    92.75     |	 91.18%		43.83%		56.17%     92.97%    |	 91.18%		43.83%		56.17%     92.97%
+			create.txt		:	96.34%		5.31%		94.69%    97.83%    |	 96.62%		04.89%		95.11%     98.14%    |	 96.78%		04.69%		95.31%     98.26%
+
+	                               合并master后                       
+						        all			model		regex     domain    	
+			music.txt		:	91.75%		27.63%		72.37%    98.68%    	
+			nav.txt		    :	97.52%		100.0%      00.00%    99.91%     	
+			phone.txt		:	99.34%		100.0%      00.00%    99.67%   
+			poem.txt		:	94.91%		71.51%		28.49%    99.27%    			
+			story.txt		:	83.74%		50.22%		49.78%    99.14%    
+		    weather.txt		:	95.62%		96.21%		03.79%    98.98%   
+			other.txt		:	90.87%		86.72%		13.28%    90.87%  
+			regex.txt		:	94.61%		03.02%		96.98%    97.51%  			
+
+		历史版本准确率：
+        slu1.0, 是slu1.0版本的正确率.
+        slu2.0, 是slu2.0版本的正确率.
+
+        slu2.0对比slu1.0：
+	    test测试集和regTest测试集性能下降原因:
+	    新增了confirm意图, 而confirm意图现在完全由规则完成, 无法支持太复杂的confirm的说法.
+        poem/story的非inform规则放到了other, 但是由于测试集中的poem/story的非inform标注没有修改, 所以下降.
+
+        此下降对体验来说没有影响.
+
+        测试集合并后, product.txt合并了regTest.txt和667.txt, create.txt合并了20180514.txt,sound.txt,control.txt和map.txt.
+        测试集去重后, 将三个测试集进行了去重, 所以正确率有略微下降.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

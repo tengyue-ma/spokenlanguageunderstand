@@ -1,0 +1,68 @@
+1. 编译
+	# 先编译redis
+	cd third/hiredis
+	make
+
+	# 再编译各源码
+	cd ../..
+	make all
+
+	# 编译示例程序
+	cd example
+	make
+	cd ..
+
+2. 运行
+	cd example
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../third/hiredis:../third/hobotlog/lib
+	./semantic_parser conf/log.cfg -c conf/regex.cfg -s 我要听周杰伦的青花瓷
+
+3. 目录结构
+	├── example					示例目录
+	│   ├── lex					规则样例,包含多个领域
+	│   ├── log					日志文件所在目录
+	│   ├── log.conf			日志配置文件
+	│   ├── Makefile			makefile
+	│   ├── regex.cfg			配置文件
+	│   ├── semantic_parser		测试文件,运行方法如2所示
+	│   └── src					测试源码文件
+	├── inc						头文件目录,包含各种各种的头文件
+	│   ├── charset.h
+	│   ├── cJSON.h
+	│   ├── domain_lex.h
+	│   ├── expression.h
+	│   ├── group.h
+	│   ├── link.h
+	│   ├── nfa_char_union.h
+	│   ├── nfa.h
+	│   ├── queue.h
+	│   ├── queue.hpp
+	│   ├── semantic.h
+	│   ├── spregex.h
+	│   ├── state.h
+	│   ├── utils.h
+	│   └── variable.h
+	├── Makefile				makefile
+	├── README
+	├── src						源文件,实现头文件中定义的功能
+	│   ├── charset.cc
+	│   ├── cJSON.c
+	│   ├── domain_lex.cc
+	│   ├── expression.cc
+	│   ├── group.cc
+	│   ├── link.cc
+	│   ├── nfa.cc
+	│   ├── nfa_char_union.cc
+	│   ├── semantic.cc
+	│   ├── spregex.cc
+	│   ├── state.cc
+	│   ├── utils.cc
+	│   ├── variable.cc
+	└── third					第三方库
+	    ├── hiredis				hiredis,用来查询redis数据库
+	    └── hobotlog			日志模块,为地平线云平台所开发
+
+4. 测试结果
+	测试集见example/test/test.txt,测试结果见example/test/test.output
+	单线程测试时间: 834条共耗时2.57秒,平均每条耗时3.08毫秒;
+	多线程测试待添加.

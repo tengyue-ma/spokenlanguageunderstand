@@ -1,0 +1,41 @@
+File '../../classifier/intent_inform/src/intent_inform.cpp'
+Lines executed:100.00% of 11
+Creating 'intent_inform.cpp.gcov'
+        -:    0:Source:../../classifier/intent_inform/src/intent_inform.cpp
+        -:    0:Graph:intent_inform.gcno
+        -:    0:Data:intent_inform.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: intent_inform.cpp
+        -:    3:	> Author: speechteam
+        -:    4:	> Mail: speech@hobot.cc
+        -:    5:	> Created Time: Mon 02 Apr 2018 04:51:46 PM CST
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include "intent_inform.h"
+        -:   10:using namespace std;
+        -:   11:
+        -:   12:namespace classify{
+        -:   13:    
+        2:   14:extern "C" Classifier* create_classifier(const string model_path, 
+        -:   15:                                         const string log_path){
+        2:   16:    Intent_inform* intent = new Intent_inform(model_path, log_path);
+        2:   17:    return dynamic_cast<Classifier *>(intent);
+        -:   18:}
+        -:   19:
+        1:   20:extern "C" void delete_classifier(Classifier* clf){
+        1:   21:    Intent_inform* intent = dynamic_cast<Intent_inform *>(clf);
+        -:   22:    //delete me_clf;
+        1:   23:    intent = NULL;
+        1:   24:}
+        -:   25:
+        1:   26:int Intent_inform::classify(const string query, 
+        -:   27:                            vector<std::pair<string, float> >& class_name, 
+        -:   28:                            feat_extractor::FeatExtractor* feat_ext){
+        1:   29:    class_name.push_back(std::pair<string, float>(this->intent, 100));
+        -:   30:
+        1:   31:    return 0;
+        -:   32:}
+        3:   33:} //< namespace classify

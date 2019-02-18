@@ -1,0 +1,137 @@
+File '../../regex_v1.3/src/semantic.cc'
+Lines executed:87.91% of 91
+Creating 'semantic.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/semantic.cc
+        -:    0:Graph:semantic.gcno
+        -:    0:Data:semantic.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <stdio.h>
+        -:    2:#include <map>
+        -:    3:
+        -:    4:#include "semantic.h"
+        -:    5:
+        -:    6:using std::map;
+        -:    7:
+        -:    8:namespace SemanticRegex{
+        -:    9:
+        9:   10:Slot::Slot(){
+        9:   11:	start = -1;
+        9:   12:	end   = -1;
+        9:   13:}
+        1:   14:Slot::Slot(const Slot& slot){
+        1:   15:	start = slot.start;
+        1:   16:	end   = slot.end;
+        1:   17:	name  = slot.name;
+        1:   18:	value = slot.value;
+        1:   19:}
+       77:   20:Slot::~Slot(){
+       77:   21:}
+        -:   22:
+       68:   23:Slot::Slot(string name, string value, int start, int end){
+       68:   24:	this->start = start;
+       68:   25:	this->end   = end;
+        -:   26:
+       68:   27:	this->name  = name;
+       68:   28:	this->value = value;
+       68:   29:}
+        -:   30:
+        5:   31:bool Slot::operator==(const Slot& s){
+        5:   32:	if(start != s.start)
+        1:   33:		return false;
+        4:   34:	if(end != s.end)
+        1:   35:		return false;
+        3:   36:	if(name != s.name)
+        1:   37:		return false;
+        2:   38:	if(value != s.value)
+        1:   39:		return false;
+        1:   40:	return true;
+        -:   41:}
+        -:   42:
+        -:   43:
+       35:   44:Semantic::Semantic(){
+       35:   45:	weight = 0.0;
+       35:   46:}
+       70:   47:Semantic::~Semantic(){
+      103:   48:	for(size_t i=0; i<slots.size(); i++){
+       68:   49:		delete slots[i];
+        -:   50:	}
+       35:   51:	slots.clear();
+       35:   52:}
+        -:   53:
+    #####:   54:Semantic& Semantic::operator=(const Semantic& sem){
+    #####:   55:	this->query 	= sem.query;
+    #####:   56:	this->intent 	= sem.intent;
+    #####:   57:	this->domain	= sem.domain;
+    #####:   58:    this->match_len = sem.match_len;
+    #####:   59:	for(size_t i=0; i<sem.slots.size(); i++){
+    #####:   60:		add_slot(new Slot(*(sem.slots[i])));
+        -:   61:	}
+    #####:   62:	return *this;
+        -:   63:}
+        -:   64:
+       12:   65:bool Semantic::operator==(const Semantic& sem){
+       12:   66:	if(this->query != sem.query || this->domain !=sem.domain || this->intent != sem.intent)
+    #####:   67:		return false;
+       12:   68:	map<string, string> map1;
+       24:   69:	map<string, string> map2;
+       36:   70:	for(size_t i=0; i<slots.size(); i++){
+       24:   71:		map1[slots[i]->name] = slots[i]->value;
+        -:   72:	}
+       36:   73:	for(size_t i=0; i<sem.slots.size(); i++){
+       24:   74:		map2[sem.slots[i]->name] = sem.slots[i]->value;
+        -:   75:	}
+        -:   76:
+       12:   77:	if(map1.size() != map2.size())
+    #####:   78:		return false;
+      108:   79:	for(map<string, string>::iterator it=map1.begin();
+       72:   80:		it!=map1.end(); it++){
+       24:   81:		if(map2.find(it->first) == map2.end() || map2[it->first] != it->second)
+    #####:   82:			return false;
+        -:   83:	}
+       24:   84:	return true;
+        -:   85:}
+        -:   86:
+        1:   87:void Semantic::add_slot(Slot* slot){
+        1:   88:	slots.push_back(slot);
+        1:   89:}
+        -:   90:
+       68:   91:void Semantic::add_slot(string name, string value, int start, int end){
+       68:   92:	Slot* slot = new Slot(name, value, start, end);
+       68:   93:	slots.push_back(slot);
+       68:   94:}
+        -:   95:
+       10:   96:string Semantic::dumps(){
+        -:   97:	char tmp[30];
+       10:   98:	string sem_res = "{";
+       10:   99:	sem_res += "\"query\": \""  + query + "\", " ;
+       10:  100:	sem_res += "\"domain\": \"" + domain + "\", ";
+       10:  101:	sem_res += "\"intent\": \"" + intent + "\", ";
+       10:  102:	sem_res += "\"slots\": {";
+       30:  103:	for(size_t i=0; i<slots.size(); i++){
+       20:  104:		sem_res += "\"" + slots[i]->name + "\": \"" + slots[i]->value;
+       20:  105:		sprintf(tmp, "[%d, %d]\", ", slots[i]->start, slots[i]->end);
+       20:  106:		sem_res += tmp;
+        -:  107:	}
+       10:  108:	if(sem_res[sem_res.size()-1] == ' ')
+       10:  109:		sem_res = sem_res.substr(0, sem_res.size()-2);
+       10:  110:	sem_res += "}, ";
+       10:  111:	sprintf(tmp, "%f", weight);
+       10:  112:	sem_res = sem_res + "\"weight\": \"" + tmp + "\"";
+       10:  113:	sem_res += "}";
+       10:  114:	return sem_res;
+        -:  115:}
+        -:  116:
+        1:  117:int Semantic::has_slot(string name){
+        1:  118:	int idx = -1;
+        1:  119:	for(size_t i=0; i<slots.size(); i++){
+        1:  120:		if(slots[i]->name == name){
+        1:  121:			idx = i;
+        1:  122:			break;
+        -:  123:		}
+        -:  124:	}
+        1:  125:	return idx;
+        -:  126:}
+        -:  127:
+        -:  128:}	// end of namespace SemanticRegex
+        -:  129:

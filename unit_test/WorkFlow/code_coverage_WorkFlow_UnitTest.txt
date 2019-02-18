@@ -1,0 +1,103 @@
+File '../work_flow/src/WorkFlow.cpp'
+Lines executed:78.95% of 38
+去掉判空后：100% of 36
+Creating 'WorkFlow.cpp.gcov'
+        -:    0:Source:../work_flow/src/WorkFlow.cpp
+        -:    0:Graph:WorkFlow.gcno
+        -:    0:Data:WorkFlow.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: WorkFlow.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 一  2/26 11:21:29 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <vector>
+        -:   10:#include <string>
+        -:   11:#include "WorkFlow.h"
+        -:   12:#include "ul_log.h"
+        -:   13:#include "Configure.h"
+        -:   14:#include "spreg.h"
+        -:   15:#include "SluErrorCode.h"
+        -:   16:#include "SluLog.h"
+        -:   17:
+        -:   18:using namespace std;
+        -:   19:using namespace hobotlog;
+        -:   20:
+        -:   21://< log定义
+        -:   22:LogModule * loginstance = NULL;
+        -:   23:
+        3:   24:WorkFlow::WorkFlow(){
+        -:   25:    //load_conf("NULL");
+        3:   26:}
+        -:   27:
+        3:   28:WorkFlow::~WorkFlow(){
+        -:   29:
+        3:   30:}
+        -:   31:
+        2:   32:int WorkFlow::load_conf(const string conf_file, 
+        -:   33:                        const string conf_path){
+        -:   34:
+        -:   35:
+        2:   36:    if (conf_file == ""){
+        1:   37:        fprintf(stderr,"workflow conf is null\n");
+        1:   38:        return ERR_WORK_FLOW_CONF_NULL;
+        -:   39:    }
+        -:   40:
+        1:   41:    int ret = 0;
+        1:   42:    comcfg::Configure config;
+        1:   43:    ret = config.load(conf_path.c_str(), conf_file.c_str());
+        1:   44:    if (ret < 0){
+    #####:   45:        fprintf(stderr,"failed to load workflow config file\n");
+    #####:   46:        return ERR_WORK_FLOW_LOAD_CONF;
+        -:   47:    }
+        -:   48:
+        -:   49:    //init work flow log
+        -:   50:    try {
+        1:   51:        string log_file = config["WORK_FLOW_LOG_CONF"].to_cstr();
+        1:   52:		if(NULL == loginstance){
+        1:   53:			loginstance = new hobotlog::LogModule(log_file);
+        1:   54:			loginstance->info("[SLU]: load workflow log conf, and init loginstance success!");
+        1:   55:		}
+    =====:   56:    }catch(...){
+    =====:   57:        cout << "do not set workflow log file in: " << conf_file << endl;
+    =====:   58:        return ERR_WORKFLOW_NOT_SET_LOG_FILE;
+        -:   59:    }
+        -:   60:
+        -:   61:    //< load
+        -:   62:    try {
+        1:   63:        int node_size = static_cast<int>(config["NODE"].size());
+        6:   64:        for (int i = 0; i < node_size; i++){
+        5:   65:            _workstep workstep;
+        5:   66:            workstep.func_type = config["NODE"][i]["NODE_FUNC"].to_cstr();
+        5:   67:            int param_size = static_cast<int>(config["NODE"][i]["PARAM"].size());
+       16:   68:            for (int j = 0; j < param_size; j++){
+       11:   69:                workstep.params.push_back(config["NODE"][i]["PARAM"][j].to_cstr());
+        -:   70:            }
+        5:   71:            workstep.output = config["NODE"][i]["OUTPUT"].to_cstr();
+        -:   72:
+        5:   73:            workflow.push_back(workstep);
+        5:   74:        }
+    =====:   75:    } catch(...){
+    =====:   76:        loginstance->error("[SLU]: failed to load config file: " + conf_file);
+    =====:   77:        return ERR_WORK_FLOW_CONF_CONTENT;
+        -:   78:    }
+        -:   79:
+        -:   80:    /*
+        -:   81:    for (size_t i = 0; i < workflow.size(); i++){
+        -:   82:        cout << "NODE:" << endl;
+        -:   83:        cout << workflow[i].func_type << endl;
+        -:   84:        for (size_t j = 0; j < workflow[i].params.size(); j++){
+        -:   85:            cout << workflow[i].params[j] << endl;
+        -:   86:        }
+        -:   87:        cout << workflow[i].output << endl;
+        -:   88:    }
+        -:   89:    */
+        -:   90:
+        1:   91:    loginstance->info("[SLU]: load workflow config file success！");
+        1:   92:    return 0;
+        3:   93:}
+        -:   94:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

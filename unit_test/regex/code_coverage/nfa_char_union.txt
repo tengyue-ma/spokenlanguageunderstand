@@ -1,0 +1,27 @@
+File '../../regex_v1.3/src/nfa_char_union.cc'
+Lines executed:100.00% of 11
+Creating 'nfa_char_union.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/nfa_char_union.cc
+        -:    0:Graph:nfa_char_union.gcno
+        -:    0:Data:nfa_char_union.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <iostream>
+        -:    2:#include "nfa_char_union.h"
+        -:    3:
+        -:    4:namespace SemanticRegex{
+        -:    5:
+    24129:    6:Nfa_Char_Union::Nfa_Char_Union(NFA* pnfa){
+    24129:    7:	this->pnfa	= pnfa;
+    24129:    8:	this->c		= '\0';
+    24129:    9:}
+        -:   10:
+    17829:   11:Nfa_Char_Union::Nfa_Char_Union(char c){
+    17829:   12:	this->pnfa	= NULL;
+    17829:   13:	this->c		= c;
+    17829:   14:}
+        -:   15:
+    38462:   16:Nfa_Char_Union::~Nfa_Char_Union(){
+    38462:   17:}
+        -:   18:
+        3:   19:}

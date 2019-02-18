@@ -1,0 +1,110 @@
+File '../../slot_filling/open_domain/src/OpenDomain.cpp'
+Lines executed:87.23% of 47
+Creating 'OpenDomain.cpp.gcov'
+        -:    0:Source:../../slot_filling/open_domain/src/OpenDomain.cpp
+        -:    0:Graph:OpenDomain.gcno
+        -:    0:Data:OpenDomain.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: OpenDomain.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: Mon 19 Mar 2018 07:35:11 PM CST
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include "utils.h"
+        -:   10:#include "OpenDomain.h"
+        -:   11:#include "logger.h"
+        -:   12:#include "comm_def.h"
+        -:   13:#include "ul_log.h"
+        -:   14:#include "Configure.h"
+        -:   15:#include "spreg.h"
+        -:   16:using namespace std;
+        -:   17:using namespace hobotlog;
+        -:   18:
+        -:   19://< log定义
+        -:   20:LogModule * loginstance = NULL;
+        -:   21:
+        -:   22:namespace slot_filling{
+        -:   23:
+        2:   24:extern "C" SlotFilling* create_slot_filling(const string model_path, 
+        -:   25:                                            const string log_path){
+        2:   26:    OpenDomain* ods_ner = new OpenDomain(log_path);
+        2:   27:    return dynamic_cast<SlotFilling *>(ods_ner);
+        -:   28:}
+        -:   29:
+        1:   30:extern "C" void delete_slot_filling(SlotFilling* ner){
+        1:   31:    OpenDomain* ods_ner = dynamic_cast<OpenDomain *>(ner);
+        -:   32:    //< delete ods_ner;
+        1:   33:    ods_ner = NULL;
+        1:   34:}
+        -:   35:
+        -:   36://< 构造函数
+        7:   37:OpenDomain::OpenDomain(const string log_path){
+        7:   38:    comcfg::Configure config;
+        7:   39:    int ret = config.load("./", log_path.c_str());
+        7:   40:    if (ret < 0){
+    #####:   41:        cout << "failed to load log conf in " << log_path << endl;
+    #####:   42:        exit(-1);
+        -:   43:    }
+        -:   44:
+        -:   45:    //< init log
+        -:   46:    try {
+        7:   47:        string log_file = config["OPEN_DOMAIN_LOG_CONF"].to_cstr();
+        7:   48:        if (loginstance == NULL){
+    #####:   49:            loginstance = new LogModule(log_file);
+        7:   50:        }
+    =====:   51:    }catch(...){
+    =====:   52:        cout << "failed to load log config." << endl;
+    =====:   53:        exit(-1);
+        7:   54:    }
+        7:   55:}
+        -:   56:
+        -:   57://< 析构函数
+        2:   58:OpenDomain::~OpenDomain(){
+        2:   59:}
+        -:   60:
+        -:   61://< 对外接口
+        2:   62:int OpenDomain::parse(const string query, 
+        -:   63:                      vector<_slot>& slots, 
+        -:   64:                      feat_extractor::FeatExtractor* feat_ext){
+        -:   65:    //< get feats
+        2:   66:    feature::Feature feats;
+        2:   67:    feat_ext->get_feat(feats, query);
+        2:   68:    loginstance->info("[SLU]: get feature in opendomain.");
+        -:   69:   
+        4:   70:    vector<string> features = feats.feats;
+        -:   71: 
+        2:   72:    int idx = 0;
+        5:   73:    for (size_t i = 0; i < features.size(); i++){
+        3:   74:        vector<string> slot_vec;
+        -:   75:        //< 空格分割
+        3:   76:        utils::strSplitbysep(features[i], slot_vec, " ");
+        -:   77:
+        -:   78:        /*
+        -:   79:         * slots[0] == "person"
+        -:   80:         * slots[1] == "刘德华"
+        -:   81:         */
+        6:   82:        _slot slot;
+        3:   83:        slot.name = slot_vec[0];
+        3:   84:        slot.value = slot_vec[1];
+        6:   85:        vector<string> slot_value_split;
+        3:   86:        utils::strSplit2simple(slot_vec[1], slot_value_split);
+        3:   87:        size_t count = slot_value_split.size();
+        3:   88:        slot.start = idx;
+        3:   89:        slot.end = idx + count -1;
+        3:   90:        idx += count;
+        -:   91:
+        3:   92:        if (slot.name != "O"){
+        1:   93:            slots.push_back(slot);
+        -:   94:        }
+        3:   95:    }
+        -:   96:
+        4:   97:    return 0;
+        -:   98:}
+        -:   99:
+        3:  100:} //< namespace slot_filling;
+        -:  101:
+        -:  102:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

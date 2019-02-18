@@ -1,0 +1,68 @@
+File '../../regex_v1.3/src/state.cc'
+Lines executed:96.97% of 33
+Creating 'state.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/state.cc
+        -:    0:Graph:state.gcno
+        -:    0:Data:state.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <queue>
+        -:    2:#include "charset.h"
+        -:    3:#include "link.h"
+        -:    4:#include "state.h"
+        -:    5:using std::queue;
+        -:    6:
+        -:    7:namespace SemanticRegex{
+        -:    8:
+        -:    9:/*
+        -:   10: * 构造函数，默认不是开始状态
+        -:   11: * 也不是结束状态，是关键状态
+        -:   12: */
+   681660:   13:State::State(){
+   671459:   14:	sflag = false;
+   671459:   15:	eflag = false;
+   671459:   16:	kflag = true;
+   671459:   17:	group_name = "";
+   677186:   18:}
+        -:   19:
+   145835:   20:State::~State(){
+    72920:   21:	vector<Link*>().swap(ilinks);
+    72917:   22:	vector<Link*>().swap(olinks);
+    72921:   23:	set<State*>().swap(closure);
+    72917:   24:	set<State*>().swap(key_closure);
+    72917:   25:}
+        -:   26:
+        -:   27:/*
+        -:   28: * 计算该状态的逆向epsilon闭包，即只通过epsilon边可达此状态的状态集合
+        -:   29: * 采用队列，广度优先遍历的方法，从当前状态的入边考虑，只要有epsilon边，
+        -:   30: * 则继续往前遍历，否则停止该条路径
+        -:   31: */
+      304:   32:set<State*> State::re_epsilon_closure(){
+      304:   33:	set<State*> closure;
+      608:   34:	set<State*> visited;
+      608:   35:	queue<State*> sque;
+      304:   36:	sque.push(this);
+   112645:   37:	while(sque.size()>0){
+   111085:   38:		State *ps = sque.front();
+   111046:   39:		sque.pop();
+   110843:   40:		if(visited.find(ps) != visited.end())
+    #####:   41:			continue;
+   109162:   42:		visited.insert(ps);
+   112353:   43:		bool flag = true;
+   281192:   44:		for(size_t i=0; i<ps->ilinks.size(); i++){
+   169193:   45:			Link *pl = ps->ilinks[i];
+   169264:   46:			State *pstart = pl->start;
+   169264:   47:			if(pl->ltype == STRING && pl->cs->type == EPSILON){
+   111639:   48:				sque.push(pstart);
+   111214:   49:				flag = false;
+        -:   50:			}
+        -:   51:		}
+   111951:   52:		if(flag){
+    58045:   53:			closure.insert(ps);
+        -:   54:		}
+        -:   55:	}
+      608:   56:	return closure;
+        -:   57:}
+        -:   58:
+        -:   59:}
+        -:   60:

@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../../regex_v1.3/third/hiredis/hiredis.h
+read.h
+../../regex_v1.3/third/hiredis/read.h
+stdarg.h
+-
+sys/time.h
+-
+stdint.h
+-
+sds.h
+../../regex_v1.3/third/hiredis/sds.h
+
+../../regex_v1.3/third/hiredis/read.h
+stdio.h
+-
+
+../../regex_v1.3/third/hiredis/sds.h
+sys/types.h
+-
+stdarg.h
+-
+stdint.h
+-
+
+/home/users/speechteam/users/leilei.zhou/spokenlanguageunderstand/import_redis_data/src/query_redis.cc
+fstream
+-
+iostream
+-
+string
+-
+hiredis.h
+/home/users/speechteam/users/leilei.zhou/spokenlanguageunderstand/import_redis_data/src/hiredis.h
+

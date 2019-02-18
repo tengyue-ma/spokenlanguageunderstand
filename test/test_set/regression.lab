@@ -1,0 +1,134 @@
+music	inform	我想听张学友的一千个伤心的理由	artist=张学友,title=一千个伤心的理由
+music	inform	刘德华的冰雨唱一个	artist=刘德华,title=冰雨
+music	inform	刘德华的冰雨	artist=刘德华,title=冰雨
+music	inform	我要听林志炫的单身情歌	artist=林志炫,title=单身情歌
+music	inform	周杰伦的告白气球	artist=周杰伦,title=告白气球
+music	inform	陈奕迅的好久不见	artist=陈奕迅,title=好久不见
+music	inform	筷子兄弟的小苹果	artist=筷子兄弟,title=小苹果
+music	inform	来一首凤凰传奇的最炫民族风	artist=凤凰传奇,title=最炫民族风
+music	inform	刘德华的男人哭吧不是罪	artist=刘德华,title=男人哭吧不是罪
+music	inform	播放周杰伦的稻香	artist=周杰伦,title=稻香
+music	inform	我想听周杰伦的青花瓷	artist=周杰伦,title=青花瓷
+music	inform	随便播放张杰的一首歌	artist=张杰
+music	inform	我想听周杰伦的歌	artist=周杰伦
+music	inform	来一首周杰伦的歌	artist=周杰伦
+music	inform	放首张杰的歌	artist=张杰
+music	inform	我要听张震岳的歌	artist=张震岳
+music	inform	来一首林俊杰的歌	artist=林俊杰
+music	inform	来一首王俊凯的歌	artist=王俊凯
+music	inform	周杰伦的歌	artist=周杰伦
+music	inform	周董的歌	artist=周董
+music	inform	想听周杰伦的伤感音乐	artist=周杰伦,tag=伤感
+music	inform	唱一首蔡依林唱的英文歌	artist=蔡依林,language=英文
+music	inform	想听凤凰传奇的广场舞歌曲	artist=凤凰传奇,tag=广场舞
+music	inform	来首英文的字母歌吧	language=英文,title=字母歌
+music	inform	来一个粤语的十年	language=粤语,title=十年
+music	confirm	可以放一首七里香吗	title=七里香
+music	inform	我要听小乌龟	title=小乌龟
+music	inform	唱首两只老虎	title=两只老虎
+music	inform	播放两只老虎	title=两只老虎
+music	inform	来一首两只老虎	title=两只老虎
+music	inform	来一首两只老虎吧	title=两只老虎
+music	inform	我要听小苹果	title=小苹果
+music	inform	唱首平凡之路吧	title=平凡之路
+poem	inform	有没有李白的关山月	author=李白,title=关山月
+poem	inform	能不能读一下李白的静夜思	author=李白,title=静夜思
+poem	inform	朗诵孟浩然的春晓	author=孟浩然,title=春晓
+poem	inform	想听李商隐的春雨	author=李商隐,title=春雨
+poem	inform	我想听望庐山瀑布	title=望庐山瀑布
+poem	inform	背一下柳宗元的渔翁	author=柳宗元,title=渔翁
+poem	inform	读一下王维的渭城曲	author=王维,title=渭城曲
+poem	inform	我想听王勃的滕王阁序	author=王勃,title=滕王阁序
+poem	inform	来一个李白的静夜思	author=李白,title=静夜思
+poem	inform	好想听王维的渭川田家	author=王维,title=渭川田家
+poem	inform	贺知章的回乡偶书背一下	author=贺知章,title=回乡偶书
+poem	inform	朗诵个李白的描写春天的诗吧	author=李白,tag=春天
+poem	inform	播放一首杜甫描写春天的诗	author=杜甫,tag=春天
+poem	inform	我想听李白描写月亮的诗	author=李白,tag=月亮
+poem	inform	我想听李白的诗	author=李白
+poem	inform	想听杜甫的诗	author=杜甫
+poem	inform	背首杜甫的诗	author=杜甫
+poem	inform	来一首白居易的诗	author=白居易
+story	inform	给我们讲个故事吧
+story	inform	我想听三只小猪的故事	title=三只小猪
+story	inform	听听乌鸦喝水的故事	title=乌鸦喝水
+story	inform	我想听卖火柴的小女孩	title=卖火柴的小女孩
+story	inform	讲小红帽的故事	title=小红帽
+story	inform	狼来了的故事	title=狼来了
+story	inform	我想听白雪公主的故事	title=白雪公主
+story	inform	讲一下白雪公主的故事吧	title=白雪公主
+story	inform	讲个白雪公主的故事	title=白雪公主
+story	inform	我想听睡美人	title=睡美人
+story	inform	我想听龟兔赛跑的故事	title=龟兔赛跑
+story	inform	龟兔赛跑	title=龟兔赛跑
+story	inform	我要听小蝌蚪找妈妈的故事	title=小蝌蚪找妈妈
+story	inform	讲个大闹天宫的故事吧	title=大闹天宫
+other	other	我好无聊啊
+other	other	我很开心
+other	other	我很难过
+other	other	你叫什么名字啊
+other	other	你今年几岁啦
+other	other	你今年几岁了
+other	other	你有妈妈吗
+other	other	你叫什么呀
+other	other	你最喜欢吃什么呀
+other	other	你喜欢吃什么
+other	other	你是哪个公司的
+other	other	你爸爸是谁
+other	other	你妈妈是谁
+other	other	一年有多少天
+other	other	广东省省会是哪个城市	loc_province=广东省
+other	other	中国第一个奥运会冠军是谁	loc_country=中国
+other	other	喜马拉雅山有多高	loc_poi=喜马拉雅山
+other	other	世界上最高的山
+weather	inform	深圳明天要带伞吗	loc_city=深圳,time=明天,focus=伞
+other	other	牛奶的英文说法
+other	other	宠物的英文说法
+other	other	机器人的英文说法
+other	other	你知道沙发用英文怎么说吗
+other	other	35乘9
+other	other	35乘九
+other	other	三十五乘九
+other	other	三十五乘9
+other	other	三十五乘以九
+other	other	35乘以9
+other	other	35乘以九
+other	other	三十五乘以9
+other	other	108÷3
+other	other	一百零八除三
+other	other	一百零八除以三
+other	other	108除以三
+other	other	108除以3
+other	other	中国有几个省份	loc_country=中国
+other	other	现在几点
+other	other	帮我设置明天早上五点闹钟
+other	other	苹果的英文是什么
+other	other	二加六等于多少
+other	other	2+6等于多少
+other	other	2加6等于多少
+nav	inform	我要导航去南京站	des_poi=南京站
+nav	inform	去南京站的路线	des_poi=南京站
+nav	inform	去南京站避免拥堵	des_poi=南京站,rou_pre=避免拥堵
+nav	inform	从这里出发去南京站	dep_poi=这里,des_poi=南京站
+nav	inform	从公司导航去南京站	dep_poi=公司,des_poi=南京站
+nav	inform	从南京大学导航去南京站	dep_poi=南京大学,des_poi=南京站
+nav	inform	导航从南京大学出发去往苏州大学途经苏州火车站不走高速	dep_poi=南京大学,des_poi=苏州大学,via_poi=苏州火车站,rou_pre=不走高速
+control	app	打开高德	name=高德,type=open
+vehicle_control	inform	帮我把空调打开	obj_1=空调,opr_1=open
+vehicle_control	inform	关掉空调	obj_1=空调,opr_1=close
+vehicle_control	inform	空调吹头	wd_dir_val_1=吹头,obj_1=空调
+vehicle_control	inform	风量调到最低	obj_1=空调,wd_pwr_val_1=min
+vehicle_control	inform	把风量调到一档	wd_pwr_abs_val_1=一,obj_1=空调
+vehicle_control	inform	风量调至一档	wd_pwr_abs_val_1=一,obj_1=空调
+vehicle_control	inform	空调温度调高些	obj_1=空调,temp_step_val_1=step
+vehicle_control	inform	空调调低一度	temp_rel_sign_1=低,temp_rel_val_1=一,obj_1=空调
+vehicle_control	inform	打开内循环	cycle_val_1=内循环,obj_1=循环系统
+vehicle_control	inform	把车窗都打开	obj_1=窗,opr_1=open
+vehicle_control	inform	帮我把车窗全部关掉	obj_1=窗,opr_1=close
+vehicle_control	inform	关闭全部车窗	obj_1=全部车窗,opr_1=close
+phone	inform	我想跟张文涛通电话	contact=张文涛
+phone	inform	给张文涛打个电话	contact=张文涛
+phone	inform	呼叫张文涛	contact=张文涛
+phone	inform	打电话给张文涛	contact=张文涛
+phone	inform	给10086打电话	number=10086
+phone	inform	给一零零八六打电话	number=一零零八六

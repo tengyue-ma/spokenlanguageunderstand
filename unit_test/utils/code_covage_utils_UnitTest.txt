@@ -1,0 +1,268 @@
+File '../../third/utils/src/utils.cpp'
+Lines executed:89.92% of 129
+去掉判空后：93.5% of 124
+Creating 'utils.cpp.gcov'
+        -:    0:Source:../../third/utils/src/utils.cpp
+        -:    0:Graph:utils.gcno
+        -:    0:Data:utils.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: utils.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 六  1/20 15:58:13 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <vector>
+        -:   10:#include <string>
+        -:   11:#include <stdlib.h>
+        -:   12:#include <sstream>
+        -:   13:#include <boost/locale/encoding_utf.hpp>
+        -:   14:#include "utils.h"
+        -:   15:
+        -:   16:using namespace std;
+        -:   17:using boost::locale::conv::utf_to_utf;
+        -:   18:
+        -:   19://判断是否为数学的 + - × ÷
+        -:   20:#define ismathoperator(ch) (ch == 43 || ch == 45 || ch == 215 || ch == 247)
+        -:   21:
+        -:   22:namespace utils{
+        -:   23://< 字符串单字分割
+        -:   24://< @param str : 待分割字符串
+        -:   25://< @param split_strs : 分割后的结果
+        -:   26://< @param type : 编码类型 utf8 / gbk 默认为utf8
+        2:   27:bool strSplit2simple(const string str, 
+        -:   28:                     vector<string>& split_strs, 
+        -:   29:                     const string& type){
+        -:   30:    //< 非utf8 or gbk return false
+        2:   31:    bool flag = false;
+        2:   32:    vector<string> char_vec;
+        2:   33:    if (type == "UTF-8" || type == "UTF8" || type == "utf8" || type == "utf-8"){
+        -:   34:        /*
+        -:   35:         * 基本定义, 勿动
+        -:   36:         * 为了保证线程安全，禁止使用全局变量
+        -:   37:         */ 
+        1:   38:        const int count = 5;
+        1:   39:        const int prefix[5] = {0x80, 0xF8, 0xF0, 0xE0, 0xC0};
+        1:   40:        const int result[5] = {0, 0xF8, 0xF0, 0xE0, 0xC0};
+        1:   41:        const int index[5] = {1, 5, 4, 3, 2};
+        -:   42:        /*
+        -:   43:         * -----分割线-----
+        -:   44:         */
+        -:   45:
+       11:   46:        for (size_t i = 0; i < str.size(); ){
+        9:   47:            char chr = str[i];
+        -:   48:            //< 单字判断
+       36:   49:            for (int j = 0; j < count; j++){
+       36:   50:                if ((chr & prefix[j]) == result[j]){
+        9:   51:                    string strChar = str.substr(i, index[j]);
+        9:   52:                    char_vec.push_back(strChar);
+        9:   53:                    i += index[j];
+        9:   54:                    break;
+        -:   55:                }
+        -:   56:            }
+        -:   57:        }
+        -:   58:
+        1:   59:        flag = true;
+        -:   60:    }
+        1:   61:    else if (type == "GBK" || type == "gbk"){
+       16:   62:        for (size_t i = 0; i < str.size(); ){
+       14:   63:            char chr = str[i];
+       14:   64:            if ((chr & 0x80) == 0){
+    #####:   65:                string strChar = str.substr(i, 1);
+    #####:   66:                char_vec.push_back(strChar);
+    #####:   67:                i++;
+        -:   68:            }
+        -:   69:            else {
+        -:   70:                // if (chr >= 161 && chr <= 247 && str[i+1] >= 161 && str[i+1] <= 254) 此行代码并不能解决问题
+       14:   71:                string strChar = str.substr(i, 2);
+       14:   72:                char_vec.push_back(strChar);
+       14:   73:                i+=2;
+        -:   74:            }
+        -:   75:        }
+        1:   76:        flag = true;
+        -:   77:    }
+        -:   78:
+        2:   79:    split_strs = char_vec;
+        -:   80:
+        2:   81:    return flag;
+        -:   82:}
+        -:   83:
+        -:   84://< 按照分隔符分割
+        -:   85://< @param str : 待分割字符串
+        -:   86://< @param split_strs : 分割结果
+        -:   87://< @param sep : 分隔符字符串
+        8:   88:bool strSplitbysep(const string str, 
+        -:   89:                   vector<string>& split_strs, 
+        -:   90:                   const string& sep){
+        -:   91:    //< 分割成功返回true 否则返回false
+        8:   92:    bool flag = false;
+        8:   93:    string str_c = str;
+        -:   94:
+        8:   95:    int pos = str_c.find(sep);
+       16:   96:    vector<string> str_vec;
+       26:   97:    while(pos != -1){
+        -:   98:        //< 获取从0-pos的字符串
+       10:   99:        string str_res = str_c.substr(0, pos);
+       10:  100:        if (str_res != ""){
+       10:  101:            str_vec.push_back(str_res);
+        -:  102:        }
+        -:  103:        //< 删除0-pos & sep字符串
+       10:  104:        str_c.erase(0, pos+sep.size());
+       10:  105:        pos = str_c.find(sep);
+       10:  106:    }
+        8:  107:    if (str_c != ""){
+        8:  108:        str_vec.push_back(str_c);
+        -:  109:    }
+        -:  110:
+        8:  111:    split_strs = str_vec;
+        -:  112:
+        8:  113:    if (split_strs.size() > 1){
+        8:  114:        flag = true;
+        -:  115:    }
+        -:  116:
+       16:  117:    return flag;
+        -:  118:}
+        -:  119:
+        1:  120:int rm_blank(string &s)
+        -:  121:{
+        1:  122:    int index = 0;
+        1:  123:    if(!s.empty()) {
+        5:  124:        while( (index = s.find(' ',index)) != string::npos) {
+        3:  125:            s.erase(index,1);
+        -:  126:        }
+        2:  127:        while( (index = s.find('\t',index)) != string::npos) {
+    #####:  128:            s.erase(index,1);
+        -:  129:        }
+        -:  130:    }
+        1:  131:    return 0;
+        -:  132:}
+        -:  133:
+        -:  134://< string 转 int float
+        -:  135://< @param str : 待转换的string
+        1:  136:int string2int(const string& str){
+        1:  137:    return atoi(str.c_str());
+        -:  138:}
+        -:  139:
+        1:  140:float string2float(const string& str){
+        1:  141:    istringstream iss(str);
+        -:  142:    float num;
+        1:  143:    iss >> num;
+        -:  144:
+        1:  145:    return num;
+        -:  146:}
+        -:  147:
+        -:  148://< ner decode
+        1:  149:int ner_decode(vector<pair<string, string> >& slot_list, 
+        -:  150:               vector<std::pair<int, int> >& slot_range, 
+        -:  151:               const vector<string>& tag_vec, 
+        -:  152:               const vector<string>& seq_vec){
+        1:  153:    size_t count = tag_vec.size();
+        1:  154:    if (count != seq_vec.size()){
+        -:  155:        //< error.
+    #####:  156:        return -1;
+        -:  157:    }
+        -:  158:
+        1:  159:    vector<string> split_strs;
+        2:  160:    string name = "";
+        1:  161:    int idx = 0;
+        1:  162:    int len = 0;
+        9:  163:    for (size_t i = 0; i < count; i++){
+        -:  164:        //< 如果tag为O
+        8:  165:        if (tag_vec[i] == "O"){
+        1:  166:            continue;
+        -:  167:        }
+        -:  168:        //< 对tag分割 获取尾部字符
+        7:  169:        strSplitbysep(tag_vec[i], split_strs, "+");
+        7:  170:        if (split_strs.size() <= 0){
+    #####:  171:            return -1;
+        -:  172:        }
+        -:  173:        //< 如果后缀为+b
+        7:  174:        if (split_strs[split_strs.size()-1] == "b"){
+        2:  175:            name = "";
+        -:  176:            //< name赋值为前缀
+        2:  177:            size_t j = 0;
+        6:  178:            while(j < split_strs.size()-1){
+        2:  179:                name += split_strs[j];
+        2:  180:                if (j+1 < split_strs.size()-1){
+    #####:  181:                    name += "+";
+        -:  182:                }
+        2:  183:                j++;
+        -:  184:            }
+        2:  185:            idx = i;
+        2:  186:            len++;
+        -:  187:        }
+        -:  188:        //< 如果后缀为+i
+        5:  189:        else if ((split_strs[split_strs.size()-1] == "i" || split_strs[split_strs.size()-1] == "m") && len > 0){
+        2:  190:            len++;
+        -:  191:        }
+        -:  192:        //< 如果后缀为+e
+        3:  193:        else if (split_strs[split_strs.size()-1] == "e" && len > 0){
+        2:  194:            len++;
+        2:  195:            string value;
+        8:  196:            for (int k = 0; k < len && k+idx < seq_vec.size(); k++){
+        6:  197:                value += seq_vec[k+idx];
+        -:  198:            }
+        2:  199:            slot_list.push_back(pair<string, string>(name, value));
+        2:  200:            slot_range.push_back(pair<int, int>(idx, idx+len-1));
+        2:  201:            name = "";
+        2:  202:            idx = 0;
+        2:  203:            len = 0;
+        -:  204:        }
+        -:  205:        //< 如果后缀为+s
+        1:  206:        else if (split_strs[split_strs.size()-1] == "s" && len == 0){
+        1:  207:            string str;
+        -:  208:            //< 单字词name
+        1:  209:            size_t j = 0;
+        3:  210:            while(j < split_strs.size()-1){
+        1:  211:                str += split_strs[j];
+        1:  212:                if (j+1 < split_strs.size()-1){
+    #####:  213:                    str += "+";
+        -:  214:                }
+        1:  215:                j++;
+        -:  216:            }
+        -:  217:
+        1:  218:            slot_list.push_back(pair<string, string>(str, seq_vec[i]));
+        1:  219:            slot_range.push_back(pair<int, int>(i, i));
+        -:  220:        }
+        -:  221:    }
+        -:  222:
+        1:  223:    if (name != ""){
+    #####:  224:        string value;
+    #####:  225:        for (size_t i = idx; i < seq_vec.size(); i++){
+    #####:  226:            value += seq_vec[i];
+        -:  227:        }
+    #####:  228:        slot_list.push_back(pair<string, string>(name, value));
+    #####:  229:        slot_range.push_back(pair<int, int>(idx, seq_vec.size()-1));
+        -:  230:    }
+        -:  231:
+        2:  232:    return 0;
+        -:  233:}
+        -:  234:
+        1:  235:std::wstring utf8_to_wstring(const string &str) {
+        1:  236:    return utf_to_utf<wchar_t>(str.c_str(), str.c_str() + str.size());
+        -:  237:}
+        -:  238:
+        1:  239:string wstring_to_utf8(const std::wstring &str) {
+        1:  240:    return utf_to_utf<char>(str.c_str(), str.c_str() + str.size());
+        -:  241:}
+        -:  242:
+        1:  243:string rm_punctuation(string query_string) {
+        -:  244:    // 转换成宽字节类型
+        1:  245:    std::wstring ws = utf8_to_wstring(query_string);
+        2:  246:    std::wstring nws;
+        -:  247:    // 过滤每一行中的标点和空格
+       17:  248:    for (wchar_t ch : ws) {
+        -:  249:        // 检查是否是标点 中文 + - × ÷ 除外
+       16:  250:        std::locale loc("en_US.UTF-8");
+       16:  251:        if ((!ispunct(ch, loc) || ismathoperator(ch)) && !isspace(ch, loc)) {
+        8:  252:            nws.push_back(ch);
+        -:  253:        }
+       16:  254:    }
+        2:  255:    return wstring_to_utf8(nws);
+        -:  256:}
+        -:  257:
+        3:  258:} //< namespace utils
+        -:  259:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

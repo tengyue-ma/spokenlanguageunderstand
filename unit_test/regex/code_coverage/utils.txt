@@ -1,0 +1,180 @@
+File '../../regex_v1.3/src/utils.cc'
+Lines executed:92.86% of 112
+Creating 'utils.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/utils.cc
+        -:    0:Graph:utils.gcno
+        -:    0:Data:utils.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <iostream>
+        -:    2:#include <cstring>
+        -:    3:#include <stdexcept>
+        -:    4:#include <fstream>
+        -:    5:
+        -:    6:#include "utils.h"
+        -:    7:
+        -:    8:using std::cout;
+        -:    9:using std::endl;
+        -:   10:using std::ifstream;
+        -:   11:using std::ofstream;
+        -:   12:
+        1:   13:void Utils::lstrip(const char* pstr, unsigned& index){
+        7:   14:	while(pstr[index]!='\0' && (' '==pstr[index] || '\t'==pstr[index]))
+        5:   15:		index++;
+        1:   16:}
+        -:   17:
+        1:   18:void Utils::rstrip(const char* pstr, unsigned& index){
+        7:   19:	while(index>=0 && (' '==pstr[index] || '\t'==pstr[index]))
+        5:   20:		index--;
+        1:   21:}
+        -:   22:
+        1:   23:void Utils::strip(const char* pstr, unsigned& idx1, unsigned& idx2){
+        1:   24:	Utils::lstrip(pstr, idx1);
+        1:   25:	Utils::rstrip(pstr, idx2);
+        1:   26:}
+        -:   27:
+    13423:   28:string Utils::strip(const string& str){
+    13423:   29:	size_t i=0;
+    13423:   30:	for(; i<str.size() && (str[i]==' ' || str[i]=='\t'); i++);
+    13446:   31:	size_t j=str.size()-1;
+    13448:   32:	for(; j>=0 && (str[j]==' ' || str[j]=='\t'); j--);
+    13438:   33:	if(i>j)
+    #####:   34:		return "";
+        -:   35:	else
+    13438:   36:		return str.substr(i, j-i+1);
+        -:   37:}
+        -:   38:
+        2:   39:void Utils::split(const char* pstr, vector<string>& strs, const char* sep){
+        2:   40:	strs.clear();
+        2:   41:	string tmp = "";
+        -:   42:
+        2:   43:	if(NULL!=sep){
+        1:   44:		int sep_len = strlen(sep);
+        1:   45:		int str_len = strlen(pstr);
+       19:   46:		for(int i=0; i<str_len;){
+       17:   47:			if(strncmp(pstr+i, sep, sep_len)==0){
+        2:   48:				if(tmp.size()>0)
+        2:   49:					strs.push_back(tmp);
+        2:   50:				tmp = "";
+        2:   51:				i += sep_len;
+        -:   52:			}else{
+       15:   53:				tmp += pstr[i++];
+        -:   54:			}
+        -:   55:		}
+        1:   56:		if(tmp.size()>0)
+        1:   57:			strs.push_back(tmp);
+        -:   58:	}else{
+        1:   59:		int str_len = strlen(pstr);
+       19:   60:		for(int i=0; i<str_len;){
+       17:   61:			if(' '==pstr[i] || '\t'==pstr[i]){
+        2:   62:				if(tmp.size()>0)
+        2:   63:					strs.push_back(tmp);
+        2:   64:				tmp = "";
+        2:   65:				i += 1;
+        -:   66:			}else{
+       15:   67:				tmp += pstr[i++];
+        -:   68:			}
+        -:   69:		}
+        1:   70:		if(tmp.size()>0)
+        1:   71:			strs.push_back(tmp);
+        2:   72:	}
+        2:   73:}
+        -:   74:
+        1:   75:int Utils::gbkstrs(const char* query, vector<string>& split_strs){
+        1:   76:	split_strs.clear();
+        1:   77:	int len = strlen(query);
+        1:   78:	int n = 1;
+        9:   79:    for(int idx=0; query[idx]!='\0';){
+        7:   80:        if(query[idx]>0)
+    #####:   81:			n = 1;
+        -:   82:		else
+        7:   83:			n = 2;
+        7:   84:		if(idx+n>len)
+    #####:   85:			break;
+        7:   86:		string str(query, idx, n);
+        7:   87:		idx += n;
+        7:   88:		if(str.length() == 0) {continue;}
+        7:   89:		split_strs.push_back(str);
+        7:   90:    }
+        1:   91:    return 0;
+        -:   92:}
+        -:   93:
+    24997:   94:int Utils::utf8strs(const char* str, vector<string>& split_strs){
+    24997:   95:	split_strs.clear();
+    24954:   96:    int n=1;
+   339648:   97:    for(int i=0; str[i]!='\0';){
+        -:   98:		//< binary operation
+   289687:   99:        char tmp = ~str[i];
+        -:  100:		//< one byte
+   289687:  101:        if(tmp<0){
+   179438:  102:            n = 1;
+        -:  103:		//< six bytes
+   110249:  104:        }else if(tmp<4){
+    #####:  105:            n = 6;
+        -:  106:		//< five bytes
+   110249:  107:        }else if(tmp<8){
+    #####:  108:            n = 5;
+        -:  109:		//< four bytes
+   110249:  110:        }else if(tmp<16){
+    #####:  111:            n = 4;
+        -:  112:		//< three bytes
+   110249:  113:        }else if(tmp<32){
+   110249:  114:            n = 3;
+        -:  115:		//< two bytes
+        -:  116:        }else{
+    #####:  117:            n = 2;
+        -:  118:        }
+   289687:  119:        string s(str, i, n); 
+   288836:  120:        split_strs.push_back(s);
+   285963:  121:        i += n;
+   285963:  122:    }   
+    25007:  123:    return 0;
+        -:  124:}
+        -:  125:
+        -:  126:template<typename T>
+        -:  127:void Utils::extend(vector<T>& v, const vector<T>& v1){
+        -:  128:	for(size_t i=0; i<v1.size(); i++){
+        -:  129:		v.push_back(v1[i]);
+        -:  130:	}
+        -:  131:}
+        -:  132:
+     2070:  133:unsigned Utils::str2uint(const string& str){
+     2070:  134:	unsigned number = 0;
+     2070:  135:	unsigned base = 1;
+     4330:  136:	for(int i=str.size()-1; i>=0; i--){
+     2260:  137:		if(str[i]>=48 && str[i]<=57)
+     2260:  138:			number += base * (str[i] - 48);
+        -:  139:		else
+    #####:  140:			throw std::runtime_error("expression illegal!");
+     2260:  141:		base *= 10;
+        -:  142:	}
+     2070:  143:	return number;
+        -:  144:}
+        -:  145:
+        3:  146:string Utils::uint2str(unsigned number){
+        3:  147:	string str = "";
+        9:  148:	while(number!=0){
+        3:  149:		char n = static_cast<char>(number%10 + 48);
+        3:  150:		str = n + str;
+        3:  151:		number = number/10;
+        -:  152:	}
+        3:  153:	return str;
+        -:  154:}
+        -:  155:
+      694:  156:string Utils::join(const vector<string>& strs, int start, int end){
+      694:  157:	string s = "";
+      694:  158:	if(end == -1 || end>strs.size())
+       33:  159:		end = strs.size();
+     2326:  160:	for(size_t i=start; i<end; i++){
+     1632:  161:		s += strs[i];
+        -:  162:	}
+      694:  163:	return s;
+        -:  164:}
+        -:  165:
+     5125:  166:void Utils::replace(string& str, char subc, char repc){
+   363549:  167:	for(size_t i=0; i<str.size(); i++){
+   358313:  168:		if(str[i] == subc)
+     1279:  169:			str[i] = repc;
+        -:  170:	}
+     5137:  171:}
+        -:  172:

@@ -1,0 +1,72 @@
+File '../../regex_v1.3/src/charset.cc'
+Lines executed:90.91% of 33
+Creating 'charset.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/charset.cc
+        -:    0:Graph:charset.gcno
+        -:    0:Data:charset.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <iostream>
+        -:    2:#include <stdexcept>
+        -:    3:#include <vector>
+        -:    4:
+        -:    5:#include "charset.h"
+        -:    6:#include "utils.h"
+        -:    7:
+        -:    8:using std::vector;
+        -:    9:
+        -:   10:namespace SemanticRegex{
+        -:   11:
+        -:   12:/*
+        -:   13: * 拷贝构造函数
+        -:   14: */
+   753918:   15:CharSet::CharSet(const CharSet* cs){
+   750551:   16:	type = cs->type;
+   750551:   17:	if(type == ORDINARY){
+   161552:   18:		str = cs->str;
+   162177:   19:        vec_str = cs->vec_str;
+   161546:   20:		str_idx = 0;
+   588999:   21:    } else if(type == NOT)
+    #####:   22:		except = cs->except;
+   588999:   23:	else if(type == RANGE || type == NOTRANGE){
+      133:   24:		min = cs->min;
+      247:   25:		max = cs->max;
+   588866:   26:	}else if(type == DATABASE){
+    #####:   27:		db_set = cs->db_set;
+        -:   28:	}
+   750659:   29:}
+        -:   30:
+        -:   31:/*
+        -:   32: * 根据字符集类型，创建相应的charset
+        -:   33: */
+    83228:   34:CharSet::CharSet(CharSetType type, const string& str){
+    83199:   35:	this->type = type;
+        -:   36:	//< 若为普通字符集，按utf-8分割成字符串数组
+    83199:   37:	if(type == ORDINARY){
+    18149:   38:		this->str  = str;
+    18155:   39:        Utils::utf8strs(str.c_str(), this->vec_str);
+    18156:   40:		str_idx = 0;
+        -:   41:	//< 若为非字符集，存到except字符串中
+    65050:   42:    }else if(type == NOT)
+    #####:   43:		this->except = str;
+        -:   44:	//< 数据库类型
+    65050:   45:	else if(type == DATABASE){
+      588:   46:		this->db_set = str;
+        -:   47:	//< 范围字符或范围非字符
+    64462:   48:	}else if(type == RANGE || type == NOTRANGE){
+        -:   49:		throw std::runtime_error("for RANGE charset type, "
+       -3:   50:		"you have to use another constructor!");
+        -:   51:	}
+    83209:   52:}
+        -:   53:
+        -:   54:/*
+        -:   55: * 构造范围字符的charset
+        -:   56: */
+       19:   57:CharSet::CharSet(const string& min, const string& max, CharSetType type){
+       19:   58:	this->type = type;
+       19:   59:	this->min  = min;
+       19:   60:	this->max  = max;
+       19:   61:}
+        -:   62:
+        3:   63:}
+        -:   64:

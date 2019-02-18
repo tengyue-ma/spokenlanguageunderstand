@@ -1,0 +1,63 @@
+File '../../slot_filling/CRF/src/CRFWrapper.cpp'
+Lines executed:90.00% of 20
+Creating 'CRFWrapper.cpp.gcov'
+        -:    0:Source:../../slot_filling/CRF/src/CRFWrapper.cpp
+        -:    0:Graph:CRFWrapper.gcno
+        -:    0:Data:CRFWrapper.gcda
+        -:    0:Runs:2
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: crf_wrapper.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 一  1/29 13:01:39 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <string>
+        -:   10:#include <vector>
+        -:   11:#include "CRFWrapper.h"
+        -:   12:#include "CrfErrorCode.h"
+        -:   13:#include "SluLog.h"
+        -:   14:
+        -:   15:using namespace std;
+        -:   16:using namespace hobotlog;
+        -:   17:
+        -:   18://< log定义
+        -:   19:LogModule * loginstance = NULL;
+        -:   20:
+        -:   21:namespace slot_filling{
+        -:   22:
+        -:   23://< 构造函数
+       34:   24:CRFWrapper::CRFWrapper(){
+       34:   25:    this->p_crf_model_ = NULL;
+       34:   26:}
+        -:   27:
+        -:   28://< 析构函数
+        4:   29:CRFWrapper::~CRFWrapper(){
+        4:   30:    if (!p_crf_model_){
+        2:   31:        return;
+        -:   32:    }
+        2:   33:    delete p_crf_model_;
+        4:   34:}
+        -:   35:
+        -:   36://< load model wrapper.
+       32:   37:int CRFWrapper::load_model(const string& filename){
+       32:   38:    string params = "";
+       32:   39:    params.append("-m ");
+       32:   40:    params.append(filename);
+       32:   41:    params.append(" -v 3");
+       32:   42:    p_crf_model_ = CRFPP::createModel(params.c_str());
+        -:   43:
+       32:   44:    if (!p_crf_model_){
+    #####:   45:		loginstance->error("[SLU]: failed to create crf model!");
+    #####:   46:        return ERR_CRF_CREAT_CRF_MODEL;
+        -:   47:    }
+        -:   48:	
+       32:   49:	loginstance->info("[SLU]: create crf model success!");
+        -:   50:	
+       32:   51:    return 0;
+        -:   52:}
+        -:   53:
+        6:   54:} //< namespace slot_filling
+        -:   55:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

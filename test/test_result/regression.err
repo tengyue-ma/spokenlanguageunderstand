@@ -1,0 +1,260 @@
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SLU性能评估
+时间戳: 2019-01-23 19:39:43
+测试集lab文件: ../test_set/regression.lab
+
+
+>>>>> 领域分类错误 (domain clf badcase)
+行号, 正确结果 <=> SLU解析结果
+other	other	35乘9 <==> phone	inform	35乘9	number=9	1.00	model
+
+
+>>>>> 领域分类错误 or 意图分类错误 (domain or intent clf badcase)
+行号, 正确结果 <=> SLU解析结果
+other	other	35乘9 <==> phone	inform	35乘9	number=9	1.00	model
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+分类评价指标(clf)
+【slu系统级领域分类 accuracy && micro-F1】: 99.25%  
+【slu系统级领域分类 macro-F1】: 99.01%  
+【slu系统级领域及意图分类 accuracy】: 99.25%  (when domain and intent is correct)
+【slu系统级领域及意图分类、语义项抽取 accuracy】	: 98.51%  (when domain/intent/slots are all correct)
+
+模型解析 vs. 规则解析
+【model match】: 42.54%
+【regex match】: 57.46%
+
+测试集不合法行条数
+【测试结果文件格式不合法行数】: 0
+【未找到正确标记的测试query数】: 0
+
+-*-domain confusion matrix-*-
+
+matrix	['control', 'music', 'nav', 'other', 'phone', 'poem', 'story', 'vehicle_control', 'weather']	
+
+control	[1, 0, 0, 0, 0, 0, 0, 0, 0]
+music	[0, 33, 0, 0, 0, 0, 0, 0, 0]
+nav	[0, 0, 7, 0, 0, 0, 0, 0, 0]
+other	[0, 0, 0, 41, 1, 0, 0, 0, 0]
+phone	[0, 0, 0, 0, 6, 0, 0, 0, 0]
+poem	[0, 0, 0, 0, 0, 18, 0, 0, 0]
+story	[0, 0, 0, 0, 0, 0, 14, 0, 0]
+vehicle_control	[0, 0, 0, 0, 0, 0, 0, 12, 0]
+weather	[0, 0, 0, 0, 0, 0, 0, 0, 1]
+
+-*-intent confusion matrix-*-
+
+matrix	['app', 'confirm', 'inform', 'other']	
+
+app	[1, 0, 0, 0]
+confirm	[0, 1, 0, 0]
+inform	[0, 0, 90, 0]
+other	[0, 0, 0, 41]
+
+-*-domain result-*-
+
+Evaluate	Accuracy	Precision	Recall	F1
+
+control:	100.00%	100.00%	100.00%	100.00%
+music:	100.00%	100.00%	100.00%	100.00%
+nav:	100.00%	100.00%	100.00%	100.00%
+other:	99.30%	100.00%	97.60%	98.80%
+phone:	99.30%	85.70%	100.00%	92.30%
+poem:	100.00%	100.00%	100.00%	100.00%
+story:	100.00%	100.00%	100.00%	100.00%
+vehicle_control:	100.00%	100.00%	100.00%	100.00%
+weather:	100.00%	100.00%	100.00%	100.00%
+
+-*-intent result-*-
+
+Evaluate	Accuracy	Precision	Recall	F1
+
+app:	100.00%	100.00%	100.00%	100.00%
+confirm:	100.00%	100.00%	100.00%	100.00%
+inform:	100.00%	100.00%	100.00%	100.00%
+other:	100.00%	100.00%	100.00%	100.00%
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+语义项抽取评价指标(ner)
+
+
+领域: control
+该领域评估所用有效条数(分类正确): 1
+precision: 0.5
+recall: 0.5
+f1: 0.5
+slotname	precision	recall	f1
+name	1.0	1.0	1.0
+opr	0.0	Nan	0.0
+type	Nan	0.0	0.0
+行号, 正确结果 <=> SLU解析结果
+1, 打开高德	name=高德,type=open	<=>	打开高德	name=高德,opr=open
+
+
+领域: music
+该领域评估所用有效条数(分类正确): 33
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+artist	1.0	1.0	1.0
+language	1.0	1.0	1.0
+tag	1.0	1.0	1.0
+title	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: nav
+该领域评估所用有效条数(分类正确): 7
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+dep_poi	1.0	1.0	1.0
+des_poi	1.0	1.0	1.0
+rou_pre	1.0	1.0	1.0
+via_poi	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: other
+该领域评估所用有效条数(分类正确): 41
+precision: 0.667
+recall: 1.0
+f1: 0.8
+slotname	precision	recall	f1
+loc_country	1.0	1.0	1.0
+loc_poi	0.333	1.0	0.5
+loc_province	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+27, 35乘以9		<=>	35乘以9	loc_poi=以
+29, 三十五乘以9		<=>	三十五乘以9	loc_poi=以
+
+
+领域: phone
+该领域评估所用有效条数(分类正确): 6
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+contact	1.0	1.0	1.0
+number	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: poem
+该领域评估所用有效条数(分类正确): 18
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+author	1.0	1.0	1.0
+tag	1.0	1.0	1.0
+title	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: story
+该领域评估所用有效条数(分类正确): 14
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+title	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: vehicle_control
+该领域评估所用有效条数(分类正确): 12
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+cycle_val_1	1.0	1.0	1.0
+obj_1	1.0	1.0	1.0
+opr_1	1.0	1.0	1.0
+temp_rel_sign_1	1.0	1.0	1.0
+temp_rel_val_1	1.0	1.0	1.0
+temp_step_val_1	1.0	1.0	1.0
+wd_dir_val_1	1.0	1.0	1.0
+wd_pwr_abs_val_1	1.0	1.0	1.0
+wd_pwr_val_1	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+领域: weather
+该领域评估所用有效条数(分类正确): 1
+precision: 1.0
+recall: 1.0
+f1: 1.0
+slotname	precision	recall	f1
+focus	1.0	1.0	1.0
+loc_city	1.0	1.0	1.0
+time	1.0	1.0	1.0
+行号, 正确结果 <=> SLU解析结果
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+语义项抽取评价指标(ner)
+【slu系统级序列标注模型评价指标】macro-F1 (over domains: music && poem && story && weather && phone && nav): 1.0
+【slu系统级语义项抽取评价指标】macro-F1 (over domains: control && music && nav && phone && poem && story && vehicle_control && weather): 0.938
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+统计系统耗时(模型耗时指先走了规则又走了模型的总时间)
+【总平均耗时】: 107.522ms
+【模型匹配平均耗时】: 97.337ms
+【规则匹配平均耗时】: 115.061ms
+【最大耗时】: 我想听张学友的一千个伤心的理由 371.9ms regex
+【最小耗时】: 空调吹头 32.47ms regex
+
+domain: control
+	该领域总平均耗时: 40.61ms
+	该领域模型匹配平均耗时: Nan
+	该领域规则匹配平均耗时: 40.61ms
+
+domain: music
+	该领域总平均耗时: 134.294ms
+	该领域模型匹配平均耗时: 209.35ms
+	该领域规则匹配平均耗时: 131.948ms
+
+domain: nav
+	该领域总平均耗时: 112.971ms
+	该领域模型匹配平均耗时: 112.971ms
+	该领域规则匹配平均耗时: Nan
+
+domain: other
+	该领域总平均耗时: 82.946ms
+	该领域模型匹配平均耗时: 82.252ms
+	该领域规则匹配平均耗时: 88.084ms
+
+domain: phone
+	该领域总平均耗时: 103.392ms
+	该领域模型匹配平均耗时: 103.392ms
+	该领域规则匹配平均耗时: Nan
+
+domain: poem
+	该领域总平均耗时: 141.722ms
+	该领域模型匹配平均耗时: 175.99ms
+	该领域规则匹配平均耗时: 131.931ms
+
+domain: story
+	该领域总平均耗时: 132.651ms
+	该领域模型匹配平均耗时: 70.34ms
+	该领域规则匹配平均耗时: 137.444ms
+
+domain: vehicle_control
+	该领域总平均耗时: 43.544ms
+	该领域模型匹配平均耗时: Nan
+	该领域规则匹配平均耗时: 43.544ms
+
+domain: weather
+	该领域总平均耗时: 110.07ms
+	该领域模型匹配平均耗时: 110.07ms
+	该领域规则匹配平均耗时: Nan
+
+
+

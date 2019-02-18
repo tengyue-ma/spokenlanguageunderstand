@@ -1,0 +1,2 @@
+/home/users/speechteam/users/leilei.zhou/spokenlanguageunderstand/import_redis_data/build/CMakeFiles/clear_redis.dir
+/home/users/speechteam/users/leilei.zhou/spokenlanguageunderstand/import_redis_data/build/CMakeFiles/query_redis.dir

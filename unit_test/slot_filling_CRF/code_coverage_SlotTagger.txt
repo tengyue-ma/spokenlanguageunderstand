@@ -1,0 +1,202 @@
+File '../../slot_filling/CRF/src/SlotTagger.cpp'
+Lines executed:80.65% of 93
+Creating 'SlotTagger.cpp.gcov'
+        -:    0:Source:../../slot_filling/CRF/src/SlotTagger.cpp
+        -:    0:Graph:SlotTagger.gcno
+        -:    0:Data:SlotTagger.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: SlotTagger.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 一  1/29 13:15:45 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <vector>
+        -:   10:#include <string>
+        -:   11:#include <map>
+        -:   12:#include "SlotTagger.h"
+        -:   13:#include "CrfErrorCode.h"
+        -:   14:#include "logger.h"
+        -:   15:#include "Configure.h"
+        -:   16:#include "spreg.h"
+        -:   17:#include "SluLog.h"
+        -:   18:
+        -:   19:using namespace std;
+        -:   20:using namespace hobotlog;
+        -:   21:
+        -:   22:namespace slot_filling{
+        -:   23:
+        -:   24:/*
+        -:   25: * @param model_path : 模型地址
+        -:   26: * @param log_path   : log地址  
+        -:   27: */
+        2:   28:extern "C" SlotFilling* create_slot_filling(const string model_path, 
+        -:   29:                                            const string log_path){
+        2:   30:    SlotTagger* crf_ner = new SlotTagger(model_path, log_path);
+        2:   31:    return dynamic_cast<SlotFilling *>(crf_ner);
+        -:   32:}
+        -:   33:
+        1:   34:extern "C" void delete_slot_filling(SlotFilling* ner){
+        1:   35:    SlotTagger* crf_ner = dynamic_cast<SlotTagger *>(ner);
+        -:   36:    //delete crf_ner;
+        1:   37:    crf_ner = NULL;
+        1:   38:}
+        -:   39:
+        -:   40://< 构造函数
+       15:   41:SlotTagger::SlotTagger(const string model_path, 
+       15:   42:                       const string log_path){
+       15:   43:    comcfg::Configure config;
+       15:   44:    int ret = config.load("./", log_path.c_str());
+       15:   45:    if (ret < 0){
+    #####:   46:        cout << "failed to load log conf in " << log_path << endl;
+    #####:   47:        exit(-1);
+        -:   48:    }
+        -:   49:
+        -:   50:    //< init log
+        -:   51:    try {
+       15:   52:        string log_file = config["CRF_LOG_CONF"].to_cstr();
+       15:   53:        if (loginstance == NULL){
+    #####:   54:            loginstance = new LogModule(log_file);
+       15:   55:        }
+    =====:   56:    }catch(...){
+    =====:   57:        cout << "failed to load log config." << endl;
+    =====:   58:        exit(-1);
+        -:   59:    }
+        -:   60:
+       15:   61:    this->_tagger = NULL;
+        -:   62:    //< load model
+       15:   63:    CRFWrapper* crf_w = new CRFWrapper();
+       15:   64:    crf_w->load_model(model_path);
+       15:   65:    load_model(*crf_w);
+       15:   66:    pthread_mutex_init(&lock, NULL);
+       15:   67:    loginstance->info("[SLU]: load model " + model_path + " success.");
+       15:   68:}
+        -:   69:
+        -:   70://< 对外接口
+        2:   71:int SlotTagger::parse(const string query, 
+        -:   72:                      vector<_slot>& slots, 
+        -:   73:                      feat_extractor::FeatExtractor* feat_ext){
+        -:   74:    //< 获取feat
+        2:   75:    feature::Feature feat;
+        2:   76:    feat_ext->get_feat(feat, query);
+        -:   77:
+        -:   78:    //< 解码成CRF目标格式
+        -:   79:    //< nothing;
+        -:   80:    //< 调用ner接口返回结果
+        2:   81:    pthread_mutex_lock(&lock);
+        4:   82:    vector<string> tags;
+        2:   83:    int ret = parse(feat.feats, tags);
+        2:   84:    slots = tags2slots(tags, query);
+        2:   85:    pthread_mutex_unlock(&lock);
+        4:   86:    return ret;
+        -:   87:}
+        -:   88:
+        -:   89://< 析构函数
+        3:   90:SlotTagger::~SlotTagger(){
+        1:   91:    if (!_tagger){
+    #####:   92:        return ;
+        -:   93:    }
+        1:   94:    delete _tagger;
+        1:   95:    pthread_mutex_destroy(&lock);
+        2:   96:}
+        -:   97:
+        -:   98://< load model.
+       15:   99:int SlotTagger::load_model(CRFWrapper& crf_wrapper){
+       15:  100:    if (!_tagger){
+       15:  101:        delete _tagger;
+        -:  102:    }
+        -:  103:
+       15:  104:    if (crf_wrapper.get_crf_model() == NULL){
+    #####:  105:        _tagger = NULL;
+        -:  106:    }
+        -:  107:
+       15:  108:    _tagger = crf_wrapper.get_crf_model()->createTagger();
+       15:  109:    if (!_tagger){
+    #####:  110:		loginstance->error("[SLU]: failed to create crf tagger!");
+    #####:  111:        return ERR_CRF_CREAT_TAGGER;
+        -:  112:    }
+        -:  113:	
+       15:  114:	loginstance->info("[SLU]: create crf tagger success!");
+        -:  115:
+       15:  116:    return 0;
+        -:  117:}
+        -:  118:
+        2:  119:int SlotTagger::parse(const vector<string>& sequence, 
+        -:  120:                      vector<string>& tags){
+        2:  121:    tags.clear();
+        -:  122:
+        2:  123:    if (!_tagger){
+    #####:  124:        for (size_t i = 0; i < sequence.size(); i++){
+    #####:  125:            tags.push_back("O");
+        -:  126:        }
+        -:  127:
+    #####:  128:        return 0;
+        -:  129:    }
+        2:  130:    _tagger->clear();
+        -:  131:
+        -:  132:    //< push
+        2:  133:    vector<string>::const_iterator iter = sequence.begin();
+        9:  134:    for ( ; iter != sequence.end(); iter++){
+        7:  135:        _tagger->add((*iter).c_str());
+        -:  136:    }
+        -:  137:
+        -:  138:    //< 预测
+        2:  139:    if (!_tagger->parse()){
+    #####:  140:		loginstance->error("[SLU]: failed to crf parse!");
+    #####:  141:        return ERR_CRF_TAGGER_PARSE;
+        -:  142:    }
+        -:  143:
+        -:  144:    //< 获取预测结果
+        9:  145:    for (size_t i = 0; i < _tagger->size(); i++){
+        7:  146:        tags.push_back(_tagger->y2(i));
+        -:  147:    }
+        -:  148:	
+        2:  149:	loginstance->info("[SLU]: crf parse success!");
+        -:  150:
+        2:  151:    return 0;
+        -:  152:}
+        -:  153:
+        -:  154://< tags to slots
+        2:  155:vector<_slot> SlotTagger::tags2slots(const vector<string>& tags, 
+        -:  156:                                     const string query){
+        2:  157:    vector<_slot> slots;
+        -:  158:    
+        -:  159:    //< query 单字切分
+        4:  160:    vector<string> seq_vec;
+        2:  161:    if (!utils::strSplit2simple(query, seq_vec)){
+    #####:  162:        return slots;
+        -:  163:    }
+        -:  164:
+        -:  165:    //< 解码
+        4:  166:    vector<pair<string, string> > slot_list;
+        4:  167:    vector<pair<int, int> > slot_range;
+        -:  168:
+        2:  169:    if (utils::ner_decode(slot_list, slot_range, tags, seq_vec) == -1){
+    #####:  170:		loginstance->error("[SLU]: ner decode error!");
+        -:  171:    }
+        -:  172:    
+        2:  173:    if (slot_list.size() != slot_range.size()){
+    #####:  174:		loginstance->error("[SLU]: slot count error!");
+        -:  175:    }
+        -:  176:
+        4:  177:    for (size_t i = 0; i < slot_list.size(); i++){
+        2:  178:        _slot slot;
+        2:  179:        slot.name  = slot_list[i].first;
+        2:  180:        slot.value = slot_list[i].second;
+        2:  181:        slot.start = slot_range[i].first;
+        2:  182:        slot.end   = slot_range[i].second;
+        -:  183:
+        2:  184:        slots.push_back(slot);
+        2:  185:    }
+        -:  186:	
+        2:  187:	loginstance->info("[SLU]: tags2slots success! query: " + query);
+        -:  188:
+        2:  189:    return slots;
+        -:  190:}
+        -:  191:
+        3:  192:} //< namespace slot_filling
+        -:  193:
+        -:  194:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

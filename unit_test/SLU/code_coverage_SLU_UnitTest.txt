@@ -1,0 +1,789 @@
+File '../work_flow/src/SLU.cpp'
+Lines executed:74.37% of 437
+去掉判空语句后：96.4% of 278
+Creating 'SLU.cpp.gcov'
+        -:    0:Source:../work_flow/src/SLU.cpp
+        -:    0:Graph:SLU.gcno
+        -:    0:Data:SLU.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: SLU.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 四  2/22 14:55:23 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include "SLU.h"
+        -:   10:#include "SluLog.h"
+        -:   11:
+        -:   12:using namespace std;
+        -:   13:
+        -:   14:namespace slu{
+        -:   15:
+        -:   16://< 构造函数
+        3:   17:SLU::SLU(){
+        3:   18:    pre = NULL;
+        3:   19:    parser = NULL;
+        3:   20:}
+        -:   21:
+        -:   22://< 析构函数
+        2:   23:SLU::~SLU(){
+        1:   24:    delete pre;
+        1:   25:    delete parser;
+        -:   26:    
+        -:   27:    //< 释放所有的特征提取模块
+        -:   28:    typedef FeatExtractor* (*DELETE_FEAT_EXTR)(FeatExtractor *);
+       12:   29:    for (map<string, FeatExtractor*>::iterator iter = feat_ext_map.begin(); iter != feat_ext_map.end(); iter++){
+       11:   30:        DELETE_FEAT_EXTR delete_feat_extr = reinterpret_cast<DELETE_FEAT_EXTR>(dlsym(handle_feat_map[iter->first], "delete_feat_extr"));
+       11:   31:        delete_feat_extr(iter->second);
+       11:   32:        dlclose(handle_feat_map[iter->first]);
+        -:   33:    }
+        -:   34:
+        -:   35:    //< 释放所有的分类模块
+        -:   36:    typedef Classifier* (*DELETE_CLASSIFIER)(Classifier *);
+       11:   37:    for (map<string, Classifier*>::iterator iter = classifier_map.begin(); iter != classifier_map.end(); iter++){
+       10:   38:        DELETE_CLASSIFIER delete_classifier = reinterpret_cast<DELETE_CLASSIFIER>(dlsym(handle_classifier_map[iter->first], "delete_classifier"));
+       10:   39:        delete_classifier(iter->second);
+       10:   40:        dlclose(handle_classifier_map[iter->first]);
+        -:   41:    }
+        -:   42:        
+        -:   43:    //< 释放所有的NER模块
+        -:   44:    typedef SlotFilling* (*DELETE_SLOT_FILLING)(SlotFilling *);
+        9:   45:    for (map<string, SlotFilling*>::iterator iter = ner_map.begin(); iter != ner_map.end(); iter++){
+        8:   46:        DELETE_SLOT_FILLING delete_slot_filling = reinterpret_cast<DELETE_SLOT_FILLING>(dlsym(handle_ner_map[iter->first], "delete_slot_filling"));
+        8:   47:        delete_slot_filling(iter->second);
+        8:   48:        dlclose(handle_ner_map[iter->first]);
+        -:   49:    }
+        1:   50:}
+        -:   51:
+        -:   52://< 创建各个模块并初始化
+        3:   53:int SLU::init_slu(const string conf_file, 
+        -:   54:                  const string conf_path){
+        3:   55:    comcfg::Configure config;
+        -:   56:
+        3:   57:    int ret = config.load(conf_path.c_str(), conf_file.c_str());
+        3:   58:    if (ret < 0){
+    #####:   59:        loginstance->error("[SLU]: failed to load slu resource config file in " + conf_path +conf_file);
+    #####:   60:        return ERR_SLU_INIT_LOAD_CONF;
+        -:   61:    }
+        -:   62:
+        6:   63:    vector<string> pre_vec;
+        6:   64:    vector<vector<string> > feat_vec;//包括crf特征和me特征
+        6:   65:    vector<vector<string> > ner_vec;
+        6:   66:    vector<vector<string> > classifier_vec;
+        -:   67:    //< 规则引擎配置文件地址
+        6:   68:    string regex_path;
+        -:   69:    //< 领域管理控制配置文件地址
+        6:   70:    string domain_manage_path;
+        -:   71:    //< log path
+        6:   72:    string log_path;
+        -:   73:
+        -:   74:    //< load
+        -:   75:    try {
+        -:   76:        //< load ltp model path
+        3:   77:        pre_vec.push_back(config["LTP_MODEL"][0]["CWS_PATH"].to_cstr());
+        3:   78:        pre_vec.push_back(config["LTP_MODEL"][0]["POS_PATH"].to_cstr());
+        3:   79:        pre_vec.push_back(config["LTP_MODEL"][0]["NER_PATH"].to_cstr());
+        3:   80:        pre_vec.push_back(config["LTP_MODEL"][0]["PARSER_PATH"].to_cstr());
+        -:   81:
+        -:   82:        //< load feat extractor
+        3:   83:        int feat_ext_size = static_cast<int>(config["FEAT_EXT"].size());
+       36:   84:        for (int i = 0; i < feat_ext_size; i++){
+       33:   85:            vector<string> feat;
+       33:   86:            feat.push_back(config["FEAT_EXT"][i]["FEAT_NAME"].to_cstr());
+       33:   87:            feat.push_back(config["FEAT_EXT"][i]["LIB_SO"].to_cstr());
+       33:   88:            feat.push_back(config["FEAT_EXT"][i]["FEAT_CONF"].to_cstr());
+       33:   89:            feat_vec.push_back(feat);
+       33:   90:        }
+        -:   91:
+        -:   92:        //< load slot filling
+        3:   93:        int slot_filling_size = static_cast<int>(config["SLOT_FILLING"].size());
+       27:   94:        for (int i = 0; i < slot_filling_size; i++){
+       24:   95:            vector<string> ner;
+       24:   96:            ner.push_back(config["SLOT_FILLING"][i]["NER_NAME"].to_cstr());
+       24:   97:            ner.push_back(config["SLOT_FILLING"][i]["LIB_SO"].to_cstr());
+       24:   98:            ner.push_back(config["SLOT_FILLING"][i]["MODEL_PATH"].to_cstr());
+       24:   99:            ner_vec.push_back(ner);
+       24:  100:        }
+        -:  101:
+        -:  102:        //< load classifier
+        3:  103:        int classifier_size = static_cast<int>(config["CLASSIFIER"].size());
+       33:  104:        for (int i = 0; i < classifier_size; i++){
+       30:  105:            vector<string> clf;
+       30:  106:            clf.push_back(config["CLASSIFIER"][i]["CLF_NAME"].to_cstr());
+       30:  107:            clf.push_back(config["CLASSIFIER"][i]["LIB_SO"].to_cstr());
+       30:  108:            clf.push_back(config["CLASSIFIER"][i]["MODEL_PATH"].to_cstr());
+       30:  109:            classifier_vec.push_back(clf);
+       30:  110:        }
+        -:  111:
+        -:  112:        //< 规则引擎
+        3:  113:        regex_path = config["REGEX_CONF_PATH"].to_cstr();
+        -:  114:        //< domain_manage
+        3:  115:        domain_manage_path = config["DOMAIN_MANAGE_PATH"].to_cstr();
+        -:  116:        //< log
+        3:  117:        log_path = config["LOG_PATH"].to_cstr();
+        -:  118:
+    =====:  119:    } catch(...){
+    =====:  120:        loginstance->error("[SLU]: failed to load slu config file: " + conf_file);
+    =====:  121:        return ERR_SLU_INIT_CONF_CONTENT;
+        -:  122:    }
+        3:  123:    loginstance->info("[SLU]: load slu config file success!");
+        -:  124:
+        -:  125:    //< 初始化规则引擎
+        3:  126:    if (regex_path != "null"){
+        3:  127:        parser = new Regex(regex_path.c_str(), loginstance);
+        3:  128:        loginstance->info("[SLU]: init regex success!");
+        -:  129:    }
+        -:  130:    else {
+    #####:  131:        loginstance->info("[SLU]: jump over init regex!");
+        -:  132:    }
+        -:  133:
+        -:  134:    //< 初始化领域管理
+        3:  135:    domain_manage = new DomainManage(domain_manage_path.c_str());
+        3:  136:    loginstance->info("[SLU]: init domain_manage success!");
+        -:  137:
+        -:  138:    //< 初始化ltp
+        -:  139:    //< 
+        3:  140:    pre = new PreProcessor();
+        3:  141:    if (pre_vec.size() == 4){
+        3:  142:        pre->create_wsg_engine(pre_vec[0].c_str());
+        3:  143:        pre->create_pos_engine(pre_vec[1].c_str());
+        3:  144:        pre->create_ner_engine(pre_vec[2].c_str());
+        3:  145:        pre->create_pas_engine(pre_vec[3].c_str());
+        3:  146:        loginstance->info("[SLU]: init ltp success!");
+        -:  147:    }
+        -:  148:    else {
+    #####:  149:        loginstance->info("[SLU]: init ltp failed!");
+        -:  150:    }
+        -:  151:
+        -:  152:    //< 初始化FeatExtractor
+        -:  153:    typedef FeatExtractor* (*CREATE_FEAT_EXTR)(const string, PreProcessor*);
+        -:  154:     
+       36:  155:    for (size_t i = 0; i < feat_vec.size(); i++){
+       33:  156:        void *handle = dlopen(feat_vec[i][1].c_str(), RTLD_NOW);
+       33:  157:        if (!handle){
+    #####:  158:            loginstance->error("[SLU]: failed to feat dlopen: " + feat_vec[i][1]);
+    #####:  159:            return ERR_SLU_INIT_FEAT_DLOPEN;
+        -:  160:        }
+       33:  161:        CREATE_FEAT_EXTR create_feat_extr = reinterpret_cast<CREATE_FEAT_EXTR>(dlsym(handle, "create_feat_extr"));
+        -:  162:
+       33:  163:        FeatExtractor* feat_ext = create_feat_extr(feat_vec[i][2], pre);
+       33:  164:        if (feat_ext == NULL){
+    #####:  165:            loginstance->error("[SLU]: failed to feat ext: " + feat_vec[i][2]);
+    #####:  166:            return ERR_SLU_INIT_CREATE_FEAT_EXTR;
+        -:  167:        }
+        -:  168:
+       33:  169:        feat_ext_map[feat_vec[i][0]] = feat_ext;
+       33:  170:        handle_feat_map[feat_vec[i][0]] = handle;
+        -:  171:    }
+        3:  172:    loginstance->info("[SLU]: init feat extractor success!");
+        -:  173:
+        -:  174:    //< 初始化分类器
+        -:  175:    typedef Classifier* (*CREATE_CLASSIFIER)(const string, const string);
+        -:  176:
+       33:  177:    for (size_t i = 0; i < classifier_vec.size(); i++){
+       30:  178:        void *handle = dlopen(classifier_vec[i][1].c_str(), RTLD_NOW);
+       30:  179:        if (!handle){
+    #####:  180:            loginstance->error("[SLU]: failed to classifier dlopen: " + classifier_vec[i][1]);
+    #####:  181:            return ERR_SLU_INIT_CLF_DLOPEN;
+        -:  182:        }
+       30:  183:        CREATE_CLASSIFIER create_classifier = reinterpret_cast<CREATE_CLASSIFIER>(dlsym(handle, "create_classifier"));
+        -:  184:
+       30:  185:        Classifier* clf = create_classifier(classifier_vec[i][2], log_path);
+       30:  186:        if (clf == NULL){
+    #####:  187:            loginstance->error("[SLU]: failed to create classifier: " + classifier_vec[i][2]);
+    #####:  188:            return ERR_SLU_INIT_CREATE_CLF;
+        -:  189:        }
+        -:  190:
+       30:  191:        classifier_map[classifier_vec[i][0]] = clf;
+       30:  192:        handle_classifier_map[classifier_vec[i][0]] = handle;
+        -:  193:    }
+        3:  194:    loginstance->info("[SLU]: init classifier success!");
+        -:  195:
+        -:  196:    //< 初始化NER
+        -:  197:    typedef SlotFilling* (*CREATE_SLOT_FILLING)(const string, const string);
+        -:  198:
+       27:  199:    for (size_t i = 0; i < ner_vec.size(); i++){
+       24:  200:        void *handle = dlopen(ner_vec[i][1].c_str(), RTLD_NOW);
+       24:  201:        if (!handle){
+    #####:  202:            loginstance->error("[SLU]: failed to ner dlopen: " + ner_vec[i][1]);
+    #####:  203:            return ERR_SLU_INIT_NER_DLOPEN;
+        -:  204:        }
+       24:  205:        CREATE_SLOT_FILLING create_slot_filling = reinterpret_cast<CREATE_SLOT_FILLING>(dlsym(handle, "create_slot_filling"));
+        -:  206:
+       24:  207:        SlotFilling* ner = create_slot_filling(ner_vec[i][2], log_path);
+       24:  208:        if (ner == NULL){
+    #####:  209:            loginstance->error("[SLU]: failed to create slot filling: " + ner_vec[i][2]);
+    #####:  210:            return ERR_SLU_INIT_CREATE_SLOT_FILLING;
+        -:  211:        }
+        -:  212:
+       24:  213:        ner_map[ner_vec[i][0]] = ner;
+       24:  214:        handle_ner_map[ner_vec[i][0]] = handle;
+        -:  215:    }
+        3:  216:    loginstance->info("[SLU]: init ner success!");
+        -:  217:
+        6:  218:    return 0;
+        -:  219:}
+        -:  220:
+        3:  221:int SLU::set_workflow(const WorkFlow& workflow){
+        3:  222:    this->workflow = workflow;
+        -:  223:
+        3:  224:    return 0;
+        -:  225:}
+        -:  226:
+        -:  227://< SLU解析接口
+        3:  228:int SLU::semantic_interface(string query, 
+        -:  229:                            SemanticInfo& sem_info, 
+        -:  230:                            string id){
+        3:  231:    return semantic_interface(query, sem_info, id, this->workflow);
+        -:  232:}
+        -:  233://< SLU解析接口
+        3:  234:int SLU::semantic_interface(string query, 
+        -:  235:                            SemanticInfo& sem_info,
+        -:  236:							string id, WorkFlow workflow){
+        3:  237:    int ret = 0;
+        3:  238:	vector<string> ids;
+        3:  239:	ret =  strSplitbysep(id, ids, "&");
+        3:  240:    if(!ret || ids.size()!=3){
+    #####:  241:		loginstance->error("[SLU]: id format is wrong! right format is: appid&userid&sessionid");
+    #####:  242:        return ERR_ID_FORMAT;
+        -:  243:    }
+        -:  244:
+        6:  245:    string appid = ids[0];
+        6:  246:	string userid = ids[1];
+        6:  247:	string sessionid = ids[2];
+        -:  248:	
+        -:  249:	//去标点
+        3:  250:	query = rm_punctuation(query);
+        -:  251:
+        -:  252:	//英文小写转大写
+        -:  253:	//query = lower2capital(query);
+        -:  254:	
+        -:  255:    //< 填充query;
+        3:  256:    ret = sem_info.set_query(query);
+        3:  257:    if(ret < 0){
+    #####:  258:        loginstance->error("[SLU]: failed to set query: " + query + " appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  259:        return ret;
+        -:  260:    }
+        -:  261:
+        -:  262:    //< 标志规则是否解析出结果
+        3:  263:    bool flag = false;
+        -:  264:    //< 节点函数名
+        6:  265:    string fun_name = "DOMAIN_MANAGE";
+       24:  266:    for (size_t i = 0; i < workflow.workflow.size(); i++){
+        -:  267:        //< 如果规则已经解析出结果，忽略以下所有工作，DOMAIN_MANAGE除外
+       21:  268:        if (flag){
+        4:  269:            if (fun_name != workflow.workflow[i].func_type){
+        4:  270:                continue;
+        -:  271:            }
+        -:  272:        }
+       17:  273:        ret = stepfunc(workflow.workflow[i], sem_info, flag, ids);
+       17:  274:        if(ret < 0){
+    #####:  275:            loginstance->error("[SLU]: stepfunc error appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+        -:  276:            //< return负值 并不代表解析结果一定不对，只能说明在某一步缺少模型或者操作出错
+    #####:  277:            return ret;
+        -:  278:        }
+        -:  279:    }
+        3:  280:    if(flag){
+        1:  281:        sem_info.set_match_mode("regex");
+        -:  282:    }
+        -:  283:    else{
+        2:  284:        sem_info.set_match_mode("model");
+        -:  285:    }
+        -:  286:
+        3:  287:    loginstance->info("[SLU]: semantic interface success! appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+        6:  288:    return 0;
+        -:  289:}
+        -:  290:
+        -:  291://< DOMAIN_MANAGE
+        2:  292:int SLU::domain_manager(_workstep& workstep, 
+        -:  293:                        SemanticInfo& sem_info, 
+        -:  294:                        vector<string> ids){
+        2:  295:    string appid = ids[0]; 
+        4:  296:    string userid = ids[1]; 
+        4:  297:    string sessionid = ids[2];
+        -:  298:    
+        2:  299:    DomainManage* domain_m = domain_manage;
+        -:  300:
+        2:  301:    if (workstep._void != NULL){
+    #####:  302:        domain_m = (DomainManage*)workstep._void;
+        -:  303:    }
+        2:  304:    if (domain_m == NULL){
+    #####:  305:        return 0;
+        -:  306:    }
+        -:  307:
+        -:  308:    //< 获取所有解析结果
+        4:  309:    vector<_form> forms = sem_info.get_forms();
+        -:  310:    //< 逐一过滤
+        4:  311:    string default_domain = domain_m->get_default_domain();
+        4:  312:    string default_intent = domain_m->get_default_intent();
+        -:  313:
+        4:  314:    for (size_t i = 0; i < forms.size(); i++){
+        2:  315:        if (domain_m->find_domain(forms[i].domain.classes) <= 0){
+        2:  316:            loginstance->info("[SLU]: domain: " + forms[i].domain.classes + " => " + default_domain + " &&& intent: " + forms[i].intent.classes + " => " + default_intent + "appid:" + appid + ";userid:" + userid + ";sessionid:" + sessionid);
+        2:  317:            forms[i].domain.classes = default_domain;
+        2:  318:            forms[i].intent.classes = default_intent;
+        -:  319:        }
+        -:  320:    }
+        2:  321:    sem_info.set_forms(forms);
+        -:  322:
+        4:  323:    return 0;
+        -:  324:}
+        -:  325:
+        -:  326://< REGEX
+        1:  327:int SLU::regex_global(_workstep& workstep, 
+        -:  328:                 SemanticInfo& sem_info, 
+        -:  329:                 bool& flag, 
+        -:  330:                 vector<string> ids){
+        1:  331:    vector<Semantic *> sems;
+        2:  332:    string query = sem_info.get_query();
+        -:  333:
+        -:  334:	//< subnav trick
+        2:  335:    string domain = "";
+        1:  336:    if (workstep.params.size() == 1){
+    #####:  337:        domain = workstep.params[0];
+        -:  338:    }
+        -:  339:	
+        -:  340:    //< 如果规则有结果
+        1:  341:    if (get_regex(query, sems, ids, domain) >= 0){
+        1:  342:        flag = true;
+        1:  343:        set_output(sems, sem_info);
+        -:  344:    }
+        -:  345:
+        2:  346:    for (size_t i = 0; i < sems.size(); i++){
+        1:  347:        delete sems[i];
+        -:  348:    }
+        1:  349:    vector<Semantic *>().swap(sems);
+        -:  350:
+        2:  351:    return 0;
+        -:  352:}
+        -:  353:
+        -:  354://< NER_FIXED
+        2:  355:int SLU::ner_fixed(_workstep& workstep,
+        -:  356:              SemanticInfo& sem_info,
+        -:  357:              vector<string> ids){
+        2:  358:    string appid = ids[0]; 
+        4:  359:    string userid = ids[1]; 
+        4:  360:    string sessionid = ids[2];
+        -:  361:    //< 定义输出
+        4:  362:    vector<_slot> output;
+        -:  363:    //< NER操作
+        2:  364:    int ret = get_ner(ner_map[workstep.params[1]], feat_ext_map[workstep.params[2]], get_input(workstep.params[0], sem_info, "null"), output, ids);
+        2:  365:    if(ret < 0){
+    #####:  366:        loginstance->error("[SLU]: failed to get ner:NER_FIXED");
+    #####:  367:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  368:        return ret;
+        -:  369:    }
+        -:  370:    //< 返回输出
+        2:  371:    ret = set_output_ner(workstep.output, output, sem_info, ids);
+        2:  372:    if(ret < 0){
+    #####:  373:        loginstance->error("[SLU]: failed to set output ner:NER_FIXED");
+    #####:  374:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  375:        return ret;
+        -:  376:    }
+        -:  377:
+        2:  378:    loginstance->info("[SLU]: NER_FIXED success!");
+        2:  379:	loginstance->info("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+        -:  380:
+        4:  381:    return 0;
+        -:  382:}
+        -:  383:
+        -:  384://< NER_QUERY_DOMAIN
+        2:  385:int SLU::ner_every_domain(_workstep& workstep, 
+        -:  386:                     SemanticInfo& sem_info, 
+        -:  387:                     vector<string> ids){
+        2:  388:    string appid = ids[0]; 
+        4:  389:    string userid = ids[1]; 
+        4:  390:    string sessionid = ids[2];
+        -:  391:    //< 获取domain
+        4:  392:    vector<string> domain = sem_info.get_domain();
+        -:  393:    //< NER操作
+        -:  394:    //< 对于每个领域做一遍NER
+        4:  395:    for (size_t i = 0; i < domain.size(); i++){
+        -:  396:        //< 定义输出
+        2:  397:        vector<_slot> output;
+        2:  398:        int ret = get_ner(ner_map[domain[i]], feat_ext_map[domain[i]], get_input(workstep.params[0], sem_info, "null"), output, ids);
+        2:  399:        if(ret < 0){
+    #####:  400:            loginstance->error("[SLU]: failed to get ner:NER_QUERY_DOMAIN, domain: " + domain[i]);
+    #####:  401:			loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  402:            return ret;
+        -:  403:        }
+        -:  404:        //< 返回对应领域的NER
+        2:  405:        ret = set_output_ner(domain[i], output, sem_info, ids);
+        2:  406:        if(ret < 0){
+    #####:  407:            loginstance->error("[SLU]: failed to get ner:NER_QUERY_DOMAIN, domain: " + domain[i]);
+    #####:  408:			loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  409:            return ret;
+        -:  410:        }
+        2:  411:    }
+        2:  412:    loginstance->info("[SLU]: NER_QUERY_DOMAIN success!");
+        2:  413:	loginstance->info("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+        -:  414:
+        4:  415:    return 0;
+        -:  416:}
+        -:  417:
+        4:  418:int SLU::clf_fixed(_workstep& workstep,
+        -:  419:                   SemanticInfo& sem_info,
+        -:  420:                   vector<string> ids){
+        4:  421:    string appid = ids[0]; 
+        8:  422:    string userid = ids[1]; 
+        8:  423:    string sessionid = ids[2];
+        -:  424:    //< 定义输出
+        8:  425:    vector<pair<string, float> > output;
+        -:  426:    //< CLF操作
+        4:  427:    int ret = get_classes(classifier_map[workstep.params[1]], feat_ext_map[workstep.params[2]], get_input(workstep.params[0], sem_info, "null"), output, ids);
+        4:  428:    if(ret < 0){
+    #####:  429:        loginstance->error("[SLU]: failed to get classes:CLF_FIXED");
+    #####:  430:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  431:        return ret;
+        -:  432:    }
+        -:  433:    //< 返回输出
+        4:  434:    ret = set_output_clf(workstep.output, output, sem_info, ids);
+        4:  435:    if(ret < 0){
+    #####:  436:        loginstance->error("[SLU]: failed to set output clf:CLF_FIXED");
+    #####:  437:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  438:        return ret;
+        -:  439:    }
+        4:  440:    loginstance->info("[SLU]: CLF_FIXED success!");
+        4:  441:	loginstance->info("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+        -:  442:
+        8:  443:    return 0;
+        -:  444:}
+        -:  445:
+        2:  446:int SLU::clf_every_domain(_workstep& workstep,
+        -:  447:                          SemanticInfo& sem_info,
+        -:  448:                          vector<string> ids){
+        2:  449:    string appid = ids[0]; 
+        4:  450:    string userid = ids[1]; 
+        4:  451:    string sessionid = ids[2];
+        -:  452:    //< 获取domain
+        4:  453:    vector<string> domain = sem_info.get_domain();
+        -:  454:    //< CLF操作
+        4:  455:    for (size_t i = 0; i < domain.size(); i++){
+        -:  456:        //< 定义输出
+        2:  457:        vector<pair<string, float> > output;
+        2:  458:        int ret = get_classes(classifier_map[domain[i]], feat_ext_map[workstep.params[2]], get_input(workstep.params[0], sem_info, "null"), output, ids);
+        2:  459:        if(ret < 0){
+    #####:  460:            loginstance->error("[SLU]: failed to get classes:clf_every_domain, domain: " + domain[i]);
+    #####:  461:			loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  462:            return ret;
+        -:  463:        }
+        -:  464:        //< 返回输出
+        2:  465:        ret = set_output_clf(workstep.output, output, sem_info, ids, domain[i]);
+        2:  466:        if(ret < 0){
+    #####:  467:            loginstance->error("[SLU]: failed to set output clf:clf_every_domain, domain: " + domain[i]);
+    #####:  468:			loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  469:            return ret;
+        -:  470:        }
+        2:  471:    }
+        2:  472:    loginstance->info("[SLU]: clf_every_domain success!");
+        2:  473:	loginstance->info("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+        -:  474:
+        4:  475:    return 0;
+        -:  476:}
+        -:  477:
+        4:  478:int SLU::clf_if_domain(_workstep& workstep,
+        -:  479:                       SemanticInfo& sem_info,
+        -:  480:                       vector<string> ids){
+        4:  481:    string appid = ids[0]; 
+        8:  482:    string userid = ids[1]; 
+        8:  483:    string sessionid = ids[2];
+        -:  484:    //< 定义输出
+        8:  485:    vector<pair<string, float> > output;
+        -:  486:    //< 获取domain
+        8:  487:    vector<string> domain = sem_info.get_domain();
+        8:  488:    for (size_t i = 0; i < domain.size(); i++){
+        4:  489:        if (domain[i] == workstep.params[3]){
+        -:  490:            //< CLF操作
+    #####:  491:            int ret = get_classes(classifier_map[workstep.params[1]], feat_ext_map[workstep.params[2]], get_input(workstep.params[0], sem_info, "null"), output, ids);
+    #####:  492:            if(ret < 0){
+    #####:  493:                loginstance->error("[SLU]: failed to get classes:CLF_IF_DOMAIN, domain: " + domain[i]);
+    #####:  494:				loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  495:                return ret;
+        -:  496:            }
+        -:  497:            //< 返回输出
+    #####:  498:            ret = set_output_clf(workstep.output, output, sem_info, ids);
+    #####:  499:            if(ret < 0){
+    #####:  500:                loginstance->error("[SLU]: failed to get classes:CLF_IF_DOMAIN, domain: " + domain[i]);
+    #####:  501:				loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  502:                return ret;
+        -:  503:            }
+        -:  504:        }
+        -:  505:    }
+        4:  506:    loginstance->info("[SLU]: CLF_IF_DOMAIN success!");
+        4:  507:	loginstance->info("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+        -:  508:
+        8:  509:    return 0;
+        -:  510:}
+        -:  511:
+        -:  512://< 单步操作
+       17:  513:int SLU::stepfunc(_workstep& workstep, 
+        -:  514:                  SemanticInfo& sem_info, 
+        -:  515:                  bool& flag,
+        -:  516:				  vector<string> ids){
+       17:  517:    if (workstep.func_type == "REGEX_GLOBAL"){
+        1:  518:        regex_global(workstep, sem_info, flag, ids);
+        -:  519:    }
+       16:  520:    else if (workstep.func_type == "NER_FIXED"){
+        2:  521:        int ret = ner_fixed(workstep, sem_info, ids);
+        2:  522:        if (ret < 0){
+    #####:  523:            return ret;
+        -:  524:        }
+        -:  525:    }
+       14:  526:    else if (workstep.func_type == "CLF_FIXED"){
+        4:  527:        int ret = clf_fixed(workstep, sem_info, ids);
+        4:  528:        if (ret < 0){
+    #####:  529:            return ret;
+        -:  530:        }
+        -:  531:    }
+       10:  532:    else if (workstep.func_type == "CLF_IF_DOMAIN"){
+        4:  533:        int ret = clf_if_domain(workstep, sem_info, ids);
+        4:  534:        if (ret < 0){
+    #####:  535:            return ret;
+        -:  536:        }
+        -:  537:    }
+        6:  538:    else if (workstep.func_type == "CLF_EVERY_DOMAIN"){
+        2:  539:        int ret = clf_every_domain(workstep, sem_info, ids);
+        2:  540:        if (ret < 0){
+    #####:  541:            return ret;
+        -:  542:        }
+        -:  543:    }
+        4:  544:    else if (workstep.func_type == "NER_EVERY_DOMAIN"){
+        2:  545:        int ret = ner_every_domain(workstep, sem_info, ids);
+        2:  546:        if (ret < 0){
+    #####:  547:            return ret;
+        -:  548:        }
+        -:  549:    }
+        2:  550:    else if (workstep.func_type == "DOMAIN_MANAGE"){
+        2:  551:        int ret = domain_manager(workstep, sem_info, ids);
+        2:  552:        if (ret < 0){
+    #####:  553:            return ret;
+        -:  554:        }
+        -:  555:    }
+        -:  556:
+       17:  557:    return 0;
+        -:  558:}
+        -:  559:
+        -:  560://< 获取每层的输入
+       10:  561:string SLU::get_input(const string param, 
+        -:  562:                 SemanticInfo& sem_info, 
+        -:  563:                 string domain){
+       10:  564:    string input = "";
+       10:  565:    if (param == "query"){
+        8:  566:        input = sem_info.get_query();
+        -:  567:    }
+        2:  568:    else if (param == "ner_query"){
+        2:  569:        input = sem_info.get_ner_query(domain);
+        -:  570:    }
+        -:  571:
+       10:  572:    return input;
+        -:  573:}
+        -:  574:
+        -:  575://< set output regex
+        1:  576:int SLU::set_output(vector<Semantic*>& sems, 
+        -:  577:                    SemanticInfo& sem_info){
+        2:  578:    for (size_t i = 0; i < sems.size(); i++){
+        1:  579:        _form form;
+        1:  580:        form.domain.classes = sems[i]->domain;
+        1:  581:        form.domain.score = sems[i]->weight;
+        1:  582:        form.intent.classes = sems[i]->intent;
+        1:  583:        form.intent.score = sems[i]->weight;
+        2:  584:        for (size_t j = 0; j < sems[i]->slots.size(); j++){
+        1:  585:            _slot slot;
+        1:  586:            slot.name = sems[i]->slots[j]->name;
+        1:  587:            slot.value = sems[i]->slots[j]->value;
+        1:  588:            slot.start = sems[i]->slots[j]->start;
+        -:  589:            //< case: 播放刘德华的歌
+        -:  590:            //< regex: artist 刘德华 start = 3 end = 6
+        -:  591:            //< SLU 中统一改为下标位置
+        1:  592:            slot.end = sems[i]->slots[j]->end-1;
+        -:  593:
+        -:  594:            //< push slot
+        1:  595:            form.slots.push_back(slot);
+        1:  596:        }
+        -:  597:        //< set form to sem_info
+        1:  598:        sem_info.set_form(form);
+        1:  599:    }
+        -:  600:
+        1:  601:    return 0;
+        -:  602:}
+        -:  603:
+        -:  604://< set result
+        -:  605://template <typename T>
+        -:  606://NER res
+        4:  607:int SLU::set_output_ner(const string param, 
+        -:  608:                        vector<_slot> output, 
+        -:  609:                        SemanticInfo& sem_info,
+        -:  610:			            vector<string> ids){
+        4:  611:    int ret = 0;
+        4:  612:    string appid = ids[0];
+        8:  613:	string userid = ids[1];
+        8:  614:	string sessionid = ids[2];
+        -:  615:	
+        4:  616:    if (param == "null_slots"){
+        2:  617:        ret = sem_info.set_null_slots(output);
+        2:  618:        if (ret < 0){
+    #####:  619:            loginstance->error("[SLU]: set slots error!");
+    #####:  620:			loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  621:            return ret;
+        -:  622:        }    
+        -:  623:    }
+        -:  624:    //< 对应领域
+        -:  625:    else {
+        2:  626:        ret = sem_info.set_slots(param, output);
+        2:  627:        if (ret < 0){
+    #####:  628:            loginstance->error("[SLU]: set slots error!");
+    #####:  629:			loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  630:            return ret;
+        -:  631:        }
+        -:  632:    }
+        -:  633:
+        8:  634:    return 0;
+        -:  635:}
+        -:  636:
+        -:  637://CLF res
+        6:  638:int SLU::set_output_clf(const string param, 
+        -:  639:                        vector<pair<string, float> > output, 
+        -:  640:                        SemanticInfo& sem_info, 
+        -:  641:			            vector<string> ids,
+        -:  642:                        const string domain){
+        6:  643:    int ret = 0;
+        6:  644:    string appid = ids[0];
+       12:  645:	string userid = ids[1];
+       12:  646:	string sessionid = ids[2];
+        -:  647:	
+        6:  648:    if (param == "domain"){
+        4:  649:        ret = sem_info.set_domain(output);
+        4:  650:        if (ret < 0){
+    #####:  651:            loginstance->error("[SLU]: set domain error!");
+    #####:  652:			loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  653:            return ret;
+        -:  654:        }
+        -:  655:    }
+        2:  656:    else if (param == "intent"){
+        2:  657:        ret = sem_info.set_intent(domain, output);
+        2:  658:        if (ret < 0){
+    #####:  659:            loginstance->error("[SLU]: set intent error!");
+    #####:  660:			loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  661:            return ret;
+        -:  662:        }
+        -:  663:    }
+        -:  664:
+       12:  665:    return 0;
+        -:  666:}
+        -:  667:
+        -:  668://< 特征提取
+    #####:  669:int SLU::get_feat(FeatExtractor* feat_ext, 
+        -:  670:                  const string& query, 
+        -:  671:                  Feature& feat,
+        -:  672:				  vector<string> ids){
+    #####:  673:    int ret = 0;
+    #####:  674:    string appid = ids[0];
+    #####:  675:	string userid = ids[1];
+    #####:  676:	string sessionid = ids[2];
+        -:  677:	
+    #####:  678:    if (feat_ext == NULL){
+    #####:  679:        loginstance->error("[SLU]: feat is null!");
+    #####:  680:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  681:        return ERR_SLU_GET_FEAT_EXT_NULL;
+        -:  682:    }
+        -:  683:
+    #####:  684:    ret = feat_ext->get_feat(feat, query);
+    #####:  685:    if (ret < 0){
+    #####:  686:        loginstance->error("[SLU]: fail to get feat!");
+    #####:  687:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  688:        return ret;
+        -:  689:    }
+        -:  690:
+    #####:  691:    return 0;
+        -:  692:}
+        -:  693:
+        -:  694://< 分类
+        6:  695:int SLU::get_classes(Classifier* clf, 
+        -:  696:                     FeatExtractor* feat_ext, 
+        -:  697:                     const string& query, 
+        -:  698:                     vector<pair<string, float> >& class_res,
+        -:  699:					 vector<string> ids){
+        6:  700:    int ret = 0;
+        6:  701:    string appid = ids[0];
+       12:  702:	string userid = ids[1];
+       12:  703:	string sessionid = ids[2];
+        -:  704:	
+        6:  705:    if (clf == NULL || feat_ext == NULL){
+    #####:  706:        loginstance->error("[SLU]: clf feat is null!");
+    #####:  707:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  708:        return ERR_SLU_GET_CLF_FEAT_EXT_NULL;
+        -:  709:    }
+        -:  710:    
+        6:  711:    ret = clf->classify(query, class_res, feat_ext);
+        6:  712:    if (ret < 0){
+    #####:  713:        loginstance->error("[SLU]: fail to classify!");
+    #####:  714:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  715:        return ret;
+        -:  716:    }
+        -:  717:
+       12:  718:    return 0;
+        -:  719:}
+        -:  720:
+        -:  721://< NER
+        4:  722:int SLU::get_ner(SlotFilling* ner, 
+        -:  723:                 FeatExtractor* feat_ext, 
+        -:  724:                 const string& query, 
+        -:  725:                 vector<_slot>& slots,
+        -:  726:				 vector<string> ids){
+        4:  727:    int ret = 0;
+        4:  728:    string appid = ids[0];
+        8:  729:	string userid = ids[1];
+        8:  730:	string sessionid = ids[2];
+        -:  731:	
+        4:  732:    if (ner == NULL || feat_ext == NULL){
+    #####:  733:        loginstance->error("[SLU]: ner or feat ext is null!");
+    #####:  734:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  735:        return ERR_SLU_GET_NER_FEAT_EXT_NULL;
+        -:  736:    }
+        -:  737:
+        4:  738:    ret = ner->parse(query, slots, feat_ext);
+        4:  739:    if (ret < 0){
+    #####:  740:        loginstance->error("[SLU]: fail to ner parse!");
+    #####:  741:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  742:        return ret;
+        -:  743:    }
+        -:  744:
+        8:  745:    return 0;
+        -:  746:}
+        -:  747:
+        -:  748://< regex
+        1:  749:int SLU::get_regex(const string query, 
+        -:  750:				   vector<Semantic*>& sems, 
+        -:  751:				   vector<string> ids,
+        -:  752:				   const string domain, 
+        -:  753:                   const int n_best, 
+        -:  754:                   const bool is_gbk){
+        1:  755:    string appid = ids[0];
+        2:  756:	string userid = ids[1];
+        2:  757:	string sessionid = ids[2];
+        -:  758:	
+        1:  759:    if (this->parser == NULL){
+    #####:  760:        loginstance->error("[SLU]: regex not init. appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  761:        return ERR_PARSER_NULL;
+        -:  762:    }
+        -:  763:
+        1:  764:    sems = this->parser->match(query, domain, n_best, is_gbk);
+        -:  765:
+        1:  766:    if (sems.size() <= 0){
+    #####:  767:        loginstance->error("[SLU]: fail to regex, result is null");
+    #####:  768:		loginstance->error("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+    #####:  769:        return ERR_REGEX_FAILED;
+        -:  770:    }
+        -:  771:        
+        1:  772:    loginstance->info("[SLU]: regex match success!");
+        1:  773:	loginstance->info("[SLU]: appid:"+appid+";userid:"+userid+";sessionid:"+sessionid);
+        -:  774:
+        2:  775:    return 0;
+        -:  776:}
+        -:  777:
+        3:  778:} //< namespace slu;
+        -:  779:
+        -:  780:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

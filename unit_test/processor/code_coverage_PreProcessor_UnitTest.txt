@@ -1,0 +1,200 @@
+File '../../third/processor/src/PreProcessor.cpp'
+Lines executed:88.73% of 71
+去掉判空以后：100% of 63
+Creating 'PreProcessor.cpp.gcov'
+        -:    0:Source:../../third/processor/src/PreProcessor.cpp
+        -:    0:Graph:PreProcessor.gcno
+        -:    0:Data:PreProcessor.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: PreProcessor.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 一  1/22 20:14:11 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include "PreProcessor.h"
+        -:   10:#include "segment_dll.h"
+        -:   11:#include "postag_dll.h"
+        -:   12:#include "ner_dll.h"
+        -:   13:#include "parser_dll.h"
+        -:   14:using namespace std;
+        -:   15:
+        -:   16://< 构造函数
+        3:   17:PreProcessor::PreProcessor(){
+        -:   18:    //< 初始化为NULL
+        3:   19:    _wsg_engine = NULL;
+        3:   20:    _pos_engine = NULL;
+        3:   21:    _ner_engine = NULL;
+        3:   22:    _pas_engine = NULL;
+        3:   23:}
+        -:   24:
+        -:   25://< 析构函数
+        3:   26:PreProcessor::~PreProcessor(){
+        -:   27:    //< 释放空间
+        3:   28:    if (_wsg_engine != NULL){
+        2:   29:        segmentor_release_segmentor(_wsg_engine);
+        -:   30:    }
+        -:   31:
+        3:   32:    if (_pos_engine != NULL){
+        2:   33:        postagger_release_postagger(_pos_engine);
+        -:   34:    }
+        -:   35:
+        3:   36:    if (_ner_engine != NULL){
+        2:   37:        ner_release_recognizer(_ner_engine);
+        -:   38:    }
+        -:   39:    
+        3:   40:    if (_pas_engine != NULL){
+        2:   41:        parser_release_parser(_pas_engine);
+        -:   42:    }
+        3:   43:}
+        -:   44:
+        -:   45://< ----------
+        -:   46://< 模型初始化
+        -:   47://< ----------
+        -:   48://< 分词 
+        -:   49://< @param wsg_mdl_path : 模型路径
+        2:   50:int PreProcessor::create_wsg_engine(string wsg_mdl_path){
+        2:   51:    _wsg_engine = segmentor_create_segmentor(wsg_mdl_path.c_str());
+        2:   52:    if (_wsg_engine == NULL){
+    #####:   53:        return -1;
+        -:   54:    }
+        -:   55:
+        2:   56:    return 0;
+        -:   57:}
+        -:   58:
+        -:   59://< 分词 
+        -:   60://< @param wsg_mdl_path : 模型路径
+        -:   61://< @param word_dict_path : 外部词典路径
+        1:   62:int PreProcessor::create_wsg_engine(string wsg_mdl_path, 
+        -:   63:                                    string word_dict_path){
+        1:   64:    _wsg_engine = segmentor_create_segmentor(wsg_mdl_path.c_str(), word_dict_path.c_str());
+        1:   65:    if (_wsg_engine == NULL){
+        1:   66:        return -1;
+        -:   67:    }
+        -:   68:
+    #####:   69:    return 0;
+        -:   70:}
+        -:   71:
+        -:   72://< 词性标注
+        -:   73://< @param pos_mdl_path : 模型路径
+        2:   74:int PreProcessor::create_pos_engine(string pos_mdl_path){
+        2:   75:    _pos_engine = postagger_create_postagger(pos_mdl_path.c_str());
+        2:   76:    if (_pos_engine == NULL){
+    #####:   77:        return -1;
+        -:   78:    }
+        -:   79:
+        2:   80:    return 0;
+        -:   81:}
+        -:   82:
+        -:   83://< 词性标注
+        -:   84://< @param pos_mdl_path : 模型路径
+        -:   85://< @param pos_dict_path : 外部词性词典
+        1:   86:int PreProcessor::create_pos_engine(string pos_mdl_path, 
+        -:   87:                                    string pos_dict_path){
+        1:   88:    _pos_engine = postagger_create_postagger(pos_mdl_path.c_str(), pos_dict_path.c_str());
+        1:   89:    if (_pos_engine == NULL){
+        1:   90:        return -1;
+        -:   91:    }
+        -:   92:
+    #####:   93:    return 0;
+        -:   94:}
+        -:   95:
+        -:   96://< 命名实体识别
+        -:   97://< @param ner_mdl_path : 模型路径
+        3:   98:int PreProcessor::create_ner_engine(string ner_mdl_path){
+        3:   99:    _ner_engine = ner_create_recognizer(ner_mdl_path.c_str());
+        3:  100:    if (_ner_engine == NULL){
+        1:  101:        return -1;
+        -:  102:    }
+        -:  103:
+        2:  104:    return 0;
+        -:  105:}
+        -:  106:
+        -:  107://< 依存句法分析
+        -:  108://< @param pas_mdl_path : 模型路径
+        3:  109:int PreProcessor::create_pas_engine(string pas_mdl_path){
+        3:  110:    _pas_engine = parser_create_parser(pas_mdl_path.c_str());
+        3:  111:    if (_pas_engine == NULL){
+        1:  112:        return -1;
+        -:  113:    }
+        -:  114:
+        2:  115:    return 0;
+        -:  116:}
+        -:  117:
+        -:  118://< --------
+        -:  119://< 模型调用
+        -:  120://< --------
+        -:  121://< 分词
+        -:  122://< @param query : 待分词文本
+        -:  123://< @param ws_vec : 分词结果
+        2:  124:int PreProcessor::wordseg(string query, 
+        -:  125:                          vector<string>& ws_vec){
+        2:  126:    int len = 0;
+        2:  127:    len = segmentor_segment(_wsg_engine, query, ws_vec);
+        -:  128:
+        2:  129:    if (len < 0){
+        -:  130:        //< wordseg error.
+    #####:  131:        return -1;
+        -:  132:    }
+        -:  133:
+        2:  134:    return 0;
+        -:  135:}
+        -:  136:
+        -:  137://< 词性标注
+        -:  138://< @param ws_vec : 分词结果
+        -:  139://< @param pos_vec : 词性标注结果
+        2:  140:int PreProcessor::postag(vector<string>& ws_vec, 
+        -:  141:                         vector<string>& pos_vec){
+        2:  142:    int ret = 0;
+        2:  143:    ret = postagger_postag(_pos_engine, ws_vec, pos_vec);
+        -:  144:
+        2:  145:    if (ret < 0){
+        -:  146:        //< postag error.
+    #####:  147:        return -1;
+        -:  148:    }
+        -:  149:
+        2:  150:    return 0;
+        -:  151:}
+        -:  152:
+        -:  153://< 命名实体识别
+        -:  154://< @param ws_vec : 分词结果
+        -:  155://< @param pos_vec : 词性标注结果
+        -:  156://< @param ner_vec : 命名实体识别结果
+        2:  157:int PreProcessor::ner(vector<string>& ws_vec, 
+        -:  158:                      vector<string>& pos_vec, 
+        -:  159:                      vector<string>& ner_vec){
+        2:  160:    int ret = 0;
+        2:  161:    ret = ner_recognize(_ner_engine, ws_vec, pos_vec, ner_vec);
+        -:  162:
+        2:  163:    if (ret < 0){
+        -:  164:        //< ner error.
+    #####:  165:        return -1;
+        -:  166:    }
+        -:  167:
+        2:  168:    return 0;
+        -:  169:}
+        -:  170:
+        -:  171://< 依存句法分析
+        -:  172://< @param ws_vec : 分词结果
+        -:  173://< @param pos_vec : 词性标注结果
+        -:  174://< @param heads_vec : 结果依存弧 heads[i]代表第i个词的父亲节点的编号
+        -:  175://< @param pas_vec : 结果依存弧关系类型
+        2:  176:int PreProcessor::parse(vector<string>& ws_vec, 
+        -:  177:                        vector<string>& pos_vec, 
+        -:  178:                        vector<int>& heads_vec, 
+        -:  179:                        vector<string>& pas_vec){
+        2:  180:    int ret = 0;
+        2:  181:    ret = parser_parse(_pas_engine, ws_vec, pos_vec, heads_vec, pas_vec);
+        -:  182:
+        2:  183:    if (ret < 0){
+        -:  184:        //< parser error.
+    #####:  185:        return -1;
+        -:  186:    }
+        -:  187:
+        2:  188:    return 0;
+        3:  189:}
+        -:  190:
+        -:  191:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

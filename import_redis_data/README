@@ -1,0 +1,42 @@
+本目录包含导入数据到redis的一些脚本工具及词典数据
+词典数据见dict/music, dict/poem, dict/story
+
+一. 导入所有词典数据方法:
+    ./import_all.sh
+
+
+二. 方法: 单个文件导入
+        ./import_file_data.sh  词典文件  [前缀](例如,music_artist)
+       例如:
+        ./import_file_data.sh  artist music_artist
+
+        ****** 注意:导入之前,请先修改脚本最后redis-cli的位置;
+        ****** 若是系统redis,则不需要位置,直接修改成redis-cli即可
+
+三. 导入数据包括三个步骤介绍:
+ 1. 将某领域下的词典文件全部转成redis命令文件,例如对于music/title中的:
+	青花瓷
+   转成:
+   	set music_title_青 0
+	set music_title_青花 0
+	set music_title_青花瓷 1
+   对应脚本: python gen_db_cmd.py
+
+ 2. 将redis命令文件转成redis protocol文件,例如对于cmds/music/title中的:
+	set music_title_青 0
+   转成:
+   	*3	# 说明有3列
+	$3	# 第一列字符串长度为3
+	set	# 第一列字符串
+	$15	# 第二列的字符串长度为15,中文占3个长度,所以是15
+	music_title_青	# 第二列字符串
+	$1	# 第三列字符串长度为1
+	0	# 第三列字符串
+   对应脚本: python cmd2pipe.py
+
+ 3. 导入到redis中
+	对于步骤2得到的文件,将导入到redis-server中,其导入方式为:
+		cat 文件名 | redis-cli --pipe
+	对应脚本: import_file_data.sh
+
+

@@ -1,0 +1,38 @@
+File '../../regex_v1.3/src/redis_wrapper.cc'
+Lines executed:100.00% of 14
+Creating 'redis_wrapper.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/redis_wrapper.cc
+        -:    0:Graph:redis_wrapper.gcno
+        -:    0:Data:redis_wrapper.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <iostream>
+        -:    2:#include "redis_wrapper.h"
+        -:    3:using std::cout;
+        -:    4:using std::endl;
+        -:    5:
+        -:    6:namespace SemanticRegex{
+        -:    7:
+       20:    8:RedisWrapper::RedisWrapper(redisContext* con){
+       20:    9:	this->con = con;
+       20:   10:	pthread_mutex_init(&redis_mutex, NULL);
+       20:   11:}
+        -:   12:
+        3:   13:RedisWrapper::~RedisWrapper(){
+        3:   14:	redisFree(con);
+        3:   15:	pthread_mutex_destroy(&redis_mutex);
+        3:   16:}
+        -:   17:
+        -:   18:/*
+        -:   19: * 查询接口,先设置互斥锁
+        -:   20: * 再查询,然后释放互斥锁
+        -:   21: */
+       36:   22:redisReply* RedisWrapper::query_redis(const string& cmd){
+        -:   23:	redisReply *rp;
+       36:   24:	pthread_mutex_lock(&redis_mutex);
+       36:   25:	rp = (redisReply*)redisCommand(con, cmd.c_str());
+       36:   26:	pthread_mutex_unlock(&redis_mutex);
+       36:   27:	return rp;
+        -:   28:}
+        -:   29:
+        3:   30:}	// end of namespace SemanticRegex

@@ -1,0 +1,401 @@
+File '../../feat_extractor/me_feat/src/MEFeatExtractor.cpp'
+Lines executed:81.08% of 185
+Creating 'MEFeatExtractor.cpp.gcov'
+        -:    0:Source:../../feat_extractor/me_feat/src/MEFeatExtractor.cpp
+        -:    0:Graph:MEFeatExtractor.gcno
+        -:    0:Data:MEFeatExtractor.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: ClfFeatExtractor.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 三  1/24 15:42:10 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <string>
+        -:   10:#include <vector>
+        -:   11:#include <stdlib.h>
+        -:   12:#include "utils.h"
+        -:   13:#include "Feature.h"
+        -:   14:#include "MEFeatExtractor.h"
+        -:   15:#include "MeFeatErrorCode.h"
+        -:   16:#include "ul_log.h"
+        -:   17:#include "Configure.h"
+        -:   18:#include "spreg.h"
+        -:   19:#include "SluLog.h"
+        -:   20:
+        -:   21:using namespace std;
+        -:   22:using namespace utils;
+        -:   23:using namespace feature;
+        -:   24:
+        -:   25:using namespace hobotlog;
+        -:   26:LogModule * loginstance;
+        -:   27:
+        -:   28:namespace feat_extractor{
+        -:   29:
+        2:   30:extern "C" FeatExtractor* create_feat_extr(const string confpath,
+        -:   31:                                           PreProcessor* pre){
+        2:   32:    MEFeatExtractor* me_feat_extr = new MEFeatExtractor(confpath, pre);
+        2:   33:    return dynamic_cast<FeatExtractor *>(me_feat_extr);
+        -:   34:}
+        -:   35:
+        1:   36:extern "C" void delete_feat_extr(FeatExtractor* feat_extr){
+        1:   37:    MEFeatExtractor* me_feat_extr = dynamic_cast<MEFeatExtractor *>(feat_extr);
+        -:   38:    //delete me_feat_extr;
+        1:   39:    me_feat_extr = NULL;
+        1:   40:}
+        -:   41:
+        -:   42://< 构造函数
+       51:   43:MEFeatExtractor::MEFeatExtractor(const string confpath, 
+       51:   44:                                 PreProcessor* pre){
+       51:   45:    int ret = 0;
+       51:   46:    ret = init_conf(confpath, pre);
+       51:   47:    if (ret < 0){
+        -:   48:        //< error.
+    #####:   49:        cout << "failed to load me feat config file in" << confpath << endl;
+    #####:   50:        exit(-1) ;
+        -:   51:    } 
+        -:   52:	
+       51:   53:	loginstance->info("[SLU]: construct MEFeatExtractor success !" + confpath);
+        -:   54:	
+       51:   55:}
+        -:   56:
+        -:   57://< 析构函数
+        2:   58:MEFeatExtractor::~MEFeatExtractor(){
+        -:   59:    
+        2:   60:}
+        -:   61:
+        -:   62://< ltp初始化
+       51:   63:int MEFeatExtractor::init_ltp(PreProcessor* pre){
+       51:   64:    this->pre = pre;
+       51:   65:    if (pre == NULL){
+    #####:   66:        loginstance->error("[SLU]: Ltp pre is NULL");
+    #####:   67:        return ERR_MEFEAT_LTP_PRE_NULL;
+        -:   68:    }
+        -:   69:    
+       51:   70:    return 0;
+        -:   71:}
+        -:   72:
+        -:   73://< string2bool
+      153:   74:bool transform2bool(string str){
+      153:   75:    if (str == "TRUE"){
+       78:   76:        return true;
+        -:   77:    }
+        -:   78:    else 
+       75:   79:        return false;
+        -:   80:}
+        -:   81:
+        -:   82://< string2int
+      102:   83:int transform2int(string str){
+      102:   84:    int res = string2int(str);
+      102:   85:    if (res < 0){
+    #####:   86:        return 0;
+        -:   87:    } 
+      102:   88:    return res;
+        -:   89:}
+        -:   90:
+        -:   91://< conf初始化
+       51:   92:int MEFeatExtractor::init_conf(const string confpath, 
+        -:   93:                               PreProcessor* pre){
+       51:   94:    int ret = 0;
+        -:   95:
+       51:   96:    comcfg::Configure config;
+       51:   97:    ret = config.load("./", confpath.c_str());
+       51:   98:    if (ret < 0){
+    #####:   99:        cout << "failed to load me feat config file in" << confpath << endl;
+    #####:  100:        return ERR_MEFEAT_LOAD_CONFIG;
+        -:  101:    }
+        -:  102:
+        -:  103:    //init log
+        -:  104:    try {
+       51:  105:        string log_file = config["ME_FEAT_LOG_CONF"].to_cstr();
+       51:  106:		if(NULL == loginstance){
+        1:  107:			loginstance = new hobotlog::LogModule(log_file);
+        1:  108:			loginstance->info("[SLU]: load me feat log conf, and init loginstance success!");
+       51:  109:		}
+    =====:  110:    }catch(...){
+    =====:  111:        cout << "do not set log file in me feat conf: " << confpath << endl;
+    =====:  112:        return ERR_MEFEAT_NOT_SET_LOG_FILE;
+        -:  113:    }
+        -:  114:
+        -:  115:
+       51:  116:    ret = init_ltp(pre);
+       51:  117:    if (ret < 0){
+    #####:  118:        loginstance->error("[SLU]: failed to load LTP in me feat function init_conf()");
+    #####:  119:        return ret;
+        -:  120:    }
+        -:  121:
+        -:  122:    //< load
+        -:  123:    try {
+       51:  124:        int init_size = static_cast<int>(config["FEAT_EXTRACTOR"].size());
+       51:  125:        if (init_size != 1){
+    #####:  126:            loginstance->error("[SLU]: failed to load me feat config file: " + confpath + ", the FEAT_EXTRACTOR number is wrong");
+    #####:  127:            return ERR_MEFEAT_CONFIG_FEAT_NUM;
+        -:  128:        }
+        -:  129:        
+       51:  130:        this->use_q2feat = transform2bool(config["FEAT_EXTRACTOR"][0]["QUERY_FEAT"].to_cstr());
+       51:  131:        this->use_p2feat = transform2bool(config["FEAT_EXTRACTOR"][0]["PATTERN_FEAT"].to_cstr());
+       51:  132:        this->use_wsg = transform2bool(config["FEAT_EXTRACTOR"][0]["WSG_FEAT"].to_cstr());
+       51:  133:        this->start = transform2int(config["FEAT_EXTRACTOR"][0]["NGRAM_START"].to_cstr());
+       51:  134:        this->end = transform2int(config["FEAT_EXTRACTOR"][0]["NGRAM_END"].to_cstr());
+        -:  135:
+        -:  136:        //< transform
+    =====:  137:    } catch(...) {
+    =====:  138:        loginstance->error("[SLU]: failed to load me feat config file: " + confpath + ", conf content is wrong");
+    =====:  139:        return ERR_MEFEAT_CONFIG_CONTENT;
+        -:  140:    }
+        -:  141:
+       51:  142:    loginstance->info("[SLU]: load me feat config file success！");
+        -:  143:
+       51:  144:    return 0;
+        -:  145:}
+        -:  146:
+        -:  147://< 特征提取
+        -:  148://< @brief get_feat
+        -:  149://< @param feats:返回的特征值
+       10:  150:int MEFeatExtractor::get_feat(feature::Feature& feats, 
+        -:  151:                              const string query){
+       10:  152:    int ret = 0;
+        -:  153:    //< feature;
+       10:  154:    vector<string> feature_vec;
+        -:  155:    //< query 切分结果
+       20:  156:    vector<string> q2ws_vec;
+        -:  157:    //< pattern 切分结果
+       20:  158:    vector<string> p2ws_vec;
+        -:  159:
+        -:  160:    //< 如果使用query feat
+       10:  161:    if (use_q2feat){
+        -:  162:        //< 分词作为基本单元
+        5:  163:        if (use_wsg){
+        -:  164:            //< 获取query&分词失败
+        3:  165:            ret = get_wsg(get_query(query), q2ws_vec);
+        3:  166:            if ( ret < 0){
+    #####:  167:                loginstance->error("[SLU]: failed to get wsg when get me feat use query feat!query: " + query);
+    #####:  168:                return ret;
+        -:  169:            }
+        -:  170:        }
+        -:  171:        //< 单字切分作为基本单元
+        -:  172:        else {
+        -:  173:            //< 获取query&切分失败
+        2:  174:            ret = get_sip(get_query(query), q2ws_vec);
+        2:  175:            if ( ret < 0){
+    #####:  176:                loginstance->error("[SLU]: failed to get sip when get me feat use query feat!query: " + query);
+    #####:  177:                return ret;
+        -:  178:            }
+        -:  179:        }
+        -:  180:        //< 提取n-gram特征
+        5:  181:        ret = get_ngram(feature_vec, q2ws_vec, start, end);
+        5:  182:        if ( ret < 0){
+        1:  183:            loginstance->error("[SLU]: failed to get ngram feature when get me feat use query feat!query: " + query);
+        1:  184:            return ret;
+        -:  185:        }
+        -:  186:    }
+        9:  187:    if (use_p2feat){
+        -:  188:        //< 获取pattern&分词失败
+        5:  189:        vector<string> pattern_vec = get_pattern(query);
+       12:  190:        for (size_t i = 0; i < pattern_vec.size(); i++){
+        7:  191:            if (pattern_vec[i][0] == '[' && pattern_vec[i][pattern_vec[i].length()-1] == ']'){
+        3:  192:                p2ws_vec.push_back(pattern_vec[i]);
+        -:  193:            }
+        -:  194:            else {
+        -:  195:                //< 同query to feat
+        4:  196:                vector<string> ws_vec;
+        4:  197:                if (use_wsg){
+        2:  198:                    ret = get_wsg(pattern_vec[i], ws_vec);
+        2:  199:                    if (ret < 0){
+    #####:  200:                        loginstance->error("[SLU]: failed to get wsg when get me feat use pattern feat!query: " + query);
+    #####:  201:                        return ret;
+        -:  202:                    }
+        -:  203:                }
+        -:  204:                else {
+        2:  205:                    ret = get_sip(pattern_vec[i], ws_vec);
+        2:  206:                    if (ret < 0){
+    #####:  207:                        loginstance->error("[SLU]: failed to get sip when get me feat use pattern feat!query: " + query);
+    #####:  208:                        return ret;
+        -:  209:                    }
+        -:  210:                }
+        -:  211:    
+        -:  212:                //< 追加到p2ws_vec中
+        4:  213:                p2ws_vec.insert(p2ws_vec.end(), ws_vec.begin(), ws_vec.end());
+        -:  214:            }
+        -:  215:        }
+        -:  216:
+        -:  217:        //< 提取n-gram特征
+        5:  218:        ret = get_ngram(feature_vec, p2ws_vec, start, end);
+        5:  219:        if (ret < 0){
+        1:  220:            loginstance->error("[SLU]: failed to get ngram feature when get me feat use pattern feat!query: " + query);
+        1:  221:            return ret;
+        4:  222:        }
+        -:  223:    }
+        -:  224:
+        -:  225:    //< 添加特征到feats
+        8:  226:    ret = feats.add_feature(feature_vec);
+        8:  227:    if(ret < 0){
+    #####:  228:        loginstance->error("[SLU]: failed to add me feature!query: " + query);
+    #####:  229:        return ERR_ADD_ME_FEATURE;
+        -:  230:    }
+        -:  231:
+        8:  232:    loginstance->info("[SLU]: get me feature and add feature success！query: " + query);
+        -:  233:
+       18:  234:    return 0;
+        -:  235:}
+        -:  236:
+        -:  237://< 分词
+        -:  238://< @param query : 待分词句子
+        -:  239://< @param ws_vec : 分词结果
+        5:  240:int MEFeatExtractor::get_wsg(string query, 
+        -:  241:                             vector<string>& ws_vec){
+        5:  242:    int ret = 0;
+        5:  243:    if (pre == NULL){
+        -:  244:        //< PreProcessor not init;
+    #####:  245:        loginstance->error("[SLU]: PreProcessor is null!");
+    #####:  246:        return ERR_PREPROCESSOR_NULL;
+        -:  247:    }
+        5:  248:    ret = pre->wordseg(query, ws_vec);
+        5:  249:    if (ret < 0){
+        -:  250:        //< wordseg error;
+    #####:  251:        loginstance->error("[SLU]: failed to wordseg!");
+    #####:  252:        return ERR_WORD_SEGMENTATION;
+        -:  253:    }
+        -:  254:
+        5:  255:    return 0;
+        -:  256:}
+        -:  257:
+        -:  258://< 单字切分
+        -:  259://< @param query : 待切分句子
+        -:  260://< @param ws_vec : 切分结果
+       14:  261:int MEFeatExtractor::get_sip(string query, 
+        -:  262:                             vector<string>& sip_vec){
+       14:  263:    if (!strSplit2simple(query, sip_vec)){
+        -:  264:        //< split str error;
+    #####:  265:        loginstance->error("[SLU]: failed to split query!");
+    #####:  266:        return ERR_SPLIT_TO_SIMPLE_WOED;
+        -:  267:    }
+        -:  268:
+       14:  269:    return 0;
+        -:  270:}
+        -:  271:
+        -:  272://< get ngram
+        -:  273://< @param res : 返回结果
+        -:  274://< @param ws_vec : 待处理数据
+        -:  275://< @param start - end n元长度范围
+       10:  276:int MEFeatExtractor::get_ngram(vector<string>& res, 
+        -:  277:                               vector<string> ws_vec, 
+        -:  278:                               const size_t start, 
+        -:  279:                               const size_t end){
+        -:  280:    //< 取start - end长度之间length
+       40:  281:    for (size_t len = start; len <= end; len++){
+        -:  282:        //< 对于每个length
+        -:  283:        //< 给出vector中满足条件的所有组合
+       90:  284:        for (size_t i = 0; i+len-1 < ws_vec.size(); i++){
+       60:  285:            string str;
+        -:  286:            //< 一个组合
+      224:  287:            for (size_t j = i; j < i+len; j++){
+      164:  288:                str += ws_vec[j];
+        -:  289:            }
+        -:  290:            //< 添加到vector
+       60:  291:            res.push_back(str);
+       60:  292:        }
+        -:  293:    }
+        -:  294:
+       10:  295:    if (res.size() == 0){
+        -:  296:        //< something error;
+        2:  297:        loginstance->error("[SLU]: failed to get me ngram feature!");
+        2:  298:        return ERR_GET_NGRAM_FEATURE;
+        -:  299:    }
+        -:  300:
+        8:  301:    return 0;
+        -:  302:}
+        -:  303:
+        -:  304://< get query
+        -:  305://< @param query : input
+        -:  306://< case: [刘德华:artist]的歌放一下 => 刘德华的歌放一下
+        5:  307:string MEFeatExtractor::get_query(string query){
+        5:  308:    string res_query;
+        -:  309:
+        -:  310:    //< 先单字切分防止出现汉字某些字节与字符冲突导致错误
+       10:  311:    vector<string> ws_vec;
+        5:  312:	int ret = get_sip(query, ws_vec);
+        5:  313:    if (ret < 0){
+    #####:  314:        return "";
+        -:  315:    }
+        -:  316:
+        -:  317:    //< get raw_query
+        5:  318:    bool flag = false;
+       39:  319:    for (size_t i = 0; i < ws_vec.size(); i++){
+       34:  320:        if (ws_vec[i] == "["){
+        4:  321:            flag = true;
+        -:  322:        }
+       30:  323:        else if (ws_vec[i] == ":" && flag){
+        4:  324:            size_t j = i;
+       34:  325:            while (j < ws_vec.size() && ws_vec[j] != "]"){
+       26:  326:                j++;
+        -:  327:            }
+        4:  328:            if (j != ws_vec.size()){
+        4:  329:                i = j;
+        -:  330:            }
+        -:  331:        }
+        -:  332:        else {
+       26:  333:            res_query += ws_vec[i];
+        -:  334:        }
+        -:  335:    }
+        -:  336:
+       10:  337:    return res_query;
+        -:  338:}
+        -:  339:
+        -:  340://< get pattern
+        -:  341://< @param query : input
+        -:  342://< vector<string> : output
+        5:  343:vector<string> MEFeatExtractor::get_pattern(string query){
+        5:  344:    vector<string> res_vec;
+       10:  345:    string chr;
+        -:  346:
+        -:  347:    //< 先单字切分防止出现汉字某些字节与字符冲突导致错误
+       10:  348:    vector<string> ws_vec;
+        5:  349:    int ret = get_sip(query, ws_vec);
+        5:  350:    if (ret < 0){
+    #####:  351:        return res_vec;
+        -:  352:    }
+        -:  353:
+        -:  354:    //bool flag = false;
+       25:  355:    for (size_t i = 0; i < ws_vec.size(); i++){
+       20:  356:        if (ws_vec[i] == "["){
+        -:  357:            //< 上一个短句追加到res_vec;
+        3:  358:            if (chr != ""){
+        2:  359:                res_vec.push_back(chr);
+        2:  360:                chr = "";
+        -:  361:            }
+        -:  362:
+        -:  363:            //flag = true;
+        3:  364:            chr += ws_vec[i];
+        3:  365:            size_t j = i+1;
+       15:  366:            while(j < ws_vec.size() && ws_vec[j] != ":"){
+        9:  367:                j++;
+        -:  368:            }
+        3:  369:            if (j != ws_vec.size()){
+        3:  370:                i = j+1;
+        -:  371:            }
+       19:  372:            for ( ; i < ws_vec.size() && ws_vec[i] != "]"; i++){
+       16:  373:                chr += ws_vec[i];
+        -:  374:            }
+        3:  375:            chr += ws_vec[i];
+        -:  376:            
+        -:  377:            //< 当前label信息追加到res_vec
+        3:  378:            res_vec.push_back(chr);
+        3:  379:            chr = "";
+        -:  380:        }
+        -:  381:        else {
+       17:  382:            chr += ws_vec[i]; 
+        -:  383:        }
+        -:  384:    }
+        5:  385:    if (chr != ""){
+        2:  386:        res_vec.push_back(chr);
+        -:  387:    }
+        -:  388:
+        5:  389:    return res_vec;
+        -:  390:}
+        -:  391:
+        3:  392:} //< namespace feat_extractor;
+        -:  393:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

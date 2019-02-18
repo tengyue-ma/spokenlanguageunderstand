@@ -1,0 +1,331 @@
+File '../../classifier/clf_nn/src/NNClassifier.cpp'
+Lines executed:71.69% of 166
+去掉判空及日志后：91.8% of 122
+Creating 'NNClassifier.cpp.gcov'
+        -:    0:Source:../../classifier/clf_nn/src/NNClassifier.cpp
+        -:    0:Graph:NNClassifier.gcno
+        -:    0:Data:NNClassifier.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: NNClassifier.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: Fri 09 Nov 2018 02:45:12 PM CST
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <fstream>
+        -:   10:#include "NNClassifier.h"
+        -:   11:#include "NNErrorCode.h"
+        -:   12:#include "utils.h"
+        -:   13:#include "Classifier.h"
+        -:   14:#include "ul_log.h"
+        -:   15:#include "Configure.h"
+        -:   16:#include "spreg.h"
+        -:   17:#include "SluLog.h"
+        -:   18:#include "Feature.h"
+        -:   19:
+        -:   20:using namespace std;
+        -:   21:using namespace utils;
+        -:   22:using namespace hobotlog;
+        -:   23:using namespace tensorflow;
+        -:   24:using namespace tensorflow::ops;
+        -:   25:
+        -:   26://< log定义
+        -:   27:LogModule * loginstance = NULL;
+        -:   28:
+        -:   29:namespace classify{
+        -:   30:    
+        2:   31:extern "C" Classifier* create_classifier(const string model_conf_path, const string log_path){
+        2:   32:    NNClassifier* nn_clf = new NNClassifier(model_conf_path, log_path);
+        2:   33:    return dynamic_cast<Classifier *>(nn_clf);
+        -:   34:}
+        -:   35:
+        2:   36:extern "C" void delete_classifier(Classifier* clf){
+        2:   37:    NNClassifier* nn_clf = dynamic_cast<NNClassifier *>(clf);
+        -:   38:    //< delete nn_clf;
+        2:   39:    nn_clf = NULL;
+        2:   40:}
+        -:   41:
+        -:   42://< 模型配置读取
+        3:   43:int NNClassifier::load_model_conf(string model_conf_path, string log_path){
+        3:   44:    comcfg::Configure config_log;
+        3:   45:    int ret = config_log.load("./", log_path.c_str());
+        3:   46:    if (ret < 0){
+    #####:   47:        cout << "failed to load log conf in " << log_path << endl;
+    #####:   48:        exit(-1);
+        -:   49:    }
+        -:   50:
+        -:   51:    //< init log
+        -:   52:    try {
+        3:   53:        string log_file = config_log["NN_CLF_LOG_CONF"].to_cstr();
+        3:   54:        if (loginstance == NULL){
+    #####:   55:            loginstance = new LogModule(log_file);
+        3:   56:        }
+    =====:   57:    }catch(...){
+    =====:   58:        cout << "failed to load log config." << endl;
+    =====:   59:        exit(-1);
+        -:   60:    }
+        -:   61:
+        6:   62:    comcfg::Configure config;
+        3:   63:    ret = config.load("./", model_conf_path.c_str());
+        3:   64:    if (ret < 0){
+    #####:   65:        loginstance->error("[SLU]: load nn model conf error.");
+    #####:   66:        return ERR_NN_MODEL_CONF;
+        -:   67:    }
+        -:   68:    //< init model configure
+        -:   69:    try {
+        3:   70:        int init_size = static_cast<int>(config["NN_MODEL_CONF"].size());
+        3:   71:        if (init_size != 1){
+    #####:   72:            loginstance->error("[SLU]: failed to load nn model conf.");
+    #####:   73:            return ERR_NN_MODEL_CONF; 
+        -:   74:        }
+        -:   75:
+        -:   76:        int classes_size;
+        -:   77:        try {
+        3:   78:            classes_size = static_cast<int>(config["NN_MODEL_CONF"][0]["CLASS_NAME"].size());
+    =====:   79:        } catch(...){
+    =====:   80:            classes_size = 0;
+        -:   81:        }
+        -:   82:
+        -:   83:        //< 读domain
+       18:   84:        for (int i = 0; i < classes_size; i++){
+       15:   85:            string name = config["NN_MODEL_CONF"][0]["CLASS_NAME"][i].to_cstr();
+       15:   86:            this->class_name_map[i] = name;
+       15:   87:        }
+        -:   88:
+        3:   89:        this->default_class = config["NN_MODEL_CONF"][0]["DEFAULT_CLASS"].to_cstr();
+        3:   90:        this->input_name = config["NN_MODEL_CONF"][0]["INPUT_NAME"].to_cstr();
+        3:   91:        this->keepprob = config["NN_MODEL_CONF"][0]["KEEP_PROB"].to_cstr();
+        3:   92:        this->keep_prob_value = string2float(config["NN_MODEL_CONF"][0]["KEEP_PROB_VALUE"].to_cstr());
+        3:   93:        this->output_name = config["NN_MODEL_CONF"][0]["OUTPUT_NAME"].to_cstr();
+        3:   94:        this->td_type = config["NN_MODEL_CONF"][0]["TD_TYPE"].to_cstr();
+        -:   95:
+        -:   96:        //< 读模型
+        3:   97:        string graph_path = config["NN_MODEL_CONF"][0]["GRAPH_PATH"].to_cstr();
+        6:   98:        string checkpoint_path = config["NN_MODEL_CONF"][0]["CHECKPOINT_PATH"].to_cstr();
+        -:   99:            
+        -:  100:        //< create session
+        3:  101:        this->session = NewSession(SessionOptions());
+        3:  102:        if (this->session == nullptr){
+    #####:  103:            loginstance->error("[SLU]: could not create TensorFlow session");
+        -:  104:
+    #####:  105:            return ERR_NOT_CREATE_SESSION;
+        -:  106:        }
+        -:  107:
+        -:  108:        //< load graph
+        6:  109:        MetaGraphDef graph_def;
+        6:  110:        auto status = ReadBinaryProto(Env::Default(), graph_path, &graph_def);
+        3:  111:        if (!status.ok()){
+    #####:  112:            loginstance->error("[SLU]: error reading graph definition from " + graph_path + " : " + status.ToString());
+        -:  113:
+    #####:  114:            return ERR_LOAD_GRAPH;
+        -:  115:        }
+        -:  116:        
+        -:  117:        //< add graph to session;
+        3:  118:        status = this->session->Create(graph_def.graph_def());
+        3:  119:        if (!status.ok()){
+    #####:  120:            loginstance->error("[SLU]: error creating graph: " + status.ToString());
+        -:  121:
+    #####:  122:            return ERR_GRAPH_CREAT;
+        -:  123:        }
+        -:  124:
+        -:  125:        //< load model weights from saved checkpoint
+        6:  126:        Tensor checkpoint_path_tensor(DT_STRING, TensorShape());
+        3:  127:        checkpoint_path_tensor.scalar<std::string>()() = checkpoint_path;
+       21:  128:        status = this->session->Run({
+       18:  129:            {graph_def.saver_def().filename_tensor_name(), checkpoint_path_tensor}, }, {}, {graph_def.saver_def().restore_op_name()}, nullptr);
+        3:  130:        if (!status.ok()){
+    #####:  131:            loginstance->error("[SLU]: error loading checkpoint from " + checkpoint_path + " : " + status.ToString());
+        -:  132:
+    #####:  133:            return ERR_LOAD_CHECKPOINT;
+        3:  134:        }
+        -:  135:
+    =====:  136:    } catch(...) {
+    =====:  137:        loginstance->error("[SLU]: failed to load nn model conf.");
+    =====:  138:        return ERR_NN_MODEL_CONF; 
+        -:  139:    }
+        -:  140:
+        6:  141:    loginstance->info("[SLU]: load model conf success.");
+        -:  142:
+        6:  143:    return 0;
+        -:  144:}
+        -:  145:
+        -:  146://< 构造函数
+        3:  147:NNClassifier::NNClassifier(const string model_conf_path, const string log_path){
+        3:  148:    int ret = load_model_conf(model_conf_path, log_path);
+        3:  149:    if (ret < 0){
+    #####:  150:        cout << "load_model_conf error." << endl;
+        -:  151:
+    #####:  152:        exit(-1);
+        -:  153:    }
+        3:  154:}
+        -:  155:
+        -:  156://< 析构函数
+        2:  157:NNClassifier::~NNClassifier(){
+        -:  158:    //< delete
+        2:  159:}
+        -:  160:
+        -:  161://< 对外接口
+        1:  162:int NNClassifier::classify(const string query, vector<std::pair<string, float> >& class_name, feat_extractor::FeatExtractor* feat_ext){
+        -:  163:    //< action1
+        1:  164:    feature::Feature feat;
+        1:  165:    feat_ext->get_feat(feat, query);
+        -:  166:    //< 解码
+        2:  167:    vector<vector<float> > tensor;
+        1:  168:    int ret = decode_feat(feat, tensor);
+        1:  169:    if (ret < 0){
+    #####:  170:        loginstance->error("[SLU]: feature to tensor error.");
+        -:  171:
+    #####:  172:        return ERR_NN_DECODE;
+        -:  173:    }
+        -:  174:   
+        -:  175:
+        -:  176:    //< action2
+        2:  177:    vector<std::pair<int, float> > class_idx;
+        1:  178:    ret = classify(tensor, class_idx);
+        1:  179:    if (ret < 0){
+    #####:  180:        loginstance->error("[SLU]: NN model classify error.");
+        -:  181:
+    #####:  182:        return ERR_NN_CLASSIFY;
+        -:  183:    }
+        -:  184:
+        -:  185:    //< action3
+        2:  186:    vector<std::pair<string, float> > classify_res;
+        2:  187:    for (size_t i = 0; i < class_idx.size(); i++){
+        1:  188:        string name;
+        1:  189:        get_class_name(class_idx[i].first, name);
+        1:  190:        classify_res.push_back(std::pair<string, float>(name, class_idx[i].second));
+        1:  191:    }
+        -:  192:    
+        1:  193:    class_name = classify_res;
+        -:  194:
+        2:  195:    return 0;
+        -:  196:}
+        -:  197:
+        -:  198://< 调用模型返回类别结果
+        1:  199:int NNClassifier::classify(vector<vector<float> > tensor, vector<std::pair<int, float> >& class_idx){
+        -:  200:    //< 必须在这个位置
+        1:  201:    if (tensor.size() <= 0){
+    #####:  202:        loginstance->error("[SLU]: tensor error. size == 0");
+        -:  203:
+    #####:  204:        return ERR_TENSOR;
+        -:  205:    }
+        -:  206:
+        -:  207:    //< 构造输入
+        1:  208:    vector<std::pair<string, Tensor> > input;
+        -:  209:    
+        2:  210:    tensorflow::Tensor keep_prob(tensorflow::DT_FLOAT, tensorflow::TensorShape());
+        1:  211:    keep_prob.scalar<float>()() = keep_prob_value;
+        -:  212:    
+        1:  213:    int tensor_x = tensor.size();
+        1:  214:    int tensor_y = tensor[0].size();
+        -:  215:
+        -:  216:    //< 转置
+        1:  217:    bool flag = true; //< true竖列 false横列
+        1:  218:    if (tensor_y == 1){
+        1:  219:        tensor_y = tensor_x;
+        1:  220:        tensor_x = 1;
+        1:  221:        flag = false; 
+        -:  222:    }
+        -:  223:    //< 类型判断
+        1:  224:    if (this->td_type == "INT32"){
+        1:  225:        tensorflow::Tensor input_tensor(tensorflow::DT_INT32, tensorflow::TensorShape({tensor_x, tensor_y}));
+        1:  226:        auto input_tensor_mapped = input_tensor.tensor<int, 2>();
+        2:  227:        for (size_t i = 0; i < tensor_x; i++){
+       51:  228:            for (size_t j = 0; j < tensor_y; j++){
+       50:  229:                if (flag){
+    #####:  230:                    input_tensor_mapped(i, j) = int(tensor[i][j]);
+        -:  231:                }
+        -:  232:                else {
+       50:  233:                    input_tensor_mapped(i, j) = int(tensor[j][i]);
+        -:  234:                }
+        -:  235:            }
+        -:  236:        }
+        -:  237:            
+        2:  238:        input = {
+        -:  239:            {this->input_name, input_tensor},
+        -:  240:            {this->keepprob, keep_prob},
+        3:  241:        };
+        -:  242:    }
+    #####:  243:    else if (this->td_type == "FLOAT"){
+    #####:  244:        tensorflow::Tensor input_tensor(tensorflow::DT_FLOAT, tensorflow::TensorShape({tensor_x, tensor_y}));
+    #####:  245:        auto input_tensor_mapped = input_tensor.tensor<float, 2>();
+    #####:  246:        for (size_t i = 0; i < tensor_x; i++){
+    #####:  247:            for (size_t j = 0; j < tensor_y; j++){
+    #####:  248:                if (flag){
+    #####:  249:                    input_tensor_mapped(i, j) = tensor[i][j];
+        -:  250:                }
+        -:  251:                else {
+    #####:  252:                    input_tensor_mapped(i, j) = tensor[j][i];
+        -:  253:                }
+        -:  254:            }
+        -:  255:        }
+        -:  256:            
+    #####:  257:        input = {
+        -:  258:            {this->input_name, input_tensor},
+        -:  259:            {this->keepprob, keep_prob},
+    #####:  260:        };
+        -:  261:    }
+        -:  262:    
+        -:  263:    //< 构造输出
+        2:  264:    vector<tensorflow::Tensor> output;
+        -:  265:
+        -:  266:    //< Run
+        2:  267:    auto status = this->session->Run(input, {output_name}, {}, &output);
+        1:  268:    if (!status.ok()){
+    #####:  269:        loginstance->error("[SLU]: session run error.");
+        -:  270:
+    #####:  271:        return ERR_SESSION_RUN;
+        -:  272:    }
+        -:  273:
+        -:  274:    int best_res;
+        1:  275:    if (output.size() > 0){
+        1:  276:        auto output_y = output[0].flat<int64>();
+        1:  277:        best_res = static_cast<int>(output_y(0));
+        -:  278:    }
+        -:  279:    else {
+    #####:  280:        loginstance->error("[SLU]: session run result error.");
+    #####:  281:        return ERR_SESSION_RES;
+        -:  282:    }
+        -:  283:
+        2:  284:    vector<std::pair<int, float> > res_vec;
+        1:  285:    res_vec.push_back(std::pair<int, float>(best_res, 1.0));
+        -:  286:
+        1:  287:    class_idx = res_vec;
+        -:  288:
+        2:  289:    return 0;
+        -:  290:}
+        -:  291:
+        -:  292://< 获取类别名称结果
+        1:  293:int NNClassifier::get_class_name(int class_idx, string& class_name){
+        1:  294:    class_name = this->class_name_map[class_idx];
+        1:  295:    if (class_name == ""){
+    #####:  296:        class_name = default_class;
+        -:  297:    }
+        -:  298:
+        1:  299:    return 0;
+        -:  300:}
+        -:  301:
+        -:  302://< feats解码 tensor
+        1:  303:int NNClassifier::decode_feat(feature::Feature feat, vector<vector<float> >& tensor){
+        1:  304:    vector<vector<float> > tensor_vec;
+       51:  305:    for (size_t i = 0; i < feat.feats.size(); i++){
+       50:  306:        vector<float> feat_vec;
+      100:  307:        vector<string> feat_str_vec;
+       50:  308:        strSplitbysep(feat.feats[i], feat_str_vec, " ");
+      100:  309:        for (int j = 0; j < feat_str_vec.size(); j++){
+       50:  310:            float num = string2float(feat_str_vec[j]);
+       50:  311:            feat_vec.push_back(num);
+        -:  312:        }
+       50:  313:        tensor_vec.push_back(feat_vec);
+       50:  314:    }
+        1:  315:    tensor = tensor_vec;
+        -:  316:
+        1:  317:    return 0;
+        -:  318:}
+        -:  319:
+        3:  320:} //< namespace classify
+        -:  321:
+        -:  322:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

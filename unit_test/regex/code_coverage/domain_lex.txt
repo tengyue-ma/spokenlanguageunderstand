@@ -1,0 +1,882 @@
+File '../../regex_v1.3/src/domain_lex.cc'
+Lines executed:78.84% of 553
+Creating 'domain_lex.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/domain_lex.cc
+        -:    0:Graph:domain_lex.gcno
+        -:    0:Data:domain_lex.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <sys/stat.h>
+        -:    2:#include <unistd.h>
+        -:    3:#include <dirent.h>
+        -:    4:#include <stdlib.h>
+        -:    5:#include <string>
+        -:    6:
+        -:    7:#include <ctime>
+        -:    8:#include <iostream>
+        -:    9:#include <fstream>
+        -:   10:#include <cstring>
+        -:   11:#include <algorithm>
+        -:   12:#include <set>
+        -:   13:#include <queue>
+        -:   14:#include <vector>
+        -:   15:
+        -:   16:#include "utils.h"
+        -:   17:#include "nfa.h"
+        -:   18:#include "group.h"
+        -:   19:#include "domain_lex.h"
+        -:   20:#include "expression.h"
+        -:   21:#include "variable.h"
+        -:   22:#include "thread_pool.h"
+        -:   23:
+        -:   24:using std::queue;
+        -:   25:using std::set;
+        -:   26:using std::ifstream;
+        -:   27:using std::cout;
+        -:   28:using std::endl;
+        -:   29:using std::ostream;
+        -:   30:using std::vector;
+        -:   31:using namespace progschj;
+        -:   32:
+        -:   33:namespace SemanticRegex{
+        -:   34:
+        -:   35:extern NFA* build_NFA(const char*, map<string, Variable*>&, bool expression);
+        -:   36:
+      120:   37:DomainLex::DomainLex(const string& name, const string& lex_dir){
+      119:   38:	wrd_max_len = 0;
+      119:   39:	lex_dir_ = lex_dir;
+      119:   40:    field_name_ = name;
+      120:   41:    list_file(lex_dir);
+      240:   42:    for(size_t i=0; i != files_.size(); ++i){
+      120:   43:        process_file(files_[i]);
+        -:   44:    }
+      120:   45:    sort_expr();
+      120:   46:}
+        -:   47:
+       34:   48:DomainLex::~DomainLex(){
+       17:   49:    map<string, Variable*>::iterator iter;
+      190:   50:    for(iter=map_var_.begin(); iter!=map_var_.end(); ++iter){
+      173:   51:        delete iter->second;
+        -:   52:    }
+        -:   53:    
+      143:   54:    for(size_t i=0; i!=vec_expr_.size(); ++i){
+      126:   55:        delete vec_expr_[i];
+        -:   56:    }
+       17:   57:}
+        -:   58:
+       18:   59:string get_slot_index(const string& name){
+       18:   60:	string idx = "";
+       18:   61:	for(size_t i=name.size()-1; i>0; i--){
+       18:   62:		if(name[i]>=48 && name[i]<=57)
+    #####:   63:			idx += name[i];
+       18:   64:		else if(name[i] == '_')
+    #####:   65:			break;
+        -:   66:		else
+       18:   67:			return "";
+        -:   68:	}
+    #####:   69:	return idx;
+        -:   70:}
+        -:   71:
+        6:   72:string modify_name(string name, string idx){
+        6:   73:	string old_idx = get_slot_index(name);
+        6:   74:	if(old_idx != ""){
+    #####:   75:		name = name.substr(0, name.size()-old_idx.size());
+        -:   76:	}
+        6:   77:	if(name.back() == '_')
+    #####:   78:		name = name.substr(0, name.size()-1);
+        6:   79:	return name + "_" + idx;
+        -:   80:}
+        -:   81:
+        6:   82:bool str_gt_str(const string& str1, const string& str2){
+        6:   83:	if(str1.size() > str2.size())
+    #####:   84:		return true;
+        6:   85:	else if(str1.size() < str2.size())
+        6:   86:		return false;
+    #####:   87:	return str1>str2;
+        -:   88:}
+        -:   89:
+        3:   90:void merge_semantics(Semantic* sem1, const Semantic* sem2){
+        -:   91:	//< 遍历sem1中已经有的slot的最大下标
+        3:   92:	string max_idx = "0";
+        3:   93:	for(size_t i=0; i<sem1->slots.size(); i++){
+    #####:   94:		string name = sem1->slots[i]->name;
+    #####:   95:		string idx = get_slot_index(name);
+    #####:   96:		if(str_gt_str(idx, max_idx))
+    #####:   97:			max_idx = idx;
+    #####:   98:	}
+        3:   99:	max_idx = Utils::uint2str(Utils::str2uint(max_idx)+1);
+        -:  100:	
+        -:  101:	//< 去重判断
+        6:  102:	map<string, vector<string> > idx_slots_map;
+        3:  103:	for(size_t i=0; i<sem1->slots.size(); i++){
+    #####:  104:		string name = sem1->slots[i]->name;
+    #####:  105:		string idx = get_slot_index(name);
+    #####:  106:		string slotname = name.substr(0, name.size()-idx.size()-1);
+    #####:  107:		string slotvalue = sem1->slots[i]->value;
+    #####:  108:		string slot = slotname + " = " + slotvalue;
+    #####:  109:		if(idx_slots_map.find(idx) == idx_slots_map.end()){
+    #####:  110:			idx_slots_map[idx] = vector<string>();
+        -:  111:		}
+    #####:  112:		idx_slots_map[idx].push_back(slot);
+    #####:  113:	}
+        -:  114:
+        6:  115:	vector<string> sem2_slots;
+        9:  116:	for(size_t i=0; i<sem2->slots.size(); i++){
+        6:  117:		string name = sem2->slots[i]->name;
+       12:  118:		string idx = get_slot_index(name);
+       12:  119:		string slotname = name.substr(0, name.size()-idx.size()-1);
+       12:  120:		string slotvalue = sem2->slots[i]->value;
+       12:  121:		string slot = slotname + " = " + slotvalue;
+        6:  122:		sem2_slots.push_back(slot);
+        6:  123:	}
+        3:  124:	std::sort(sem2_slots.begin(), sem2_slots.end());
+        -:  125:
+        3:  126:	map<string, vector<string> >::iterator iter;
+        3:  127:	for(iter=idx_slots_map.begin(); iter!=idx_slots_map.end(); iter++) {
+    #####:  128:		std::sort(iter->second.begin(), iter->second.end());
+    #####:  129:		if(sem2_slots == iter->second)
+        3:  130:			return;
+        -:  131:	}
+        -:  132:
+        -:  133:	//< 将sem2中的所有slot拼接到sem1中
+        9:  134:	for(size_t i=0; i<sem2->slots.size(); i++){
+        6:  135:		string name  = sem2->slots[i]->name;
+       12:  136:		string value = sem2->slots[i]->value;
+        6:  137:		int start = sem2->slots[i]->start;
+        6:  138:		int end   = sem2->slots[i]->end;
+       12:  139:		string idx = get_slot_index(name);
+        6:  140:		if(str_gt_str(idx, max_idx))
+    #####:  141:			sem1->add_slot(name, value, start, end);
+        -:  142:		else
+        6:  143:			sem1->add_slot(modify_name(name, max_idx), value, start, end);
+        9:  144:	}
+        -:  145:	
+        -:  146:}
+        -:  147:
+        -:  148:/*
+        -:  149:ostream& operator<<(ostream& out, const Semantic& sem){
+        -:  150:	out << "  domain: " << sem.domain << endl;
+        -:  151:	out << "  intent: " << sem.intent << endl;
+        -:  152:	out << "  slots:" << endl;
+        -:  153:	for(size_t i=0; i<sem.slots.size(); i++){
+        -:  154:		out << "    " << sem.slots[i]->name << " : " << sem.slots[i]->value << endl;
+        -:  155:	}
+        -:  156:	return out;
+        -:  157:}
+        -:  158:*/
+        -:  159:
+        3:  160:vector<Semantic*> DomainLex::split_match(const string& raw_sentence,
+        -:  161:										 const vector<string>& sentence,
+        -:  162:										 map<string, int>* log,
+        -:  163:										 string& matched_string,
+        -:  164:										 RedisWrapper *redis_wrapper,
+        -:  165:										 unordered_map< string, vector<size_t> >& substr_idx_map,
+        -:  166:										 hobotlog::LogModule *loginstance){
+        3:  167:	float char_weight = -1.0f;
+        -:  168:	//< 最终的语义结果
+        3:  169:	vector<Semantic*> sems;
+        6:  170:	vector<float> max_weight(sentence.size(), -1.0f);
+        6:  171:	vector<int> pre_chars(sentence.size(), -1);
+        6:  172:	vector<Semantic*> max_sem(sentence.size(), NULL);
+        3:  173:	size_t len = 0;
+        9:  174:	for(size_t i=0; i<sentence.size()-1;){
+        3:  175:		bool matched = false;
+        3:  176:		string part_mc_str = "";
+        3:  177:		for(size_t e=sentence.size(); e>i+1; e--){
+        3:  178:			vector<string> part_sent(sentence.begin()+i, sentence.begin()+e);
+        -:  179:			//< 记得释放part_sems里的Semantic对象
+        -:  180:			vector<Semantic*> part_sems = match(Utils::join(part_sent), part_sent,
+        -:  181:											log, part_mc_str, redis_wrapper,
+        3:  182:											substr_idx_map, loginstance);
+        3:  183:			if(part_sems.size()<=0)
+    #####:  184:				continue;
+        3:  185:			matched = true;
+        3:  186:			len = part_sent.size();
+        -:  187:			// cout << "matched length: " <<  len << endl;
+        3:  188:			float pre_max_weight = 0.0f;
+        3:  189:			if(i>0)
+    #####:  190:				pre_max_weight = max_weight[i-1];
+        3:  191:			size_t idx = i + part_sent.size() - 1;
+        3:  192:			if(max_weight[idx]<pre_max_weight+part_sems[0]->weight){
+        3:  193:				max_weight[idx] = pre_max_weight + part_sems[0]->weight;
+        3:  194:				pre_chars[idx] = i;
+        -:  195:				//< 先删除原结果,才能把新结果赋给该位置
+        3:  196:				if(max_sem[idx] != NULL)
+    #####:  197:					delete max_sem[idx];
+        3:  198:				max_sem[idx] = part_sems[0];
+        3:  199:				for(size_t j=1; j<part_sems.size(); j++)
+    #####:  200:					delete part_sems[j];
+        -:  201:				//< 修改slot的[start,end]为全局index
+        9:  202:				for(size_t j=0; j<max_sem[idx]->slots.size(); j++){
+        6:  203:					if(max_sem[idx]->slots[j]->start != -1)
+        6:  204:						max_sem[idx]->slots[j]->start += i;
+        6:  205:					if(max_sem[idx]->slots[j]->end != -1)
+        6:  206:						max_sem[idx]->slots[j]->end += i;
+        -:  207:				}
+        -:  208:			}
+        3:  209:			i += part_sent.size();
+        -:  210:			// cout << "matched string: " << Utils::join(part_sent) << endl;
+        3:  211:			break;
+    =====:  212:		}
+        3:  213:		if(!matched && i>0){
+    #####:  214:			size_t t = i-1;
+    #####:  215:			i -= len;
+        -:  216:			// cout << "t=" << t << "; i=" << i << endl;
+    #####:  217:			while(t>i+1){
+    #####:  218:				vector<string> part_sent(sentence.begin()+i, sentence.begin()+t);
+        -:  219:				vector<Semantic*> part_sems = match(Utils::join(part_sent), part_sent,
+        -:  220:													log, part_mc_str, redis_wrapper,
+    #####:  221:													substr_idx_map, loginstance);
+    #####:  222:				if(part_sems.size()<=0){
+    #####:  223:					t--;
+    #####:  224:					if(t==i+1)
+    #####:  225:						i += len;
+    #####:  226:					continue;
+        -:  227:				}
+    #####:  228:				matched = true;
+    #####:  229:				len = part_sent.size();
+        -:  230:				// cout << "submatched string: " << Utils::join(part_sent) << endl;
+    #####:  231:				float pre_max_weight = 0.0f;
+    #####:  232:				if(i>0)
+    #####:  233:					pre_max_weight = max_weight[i-1];
+    #####:  234:				size_t idx = i + part_sent.size() - 1;
+    #####:  235:				if(max_weight[idx]<pre_max_weight+part_sems[0]->weight){
+    #####:  236:					max_weight[idx] = pre_max_weight + part_sems[0]->weight;
+    #####:  237:					pre_chars[idx] = i;
+    #####:  238:					if(max_sem[idx] != NULL)
+    #####:  239:						delete max_sem[idx];
+    #####:  240:					max_sem[idx] = part_sems[0];
+    #####:  241:					for(size_t j=1; j<part_sems.size(); j++)
+    #####:  242:						delete part_sems[j];
+    #####:  243:					for(size_t j=0; j<max_sem[idx]->slots.size(); j++){
+    #####:  244:						if(max_sem[idx]->slots[j]->start != -1)
+    #####:  245:							max_sem[idx]->slots[j]->start += i;
+    #####:  246:						if(max_sem[idx]->slots[j]->end != -1)
+    #####:  247:							max_sem[idx]->slots[j]->end += i;
+        -:  248:					}
+        -:  249:				}
+    #####:  250:			i += part_sent.size();
+    #####:  251:			break;
+    =====:  252:			}
+        -:  253:		}
+        -:  254:		//< 一个都没匹配上,直接返回
+        3:  255:		if(!matched){
+    #####:  256:			for(size_t i=0; i<max_sem.size(); i++){
+    #####:  257:				if(max_sem[i] != NULL){
+    #####:  258:					delete max_sem[i];
+    #####:  259:					max_sem[i] = NULL;
+        -:  260:				}
+        -:  261:			}
+    #####:  262:			return sems;
+        -:  263:		}
+        3:  264:	}
+        -:  265:
+        -:  266:	//< 回溯
+        6:  267:	vector<Semantic*> final_max_sem;
+        3:  268:	int i = sentence.size()-1;
+        9:  269:	while(i > -1){
+        3:  270:		if(max_sem[i] == NULL)
+    #####:  271:			return sems;
+        3:  272:		final_max_sem.push_back(max_sem[i]);
+        3:  273:		max_sem[i] = NULL;
+        3:  274:		i = pre_chars[i]-1;
+        -:  275:	}
+        3:  276:	std::reverse(final_max_sem.begin(), final_max_sem.end());
+        -:  277:	
+        -:  278:	//< 释放max_sem的空间
+       24:  279:	for(size_t i=0; i<max_sem.size(); i++){
+       21:  280:		if(max_sem[i] != NULL){
+    #####:  281:			delete max_sem[i];
+    #####:  282:			max_sem[i] = NULL;
+        -:  283:		}
+        -:  284:	}
+        -:  285:
+        -:  286:	//< 多个语义结果合并
+        3:  287:	Semantic *final_sem = new Semantic();
+        3:  288:	final_sem->query = raw_sentence;
+        3:  289:	final_sem->match_len = sentence.size();
+        3:  290:	final_sem->weight = max_weight.back();
+        3:  291:	final_sem->domain = this->field_name_;
+        3:  292:	final_sem->intent = "inform";
+        6:  293:	for(size_t i=0; i<final_max_sem.size(); i++){
+        3:  294:		merge_semantics(final_sem, final_max_sem[i]);
+        3:  295:		delete final_max_sem[i];
+        -:  296:	}
+        3:  297:	sems.push_back(final_sem);
+        3:  298:	matched_string = raw_sentence;
+        -:  299:
+        3:  300:	return sems;
+        -:  301:}
+        -:  302:
+        -:  303:/*
+        -:  304: * 在当前领域下匹配用户的输入句子
+        -:  305: * 遍历当前领域的所有正则表达式,每个表达式的NFA都匹配一遍
+        -:  306: * 最后收集各个NFA的结果,写到一个vector中返回
+        -:  307: */
+       19:  308:vector<Semantic*> DomainLex::match(const string& raw_sentence, 
+        -:  309:                                   const vector<string>& sentence, 
+        -:  310:                                   map<string, int>* log, 
+        -:  311:                                   string& matched_string, 
+        -:  312:								   RedisWrapper *redis_wrapper,
+        -:  313:								   unordered_map< string, vector<size_t> >& substr_idx_map,
+        -:  314:								   hobotlog::LogModule *loginstance){
+       19:  315:	vector<Semantic*> sems;
+        -:  316:
+        -:  317:	//< vec_idx表示一个数组,
+        -:  318:	//< 每个位置表示此表中相应词在sentence中出现的结尾位置
+       38:  319:	vector< vector<size_t> > vec_idx(wrd_idx_map.size()+1, vector<size_t>());
+     1311:  320:	for(unordered_map< string, vector<size_t> >::iterator iter=substr_idx_map.begin();
+      874:  321:		iter!=substr_idx_map.end(); iter++){
+      418:  322:		if(wrd_idx_map.find(iter->first) != wrd_idx_map.end()){
+       45:  323:			size_t index = wrd_idx_map[iter->first];
+       45:  324:			vec_idx[index] = iter->second;
+        -:  325:			// loginstance->debug("vec_idx[" + std::to_string(index) + "] = " + std::to_string(iter->second));
+        -:  326:		}
+        -:  327:	}
+        -:  328:
+        -:  329:	//< 遍历所有的正则表达式,每个都匹配一遍
+      184:  330:	for(size_t i=0; i<vec_expr_.size(); i++){
+      165:  331:		Expression *expr = vec_expr_[i];
+        -:  332:		// loginstance->debug("matching expression " + expr->expr_value_ + ".");
+      165:  333:        vector<Group> match_group = expr->match(raw_sentence, sentence, log, matched_string, redis_wrapper, vec_idx);
+      165:  334:		if(match_group.size() <= 0){
+      134:  335:			continue;
+        -:  336:        // }else{
+        -:  337:		// 	cout << "matched regex: " << expr->expr_value_ << endl;
+        -:  338:		}
+       31:  339:		Semantic* sem = new Semantic();
+       31:  340:        sem->match_len = matched_string.size();
+       31:  341:        sem->query = raw_sentence;
+       31:  342:		sem->weight = expr->weight_;
+       93:  343:		for(size_t j=0; j<expr->requests_.size(); j++){
+       62:  344:			size_t index = expr->requests_[j].second;
+       62:  345:			string slot_name = expr->requests_[j].first;
+      124:  346:			string slot_valu = match_group[index].str;
+       62:  347:			if(slot_name == "domain")
+    #####:  348:				sem->domain = slot_valu;
+       62:  349:			else if(slot_name == "intent")
+    #####:  350:				sem->intent = slot_valu;
+       62:  351:			else if(slot_valu != "")
+        -:  352:				sem->add_slot(slot_name, slot_valu,
+       62:  353:							  match_group[index].start,
+      124:  354:							  match_group[index].end);
+       62:  355:		}
+      151:  356:		for(size_t j=0; j<match_group.size(); j++){
+      120:  357:			if(match_group[j].name != "" && match_group[j].str != ""){
+    #####:  358:				int idx = sem->has_slot(match_group[j].name);
+    #####:  359:				if(idx == -1 || sem->slots[idx]->value!=match_group[j].str){
+    #####:  360:					sem->add_slot(match_group[j].name,
+    #####:  361:								  match_group[j].str,
+    #####:  362:								  match_group[j].start,
+    #####:  363:								  match_group[j].end);
+        -:  364:				}
+        -:  365:			}
+        -:  366:		}
+        -:  367:
+      174:  368:		for(map<string, string>::iterator iter=expr->requests1_.begin();
+      116:  369:			iter!=expr->requests1_.end(); iter++){
+       27:  370:			if(iter->first == "domain")
+       27:  371:				sem->domain = iter->second;
+    #####:  372:			else if(iter->first == "intent")
+    #####:  373:				sem->intent = iter->second;
+        -:  374:			else
+    #####:  375:				sem->add_slot(iter->first, iter->second, -1, -1);
+        -:  376:		}
+       31:  377:		if(sem->domain == "")
+        4:  378:			sem->domain = this->field_name_;
+       31:  379:		if(sem->intent == "")
+       31:  380:			sem->intent = "inform";
+        -:  381:
+        -:  382:        //< 看该条规则的匹配权重是否跟之前的某规则权重一样大
+        -:  383:        //< 若是,则保留匹配长度较大者
+       31:  384:        bool diff_weight_flag = true;
+       39:  385:        for(size_t i=0; i<sems.size(); i++){
+       16:  386:            if(sems[i]->weight == sem->weight){
+        8:  387:                diff_weight_flag = false;
+        8:  388:                if(sem->match_len > sems[i]->match_len){
+    #####:  389:                    delete sems[i];
+    #####:  390:                    sems[i] = sem;
+        8:  391:                }else if(*sem == *sems[i]){
+        8:  392:                    delete sem;
+    #####:  393:                }else if(sem->match_len == sems[i]->match_len){
+    #####:  394:                    diff_weight_flag = true;
+        -:  395:                }else{
+    #####:  396:                    delete sem;
+        -:  397:                }
+        8:  398:                break;
+        -:  399:            }
+        -:  400:        }
+       31:  401:        if(diff_weight_flag){
+       23:  402:            sems.push_back(sem);
+        -:  403:        }
+       31:  404:	}
+        -:  405:
+       38:  406:	return sems;
+        -:  407:}
+        -:  408:
+     2475:  409:bool DomainLex::compare_weight(const Expression* e1, const Expression* e2){
+     2475:  410:    return e1->weight_ > e2->weight_;
+        -:  411:}
+        -:  412:
+      120:  413:void DomainLex::sort_expr(){
+      120:  414:    sort(vec_expr_.begin(), vec_expr_.end(), DomainLex::compare_weight);
+      120:  415:}
+        -:  416:
+      119:  417:void DomainLex::list_file(const string& field){
+      119:  418:    const char* dir_name = field.c_str();
+      118:  419:    if(NULL == dir_name){
+    #####:  420:        throw std::runtime_error("Invalid folder name!");
+        -:  421:    }
+        -:  422:    struct dirent* read_dir;
+        -:  423:    DIR* open_dir;
+      118:  424:    open_dir = opendir(dir_name);
+        -:  425:
+      120:  426:    if(NULL == open_dir){
+    #####:  427:		throw std::runtime_error("Cannot open directory!");
+        -:  428:    }
+        -:  429:    
+      599:  430:    while((read_dir = readdir(open_dir)) != NULL){
+        -:  431:        //< 忽略表示当前目录的"."以及上级目录的".."
+      358:  432:		if(read_dir->d_name[0] == '.')
+      239:  433:            continue;
+      119:  434:        string file_name = dir_name;
+      119:  435:        file_name.append("/");
+      120:  436:        file_name.append(read_dir->d_name);
+      120:  437:        this->files_.push_back(file_name);
+      119:  438:    }
+      120:  439:}
+        -:  440:
+        -:  441:/*
+        -:  442: * 处理单个文件
+        -:  443: */
+      159:  444:void DomainLex::process_file(const string& file_name, bool root){
+      159:  445:    ifstream in(file_name.c_str());
+        -:  446:
+        -:  447:	//< 暂存expr line，最后处理
+      320:  448:    vector<string> expr_lines;
+        -:  449:	//< 暂存var line，最后处理
+      318:  450:    vector<string> var_lines;
+      158:  451:    if(root)
+      118:  452:        map_var_.clear();
+        -:  453:    
+      158:  454:    if(in){
+      158:  455:        string line;
+      159:  456:        size_t line_num = 1;
+     4480:  457:        while(getline(in, line)){
+     4159:  458:			Utils::replace(line, '\t', ' ');
+        -:  459:			//< 检查该行的类型
+     4164:  460:            LineType line_type = check_line(file_name, line, line_num);
+        -:  461:			//< 文件包含
+     4163:  462:            if(line_type == INCLUDE){
+       40:  463:                hash_line(line);
+        -:  464:			//< 注释行
+     4123:  465:            }else if(line_type == ANNOTATION){
+      512:  466:                anno_line(line);
+        -:  467:			//< 正则表达式行
+     3611:  468:            }else if(line_type == EXPRESSION){
+      970:  469:                expr_lines.push_back(line);
+        -:  470:			//< 空行
+     2641:  471:            }else if(line_type == VOID){
+     1223:  472:                void_line(line);
+        -:  473:			//< 变量定义行
+        -:  474:            }else{
+     1418:  475:                var_lines.push_back(line);
+        -:  476:            }
+     4162:  477:            ++line_num;
+        -:  478:        }
+        -:  479:        
+        -:  480:        //< 处理变量定义
+     1579:  481:        for(size_t i=0; i<var_lines.size(); ++i)
+     1419:  482:            var_line(var_lines[i]);
+        -:  483:
+        -:  484:
+        -:  485:
+        -:  486:
+        -:  487:        //< 为所有变量建立nfa
+      160:  488:        map<string, Variable*>::iterator iter;
+     2021:  489:        for(iter=map_var_.begin(); iter!=map_var_.end(); ++iter){
+     1861:  490:            iter->second->pnfa_ = build_NFA(iter->second->var_value_.c_str(), map_var_, false);
+        -:  491:		}
+        -:  492:       
+        -:  493:
+        -:  494:        // 线程池
+      319:  495:        ThreadPool pool(8);
+        -:  496:        // domain内表达式构造nfa过程-多线程
+      320:  497:        vector<std::future<Expression*>> expr_results;
+        -:  498:
+        -:  499:        // 把处理每个expression行当作任务分发到线程池
+     1130:  500:        for(size_t i=0; i<expr_lines.size(); ++i){
+      970:  501:            string exp = expr_lines[i];
+        -:  502:            expr_results.emplace_back(
+     5811:  503:                pool.enqueue([exp, this]{
+      962:  504:                    Expression* pexp = this->expr_line(exp);
+      969:  505:                    return pexp;
+        -:  506:                })
+      970:  507:            );
+      970:  508:		}
+        -:  509:        // 等待所有任务执行完毕
+      160:  510:        pool.wait_until_empty();
+        -:  511:        // 对每条Expression对应的nfa处理，扩展词表、更新最大词长度、str_idx，并对Expression去重
+     1130:  512:        for(size_t i = 0; i < expr_results.size(); i++){
+      970:  513:            Expression* pexp = expr_results[i].get();
+      970:  514:            extend_vocab(pexp->pnfa_);
+      969:  515:            int flag = 0;
+     9050:  516:            for(size_t j = 0; j < vec_expr_.size(); j++){
+     8102:  517:                if(*pexp == *(vec_expr_[j])){
+       21:  518:                    flag = 1;
+       21:  519:                    break;
+        -:  520:                }
+        -:  521:            }
+      970:  522:            if(flag == 0)
+      949:  523:                this->vec_expr_.push_back(pexp);
+        -:  524:        }
+        -:  525:
+      320:  526:		in.close();
+        -:  527:    }else{
+    #####:  528:        std::cerr << "Failed to open " << file_name << "!" << endl;
+        -:  529:    }
+      320:  530:    return;
+        -:  531:}
+        -:  532:
+        -:  533:/*
+        -:  534: * 检查读取的一行属于何种类型
+        -:  535: */
+     4163:  536:LineType DomainLex::check_line(const string& file_name,
+        -:  537:							   const string& line,
+        -:  538:							   const int& line_num){
+     4163:  539:	string line1 = Utils::strip(line);
+     4159:  540:	if(line1.size() == 0){
+     1222:  541:		return VOID;
+     2940:  542:	}else if(line1.substr(0, 8) == "#include"){
+       40:  543:		return INCLUDE;
+     2899:  544:	}else if(line1[0] == '#'){
+      512:  545:		return ANNOTATION;
+     2387:  546:	}else if(line1.substr(0, 6) == "export" && line1.find("request") != string::npos){
+      970:  547:		return EXPRESSION;
+     1418:  548:	}else if(line1.find("=") != 0 && line1.find("=") != string::npos){
+     1418:  549:		return VARIABLE;
+        -:  550:	}else{
+    #####:  551:        string err_msg = file_name;
+    #####:  552:        err_msg.append(": ");
+    #####:  553:        err_msg.append(std::to_string(line_num));
+    #####:  554:        err_msg.append(": Invalid line!");
+    #####:  555:        throw std::runtime_error(err_msg);
+     4162:  556:	}
+        -:  557:}
+        -:  558:
+        -:  559:/*
+        -:  560: * 处理文件包含,采用递归的形式,若包含了某文件,
+        -:  561: * 则读取该文件的内容,一行一行处理
+        -:  562: */
+       40:  563:void DomainLex::hash_line(const string& line){
+       40:  564:	string file_name = this->lex_dir_;
+       40:  565:	if(file_name.back() != '/')
+       40:  566:		file_name.append("/");
+       40:  567:	int count = 0;
+     1160:  568:	for(size_t i=0; i<line.size(); i++){
+     1120:  569:		if(line[i] == '"')
+       80:  570:			count++;
+     1040:  571:		else if(count>0)
+      680:  572:			file_name += line[i];
+        -:  573:	}
+       40:  574:	if(count!=2 || line.back()!='"')
+    #####:  575:        throw std::runtime_error("Invalid include!");
+       40:  576:    process_file(file_name, 0);
+       40:  577:    return;
+        -:  578:}
+        -:  579:
+        -:  580:/*
+        -:  581: * 处理表达式中的request返回值
+        -:  582: */
+      970:  583:PassRequests DomainLex::get_requests(const string& str_requests){
+      970:  584:    PassRequests pass_requests;
+      967:  585:    size_t i=0;
+     1937:  586:    vector<string> split_req;
+      968:  587:    Utils::utf8strs(str_requests.c_str(), split_req);
+        -:  588:    
+      969:  589:    while(split_req[i] != "(") ++i;
+      969:  590:    ++i;
+     3566:  591:    while(i < split_req.size()-1 && split_req[i] != ")"){
+     1626:  592:        string attr;
+    12896:  593:        while(split_req[i] != "="){
+     9643:  594:            if(split_req[i] == " "){
+      925:  595:                ++i;
+      925:  596:                continue;
+        -:  597:            }else{
+     8716:  598:                attr += split_req[i];
+     8719:  599:                ++i;
+        -:  600:            }
+     1628:  601:        }++i;
+     1628:  602:        while(split_req[i] != "\"") ++i;
+     1628:  603:        ++i;
+     1628:  604:        while(split_req[i] == " ") ++i;
+     1628:  605:        if(split_req[i] == "$"){
+     1466:  606:			++i;
+     1466:  607:            string str_index;
+     4398:  608:            while(split_req[i] != "\""){
+     1466:  609:                if(split_req[i] == " "){
+    #####:  610:                    ++i;
+    #####:  611:                    continue;
+        -:  612:                }else{
+     1466:  613:                    str_index += split_req[i];
+     1466:  614:                    ++i;
+        -:  615:                }
+     1466:  616:            }++i;
+     1466:  617:            while(split_req[i]!="," && split_req[i]!=")") ++i;
+     1466:  618:            ++i;
+     1466:  619:            pass_requests.requests1.push_back(make_pair(attr, Utils::str2uint(str_index)));
+        -:  620:        }else{
+      162:  621:            string str_index;
+     1134:  622:            while(split_req[i] != "\""){
+      810:  623:                if(split_req[i] == " "){
+    #####:  624:                    ++i;
+    #####:  625:                    continue;
+        -:  626:                }else{
+      810:  627:                    str_index += split_req[i];
+      810:  628:                    ++i;
+        -:  629:                }
+      162:  630:            }++i;
+      162:  631:            while(split_req[i] != "," && split_req[i] != ")") ++i;
+      162:  632:            ++i;
+      162:  633:            pass_requests.requests2.insert(pair<string, string>(attr, str_index));
+        -:  634:        }
+     1628:  635:    }
+     1940:  636:    return pass_requests;
+        -:  637:}
+        -:  638:
+        -:  639:/*
+        -:  640: * 判断某字符串是否为"< 数字 >"的格式,例如:
+        -:  641: *	< 0.93 >
+        -:  642: */
+      968:  643:bool is_weight(const string& line){
+      968:  644:	const int NONE=0, INT=1, DOT=2, FLOAT=3, END=4;
+      968:  645:	string new_line = Utils::strip(line);
+      968:  646:	if(new_line[0] != '<' || new_line[new_line.size()-1] != '>')
+    #####:  647:		return false;
+      968:  648:	new_line = new_line.substr(1, new_line.size()-2);
+      970:  649:	int state = NONE;
+     4095:  650:	for(int i=0; i<new_line.size(); i++){
+     3127:  651:		if(new_line[i]>=48 && new_line[i]<=57){
+     1928:  652:			if(state == NONE)
+      960:  653:				state = INT;
+      968:  654:			else if(state == DOT)
+      968:  655:				state = FLOAT;
+    #####:  656:			else if(state == END)
+    #####:  657:				return false;
+     1197:  658:		}else if(new_line[i] == '.'){
+      969:  659:			if(state == INT)
+      969:  660:				state = DOT;
+        -:  661:			else
+    #####:  662:				return false;
+      228:  663:		}else if(new_line[i] == ' ' || new_line[i] == '\t'){
+      228:  664:			if(state == DOT)
+    #####:  665:				return false;
+      228:  666:			else if(state != NONE)
+      114:  667:				state = END;
+        -:  668:		}else
+    #####:  669:			return false;
+        -:  670:	}
+        -:  671:
+      968:  672:	if(state == DOT)
+    #####:  673:		return false;
+        -:  674:
+      968:  675:	return true;
+        -:  676:}
+        -:  677:
+        -:  678:/*
+        -:  679: * 判断某字符串是否为正则表达式,例如:
+        -:  680: *	export exp=我(要|想)听(吻别|青花瓷) => request(title="$2") <0.9>;
+        -:  681: */
+      955:  682:bool is_expr(const string& line){
+        -:  683:	size_t idx;
+      955:  684:	string new_line = Utils::strip(line);
+      963:  685:	if(new_line[new_line.size()-1] != ';')
+    #####:  686:		return false;
+      963:  687:	new_line = new_line.substr(0, new_line.size()-1);
+      967:  688:	Utils::replace(new_line, '\t', ' ');
+        -:  689:
+      970:  690:	new_line = Utils::strip(new_line);
+      968:  691:	if(new_line.substr(0, 6) != "export")
+    #####:  692:		return false;
+        -:  693:
+      966:  694:	new_line = Utils::strip(new_line.substr(6));
+      965:  695:	idx = new_line.find("=");
+      967:  696:	if(idx == string::npos)
+    #####:  697:		return false;
+        -:  698:
+      967:  699:	new_line = Utils::strip(new_line.substr(idx+1));
+      968:  700:	idx = new_line.find("=>");
+      968:  701:	if(idx == string::npos)
+    #####:  702:		return false;
+        -:  703:
+      968:  704:	new_line = Utils::strip(new_line.substr(idx+2));
+      967:  705:	if(new_line.substr(0, 7) != "request")
+    #####:  706:		return false;
+        -:  707:	
+      967:  708:	new_line = Utils::strip(new_line.substr(7));
+      969:  709:	if(new_line[0] != '(')
+    #####:  710:		return false;
+        -:  711:	
+      968:  712:	new_line = Utils::strip(new_line.substr(1));
+      967:  713:	idx = new_line.find(")");
+      968:  714:	if(idx == string::npos)
+    #####:  715:		return false;
+        -:  716:
+      968:  717:	new_line = Utils::strip(new_line.substr(idx+1, new_line.size()));
+      970:  718:	if(is_weight(new_line))
+      968:  719:		return true;
+    #####:  720:	return false;
+        -:  721:}
+        -:  722:
+        -:  723:
+      970:  724:void DomainLex::extend_vocab(NFA *pnfa){
+      970:  725:	set<State*> visited;
+     1938:  726:	queue<State*> sque;
+      968:  727:	sque.push(pnfa->start);
+   565850:  728:	while(sque.size()>0){
+   563855:  729:		State *ps = sque.front();
+   563857:  730:		sque.pop();
+   563834:  731:		if(visited.find(ps) != visited.end())
+   116464:  732:			continue;
+   447410:  733:		visited.insert(ps);
+  1010427:  734:		for(size_t i=0; i<ps->olinks.size(); i++){
+   562962:  735:			Link *pl = ps->olinks[i];
+   562949:  736:			if(pl->ltype==STRING && pl->cs->type==ORDINARY && ps->kflag){
+    98130:  737:				if(wrd_idx_map.find(pl->cs->str) == wrd_idx_map.end())
+     4945:  738:					wrd_idx_map[pl->cs->str] = wrd_idx_map.size();
+    98130:  739:				pl->cs->str_idx = wrd_idx_map[pl->cs->str];
+    98130:  740:				if(wrd_max_len < pl->cs->vec_str.size())
+      259:  741:					wrd_max_len = pl->cs->vec_str.size();
+        -:  742:			}
+   562949:  743:			sque.push(pl->end);
+        -:  744:		}
+      968:  745:	}
+      969:  746:}
+        -:  747:
+        -:  748:
+        -:  749:/*
+        -:  750: * 处理一行的正则表达式,为其建立对应的NFA
+        -:  751: */
+      955:  752:Expression* DomainLex::expr_line(const string& line){
+      955:  753:    if(!is_expr(line)){
+    #####:  754:        string err_msg = "Invalid expression line! \n\t";
+    #####:  755:        err_msg.append(line);
+    #####:  756:        throw std::runtime_error(err_msg);
+        -:  757:    }
+        -:  758:
+      969:  759:    size_t i = 0;
+      969:  760:    vector<string> split_line;
+      964:  761:    Utils::utf8strs(line.c_str(), split_line);
+        -:  762:    
+     1939:  763:    string expr_name;
+      969:  764:    while(split_line[i] != " ") ++i;
+    10612:  765:    while(split_line[i] != "="){
+     8660:  766:        if(split_line[i] == " "){
+     1937:  767:            ++i;
+     1937:  768:            continue;
+        -:  769:        }else{
+     6732:  770:            expr_name += split_line[i];
+     6737:  771:            ++i;
+        -:  772:        }
+      969:  773:    }++i;
+        -:  774:
+     1939:  775:    string expr_value;
+    42586:  776:    while(split_line[i] != "="){
+    40535:  777:        if(split_line[i] == " "){
+     2505:  778:            ++i;
+     2505:  779:            continue;
+        -:  780:        }else{
+    38070:  781:            expr_value += split_line[i];
+    38143:  782:            ++i;
+        -:  783:        }
+      970:  784:    }i+=2;
+        -:  785:    
+     1940:  786:    string str_requests;
+    31643:  787:    while(split_line[i] != "<"){
+    29694:  788:        str_requests += split_line[i];
+    29703:  789:        ++i;
+      970:  790:    }++i;
+        -:  791:
+     1940:  792:    string str_weight;
+     5074:  793:    while(split_line[i] != ">"){
+     3134:  794:        if(split_line[i] == " "){
+      228:  795:            ++i;
+      228:  796:            continue;
+        -:  797:        }else{
+     2906:  798:            str_weight += split_line[i];
+     2906:  799:            ++i;
+        -:  800:        }
+        -:  801:    }
+        -:  802:
+        -:  803:    //< 构建Expression
+     1940:  804:    PassRequests pass_requests = get_requests(str_requests);
+      970:  805:    double weight = atof(str_weight.c_str());
+    58554:  806:	for(map<string, Variable*>::iterator iter = map_var_.begin();
+    57598:  807:		iter!=map_var_.end(); iter++){
+        -:  808:	}
+      969:  809:    NFA* pnfa = build_NFA(expr_value.c_str(), map_var_, true);
+        -:  810:
+        -:  811:
+      970:  812:    Expression* expr = new Expression(expr_name, expr_value, pass_requests.requests1, pass_requests.requests2, weight, pnfa);
+        -:  813:    
+     1940:  814:    return expr;
+        -:  815:}
+        -:  816:
+        -:  817:
+        -:  818:
+        -:  819:/*
+        -:  820: * 处理变量定义行,为该变量建立NFA
+        -:  821: */
+     1419:  822:void DomainLex::var_line(const string& line){
+     1419:  823:    int i=0;
+     1419:  824:    vector<string> split_line;
+     1419:  825:    Utils::utf8strs(line.c_str(), split_line);
+     2998:  826:	while(split_line.back() != ";")
+      160:  827:		split_line.pop_back();
+     1419:  828:	split_line.pop_back();
+        -:  829:
+     2838:  830:    string var_name;
+    10350:  831:    while(split_line[i] != "="){
+     7511:  832:        if(split_line[i] == " "){
+     2509:  833:            ++i;
+     2509:  834:            continue;
+        -:  835:        }else{
+     5003:  836:            var_name += split_line[i];
+     5003:  837:            ++i;
+        -:  838:        }
+     1419:  839:    }++i;
+     1419:  840:    if(i == split_line.size())
+    #####:  841:      throw std::runtime_error("Invalid variable!");
+        -:  842:
+     2837:  843:    string var_value;
+    35955:  844:    while(i != split_line.size()){
+    33115:  845:        if(split_line[i] == " "){
+     1438:  846:            ++i;
+     1438:  847:            continue;
+        -:  848:        }else{
+    31675:  849:            var_value += split_line[i];
+    31679:  850:            ++i;
+        -:  851:        }
+        -:  852:    }
+        -:  853:    
+        -:  854:    //< 直接更新变量,不检查重复直接覆盖
+     1419:  855:    map_var_.insert(make_pair(var_name, new Variable(var_name, var_value)));
+        -:  856:
+     2837:  857:    return;
+        -:  858:}
+        -:  859:
+        -:  860:/*
+        -:  861: * 处理注释行,不需要执行任何操作
+        -:  862: */
+      512:  863:void DomainLex::anno_line(const string& line){
+      512:  864:    return;
+        -:  865:}
+        -:  866:
+        -:  867:/*
+        -:  868: * 处理空行,不需要执行任何操作
+        -:  869: */
+     1223:  870:void DomainLex::void_line(const string& line){
+     1223:  871:    return;
+        -:  872:}
+        -:  873:
+        3:  874:}

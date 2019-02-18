@@ -1,0 +1,61 @@
+File '../../regex_v1.3/src/expression.cc'
+Lines executed:100.00% of 19
+Creating 'expression.cc.gcov'
+        -:    0:Source:../../regex_v1.3/src/expression.cc
+        -:    0:Graph:expression.gcno
+        -:    0:Data:expression.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <vector>
+        -:    2:#include <string>
+        -:    3:#include <utility>
+        -:    4:#include <iostream>
+        -:    5:
+        -:    6:#include "expression.h"
+        -:    7:#include "nfa.h"
+        -:    8:
+        -:    9:using std::vector;
+        -:   10:using std::string;
+        -:   11:using std::pair;
+        -:   12:using std::cout;
+        -:   13:using std::endl;
+        -:   14:
+        -:   15:namespace SemanticRegex{
+        -:   16:
+      970:   17:Expression::Expression(const string& expr_name,
+        -:   18:                       const string& expr_value,
+        -:   19:                       const vector< pair<string, size_t> > requests,
+        -:   20:                       const map<string, string> requests1,
+        -:   21:                       const double& weight,
+      970:   22:                       NFA* pnfa) {
+      969:   23:    expr_name_ 	= expr_name;
+      969:   24:    expr_value_ = expr_value;
+      970:   25:    requests_ 	= requests;
+      970:   26:    requests1_ 	= requests1;
+      970:   27:    weight_ 	= weight;
+      970:   28:    pnfa_ 		= pnfa;
+      970:   29:}
+        -:   30:
+      252:   31:Expression::~Expression() {
+      126:   32:    this->pnfa_->destruct();
+      126:   33:}
+        -:   34:
+     8102:   35:bool Expression::operator == (const Expression& e2){
+     8102:   36:    if (this->expr_value_ == e2.expr_value_)
+       21:   37:        return true;
+     8081:   38:    return false;
+        -:   39:}
+        -:   40:
+        -:   41:/*
+        -:   42: * 直接调用表达式对应的NFA进行匹配即可
+        -:   43: */
+      165:   44:vector<Group> Expression::match(const string& raw_sentence, 
+        -:   45:                                const vector<string>& sentence, 
+        -:   46:                                map<string, int>* log, 
+        -:   47:                                string& matched_string, 
+        -:   48:								RedisWrapper *redis_wrapper,
+        -:   49:								const vector< vector<size_t> >& vec_idx) {
+      165:   50:    return this->pnfa_->match(raw_sentence, sentence, vec_idx, log, matched_string, redis_wrapper);
+        -:   51:}
+        -:   52:
+        3:   53:}

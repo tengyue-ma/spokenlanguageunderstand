@@ -1,0 +1,89 @@
+File '../../feat_extractor/open_domain_feat/src/slotType.cpp'
+Lines executed:100.00% of 30
+Creating 'slotType.cpp.gcov'
+        -:    0:Source:../../feat_extractor/open_domain_feat/src/slotType.cpp
+        -:    0:Graph:slotType.gcno
+        -:    0:Data:slotType.gcda
+        -:    0:Runs:2
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:	> File Name: slotType.cpp
+        -:    3:	> Author: TengyueMa
+        -:    4:	> Mail: lumujin@icloud.com
+        -:    5:	> Created Time: 四  1/ 4 15:21:23 2018
+        -:    6: ************************************************************************/
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <map>
+        -:   10:#include <string>
+        -:   11:#include <vector>
+        -:   12:#include <fstream>
+        -:   13:#include "slotType.h"
+        -:   14:#include "SluLog.h"
+        -:   15:
+        -:   16:using namespace std;
+        -:   17:
+        -:   18://< 构造函数
+        2:   19:slotType::slotType(){
+        -:   20:    //loadDict2Map("city", "./dict/City.txt");
+        -:   21:    //loadDict2Map("area", "./dict/Area.txt");
+        -:   22:    //loadDict2Map("country", "./dict/Country.txt");
+        -:   23:    //loadDict2Map("province", "./dict/Province.txt");
+        2:   24:}
+        -:   25:
+       38:   26:slotType::slotType(const vector<pair<string, string> > vec_dict){
+       76:   27:    for (size_t i = 0; i < vec_dict.size(); i++){
+       38:   28:        loadDict2Map(vec_dict[i].first, vec_dict[i].second);
+        -:   29:    }
+       38:   30:}
+        -:   31:
+        -:   32://< 析构函数
+       12:   33:slotType::~slotType(){
+        6:   34:    if(!dictmap.empty()){  
+        -:   35:        //< 释放
+       18:   36:        for(map<string, string>::iterator iter = dictmap.begin(); iter != dictmap.end(); iter++){  
+       16:   37:            dictmap.erase(iter);  
+        -:   38:        }  
+        2:   39:        dictmap.clear();  
+        -:   40:    }  
+        6:   41:}
+        -:   42:
+        -:   43://< 查询key的slotname
+       50:   44:string slotType::getSlotname(const string value, 
+        -:   45:                             string name){
+       50:   46:    if (dictmap.find(value) != dictmap.end()){
+        4:   47:        return dictmap[value];
+        -:   48:    }
+        -:   49:	
+       46:   50:	loginstance->info("[SLU]: get slot name success! name: " + name);
+        -:   51:    
+       46:   52:    return name;
+        -:   53:}
+        -:   54:
+        -:   55://< 加载词典信息到map
+       38:   56:bool slotType::loadDict2Map(const string slotname, 
+        -:   57:                            const string dictpath){
+       38:   58:    ifstream dictfile;
+        -:   59:    //< 打开文件
+       38:   60:    dictfile.open(dictpath.c_str());
+        -:   61:
+       38:   62:    if (!dictfile){
+        2:   63:		loginstance->error("[SLU]: failed to open dict! dict path: " + dictpath);
+        2:   64:        return false;
+        -:   65:    }
+        -:   66:    
+        -:   67:    //< load
+       72:   68:    string slot_value;
+      360:   69:    while (dictfile >> slot_value){
+      288:   70:        dictmap[slot_value] = slotname;
+        -:   71:    }
+        -:   72:	
+       36:   73:	loginstance->info("[SLU]: load dict to map success! dict path: " + dictpath);
+        -:   74:    
+        -:   75:    //< 关闭文件
+       36:   76:    dictfile.close();
+        -:   77:
+       74:   78:    return true;
+        6:   79:}
+        -:   80:
+        -:   81:/* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */
