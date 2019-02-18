@@ -1,5 +1,8 @@
 SLU V2.0
-    2018.6.29 by zhouleilei.
+    2018.6.29 by tengyue-ma.
+0. 模型&so库下载
+    待上传
+
 
 1. 编译
     编译前请先./clean.sh
